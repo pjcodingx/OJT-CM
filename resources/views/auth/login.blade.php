@@ -215,8 +215,8 @@
         <!-- This is Cm Login Form Container -->
         <main class="login-container">
             <header class="login-header">
-                <h1>Welcome Back</h1>
-                <p>Please sign in to your account</p>
+                <h1>Welcome Back!</h1>
+                <p style="font-size: 14px; margin-top: -8px;">Please sign in to your account</p>
             </header>
 
             @if ($errors->any())
