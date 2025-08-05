@@ -11,4 +11,20 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 class Company extends Authenticatable
 {
     use HasFactory, Notifiable;
+
+    protected $fillable = [
+        'name', 'email', 'password', 'photo', 'address', 'location', 'faculty_id'
+    ];
+
+        public function faculties()
+        {
+            return $this->belongsToMany(Faculty::class, 'company_faculty');
+        }
+
+        public function students(){
+            return $this->hasMany(Student::class);
+        }
+
+
+
 }
