@@ -13,4 +13,14 @@ use Illuminate\Notifications\Notifiable;
 class Admin extends Authenticatable
 {
     use HasFactory, Notifiable;
+
+
+    //!ADDED THIS FOR EDIT PROFILE ADMIN SO IT CAN BE FILLED OR UPDATE FROM THE DB
+    protected $fillable = [
+        'name', 'email', 'password', 'photo'
+    ];
+
+    protected $hidden = [
+        'password', 'remember_token',
+    ];
 }
