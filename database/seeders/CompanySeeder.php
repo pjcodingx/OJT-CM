@@ -18,8 +18,26 @@ class CompanySeeder extends Seeder
         $company->name = 'Company';
         $company->email = 'company@gmail.com';
         $company->password = Hash::make('password'); // Use a secure password
-
-
         $company->save();
+
+        if(!Company::where('email', 'Alorica@gmail.com')->exists()){
+            Company::create([
+                'name' => 'Alorica',
+                'email' => 'alorica@gmail.com',
+                'password' => Hash::make('password'), // Use a secure password
+
+            ]);
+        }
+
+        if(!Company::where('email', 'accenture@gmail.com')->exists()){
+            Company::create([
+                'name' => 'Accenture',
+                'email' => 'accenture@gmail.com',
+                'password' => Hash::make('password'), // Use a secure password
+
+            ]);
+        }
+
+        }
     }
-}
+

@@ -14,13 +14,23 @@ class AdminSeeder extends Seeder
      */
     public function run(): void
     {
-        //create a new admin user
-        $admin = new Admin();
-        $admin->name = 'Admin';
-        $admin->email = 'admin@gmail.com';
-        $admin->password = Hash::make('password'); // Use a secure password
+       // Admin 1
+        if (!Admin::where('email', 'admin1@gmail.com')->exists()) {
+            Admin::create([
+                'name' => 'Admin Precious',
+                'email' => 'admin1@gmail.com',
+                'password' => Hash::make('password'),
+            ]);
+        }
 
-
-        $admin->save(); // Save the admin user to the database
+        // Admin 2
+        if (!Admin::where('email', 'admin2@gmail.com')->exists()) {
+            Admin::create([
+                'name' => 'Admin Two',
+                'email' => 'admin2@gmail.com',
+                'password' => Hash::make('password'),
+            ]);
+        }
     }
+
 }

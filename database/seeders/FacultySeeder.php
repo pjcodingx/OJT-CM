@@ -21,5 +21,22 @@ class FacultySeeder extends Seeder
 
 
         $faculty->save();
+
+        if(!Faculty::where('email', 'seth@gmail.com')->exists()){
+            $faculty = Faculty::create([
+                'name' => 'Seth',
+                'email' => 'seth@gmail.com',
+                'password' => Hash::make('password'), // Use a secure password
+            ]);
+        }
+
+        if(!Faculty::where('email', 'monica@gmail.com')->exists()){
+            $faculty = Faculty::create([
+                'name' => 'Monica',
+                'email' => 'monica@gmail.com',
+                'password' => Hash::make('password'),
+                ]);
+    }
+
     }
 }
