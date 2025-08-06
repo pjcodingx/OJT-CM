@@ -8,7 +8,12 @@ use App\Http\Controllers\admin\CompanyController;
 use App\Http\Controllers\admin\FacultyController;
 use App\Http\Controllers\admin\StudentController;
 use App\Http\Controllers\Auth\MultiLoginController;
+use App\Http\Controllers\faculty\MyStudentController;
+use App\Http\Controllers\JournalManagementController;
 use App\Http\Controllers\admin\AdminDashboardController;
+use App\Http\Controllers\student\StudentJournalController;
+use App\Http\Controllers\company\CompanyDashboardController;
+use App\Http\Controllers\faculty\FacultyDashboardController;
 use App\Http\Controllers\student\StudentDashboardController;
 
 // Route::get('/welcome', function () {
@@ -80,6 +85,7 @@ Route::middleware(['admin'])->prefix('admin')->group(function () {
 
 
 
+
     //* Route for Companies
     Route::get('/companies', [CompanyController::class, 'index'])->name('admin.companies.index');
     Route::get('/companies/create', [CompanyController::class, 'create'])->name('admin.companies.create');
@@ -96,4 +102,22 @@ Route::middleware(['admin'])->prefix('admin')->group(function () {
 
 Route::middleware(['student'])->prefix('student')->group(function () {
     Route::get('/dashboard', [StudentDashboardController::class, 'dashboard'])->name('student.dashboard');
+    Route::get('/profile', [StudentDashboardController::class, 'profile'])->name('student.profile');
+    Route::post('/update-photo/{id}', [StudentDashboardController::class, 'updatePhoto'])->name('student.update.photo');
+    Route::get('/journals/create', [StudentJournalController::class, 'create'])->name('student.journals.create');
+    Route::post('/journals', [StudentJournalController::class, 'store'])->name('student.journals.store');
+});
+
+
+// ROUTE FOR FACULTY
+Route::middleware(['faculty'])->prefix('faculty')->group(function (){
+    Route::get('/dashboard', [FacultyDashboardController::class, 'dashboard'])->name('faculty.dashboard');
+
+    Route::get('/journals', [JournalManagementController::class, 'index'])->name('faculty.journals.index');
+    Route::get('/my-students', [MyStudentController::class, 'index'])->name('faculty.students.index');
+
+});
+
+Route::middleware(['company'])->prefix('company')->group(function(){
+    Route::get('/dashboard', [CompanyDashboardController::class, 'dashboard'])->name('company.dashboard');
 });
