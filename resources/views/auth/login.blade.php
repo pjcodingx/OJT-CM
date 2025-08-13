@@ -33,13 +33,13 @@
                 overflow: hidden;
             }
 
-            .logo-overlay {
+          .logo-overlay {
                 position: absolute;
-                left: -250px;
+                left: -150px;  /* Changed from -250px */
                 top: 50%;
                 transform: translateY(-50%);
-                width: 1000px;
-                height: 1000px;
+                width: 800px;  /* Changed from 1000px */
+                height: 800px; /* Changed from 1000px */
                 opacity: 0.1;
                 z-index: 1;
                 pointer-events: none;
@@ -151,11 +151,33 @@
                 text-decoration: underline;
             }
 
-            /* Responsive Design */
+
+
+
             @media (max-width: 768px) {
                 .login-container {
                     margin: 1rem;
                     padding: 2rem;
+                }
+
+                .logo-overlay {
+                    width: 200px;
+                    height: 200px;
+                    left: -180px;
+                }
+
+                .login-header h1 {
+                    font-size: 1.75rem;
+                }
+            }
+
+            @media (max-width: 1200px) {
+                .login-container {
+                    margin: 1rem;
+                    padding: 2rem;
+                }
+                .logo-overlay img{
+                    width: 500px;
                 }
 
                 .logo-overlay {
