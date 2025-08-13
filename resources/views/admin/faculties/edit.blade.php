@@ -241,7 +241,7 @@
         <div class="form-group">
             <label>Department (Course)</label>
             <select name="course_id" required>
-                <option value="">-- Select Department --</option>
+                <option value="{{ old($faculty->course_id) }}">-- Select Department --</option>
                 @foreach($courses as $course)
                     <option value="{{ $course->id }}" {{ $faculty->course_id == $course->id ? 'selected' : '' }}>{{ $course->name }}</option>
                 @endforeach

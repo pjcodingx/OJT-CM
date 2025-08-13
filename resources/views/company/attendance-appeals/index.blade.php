@@ -20,7 +20,7 @@
             <div style="margin-bottom:12px;">
                 <div style="display:flex; justify-content:space-between; align-items:center;">
                     <div style="font-weight:600; color:#0b3e2e;">Pending appeals for your trainees</div>
-                    <div style="color:#6b7280; font-size:13px;">Showing: <strong style="color:#0b3e2e;">Pending</strong></div>
+                    <div style="color:#6b7280; font-size:13px;">Showing: <strong style="color:#c2cd02;">Pending</strong></div>
                 </div>
             </div>
 

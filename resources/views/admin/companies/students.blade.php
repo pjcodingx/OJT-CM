@@ -131,7 +131,7 @@
     <table>
         <thead>
             <tr>
-                <th>ID</th>
+
                 <th>Name</th>
                 <th>Email</th>
                 <th>Course</th>
@@ -142,7 +142,7 @@
         <tbody>
             @forelse($students as $student)
             <tr>
-                <td>{{ $student->id }}</td>
+
                 <td>{{ $student->name }}</td>
                 <td>{{ $student->email }}</td>
                 <td>{{ $student->course->name ?? 'N/A' }}</td>
