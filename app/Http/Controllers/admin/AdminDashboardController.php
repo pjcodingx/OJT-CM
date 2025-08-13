@@ -29,7 +29,8 @@ class AdminDashboardController extends Controller
     }
 
     public function index(Request $request){
-
+        $admin = Auth::guard('admin')->user();
+        //filter ni for faculty search and dates
         $facultyId = $request->get('faculty_id');
         $startDate = $request->get('start_date');
         $endDate = $request->get('end_date');
@@ -47,7 +48,7 @@ class AdminDashboardController extends Controller
         })
         ->latest()->paginate(10);
 
-        return view('admin.index', compact('facultyId', 'journals', 'startDate', 'endDate'));
+        return view('admin.index', compact('facultyId', 'journals', 'startDate', 'endDate', 'admin'));
     }
 
 

@@ -65,6 +65,7 @@ class AttendanceLogController extends Controller
         'faculty_id' => $request->input('faculty_id'),
         'start_date' => $request->input('start_date'),
         'end_date' => $request->input('end_date'),
+        'admin' => $admin,
     ]);
 }
 }
