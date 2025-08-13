@@ -433,3 +433,39 @@ body {
         padding: 1px 3px;
     }
 }
+
+
+/* Media query for 1200px and above - ensures 4 equal cards in one row */
+/* Media query for 1200px and above - ensures equal card sizes */
+@media (min-width: 1200px) {
+    .info-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 16px;
+        width: 100%;
+    }
+
+    .info-card {
+        width: 100%;
+        box-sizing: border-box;
+        max-width: none;
+    }
+}
+
+/* Optional: For better responsive behavior on medium screens */
+@media (min-width: 768px) and (max-width: 1199px) {
+    .info-cards {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+    }
+}
+
+/* Optional: For mobile screens */
+@media (max-width: 767px) {
+    .info-cards {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+}
