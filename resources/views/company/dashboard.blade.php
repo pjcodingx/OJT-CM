@@ -101,6 +101,8 @@
         font-size: 12px;
     }
 }
+
+
 </style>
 
 <div class="dashboard-content">

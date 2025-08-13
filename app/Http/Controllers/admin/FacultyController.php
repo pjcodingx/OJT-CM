@@ -132,9 +132,9 @@ class FacultyController extends Controller
             }
 
 
-            if (isset($validated['company_ids'])) {
-                $faculty->companies()->attach($validated['company_ids']);
-            }
+            // if (isset($validated['company_ids'])) {
+            //     $faculty->companies()->attach($validated['company_ids']);
+            // }
 
 
             return redirect()->route('admin.faculties.index')

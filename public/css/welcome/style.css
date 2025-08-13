@@ -201,7 +201,7 @@ body{
         width: 550px;
         height: 550px;
         left: -200px;
-        top: 50%;
+        top: 40%;
     }
 
     .message {
@@ -225,12 +225,15 @@ body{
         width: 700px;
         height: 700px;
         left: -110px;
-        bottom: 50%;
+        bottom: 40%;
     }
 
     .message {
-        right: 30px;
+        right: 90px;
         max-width: 500px;
+        top: 170px;
+        position: absolute;
+
     }
 
     .message h1 {
@@ -265,8 +268,8 @@ body{
     .image-wrapper img {
         width: 350px;
         height: 350px;
-        left: -100px;
-        top: 40%;
+        left: 100px;
+        top: 70%;
     }
 
     .message {
@@ -274,6 +277,40 @@ body{
         top: auto;
         right: auto;
         left: 50%;
+        transform: translateX(-50%);
+        width: 90%;
+        max-width: none;
+        margin: 30px auto;
+        padding: 20px;
+        backdrop-filter: blur(10px);
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 20px;
+    }
+
+    .message h1 {
+        font-size: 32px;
+    }
+
+    .message p {
+        font-size: 16px;
+        text-align: justify;
+    }
+}
+
+@media (max-width: 840px) {
+    .image-wrapper img {
+        width: 1000px;   /* bigger than current 350px */
+        height: 300px;
+        left: 20%;      /* move right */
+        top: -10%;       /* move up */
+        object-fit: cover;
+    }
+
+    .message {
+        position: relative;
+        top: auto;
+        right: -90%;
+        left: 70%;
         transform: translateX(-50%);
         width: 90%;
         max-width: none;
