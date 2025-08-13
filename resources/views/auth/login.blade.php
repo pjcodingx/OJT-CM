@@ -35,11 +35,11 @@
 
           .logo-overlay {
                 position: absolute;
-                left: -150px;  /* Changed from -250px */
+                left: -200px;
                 top: 50%;
                 transform: translateY(-50%);
-                width: 800px;  /* Changed from 1000px */
-                height: 800px; /* Changed from 1000px */
+                width: 950px;
+                height: 950px;
                 opacity: 0.1;
                 z-index: 1;
                 pointer-events: none;
@@ -151,6 +151,19 @@
                 text-decoration: underline;
             }
 
+            @media (max-width: 1318px){
+                .logo-overlay {
+                position: absolute;
+                left: -150px;
+                top: 50%;
+                transform: translateY(-50%);
+                width: 800px;
+                height: 800px;
+                opacity: 0.1;
+                z-index: 1;
+                pointer-events: none;
+            }
+            }
 
 
 
