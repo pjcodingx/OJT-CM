@@ -134,10 +134,10 @@
 
  .alert-error {
         display: none;
-        background-color: #fee2e2; /* light red */
-        color: #b91c1c; /* dark red text */
+        background-color: #fee2e2;
+        color: #b91c1c;
         padding: 10px 15px;
-        border-left: 5px solid #dc2626; /* solid red */
+        border-left: 5px solid #dc2626;
         border-radius: 4px;
         margin-top: 10px;
         font-size: 14px;
@@ -167,6 +167,17 @@
     <form action="{{ route('admin.students.store') }}" method="POST" id="create-student-form">
         @csrf
 
+        @if ($errors->any())
+            <div class="alert-error" style="display: block; background-color: #fee2e2; color: #b91c1c; padding: 10px 15px; border-left: 5px solid #dc2626; border-radius: 4px; margin-bottom: 15px;">
+                <ul style="margin:0; padding-left: 20px;">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
+
         <div class="form-group">
             <label>Name</label>
             <input type="text" name="name" required>
@@ -178,7 +189,7 @@
         </div>
 
         <div class="password-row">
-        <!-- Password Field -->
+
         <div class="form-group password-col">
             <label for="password" class="form-label">Password</label>
             <div class="input-wrapper">
@@ -187,7 +198,7 @@
             </div>
         </div>
 
-        <!-- Confirm Password Field -->
+
         <div class="form-group password-col">
             <label for="password_confirmation" class="form-label">Confirm Password</label>
             <div class="input-wrapper">
@@ -202,7 +213,7 @@
 
     <small id="password-match-message" style="color: red; display: none; margin-top: -10px; margin-bottom: 5px;">Passwords do not match</small>
 
-<!-- Error message -->
+
     <p id="password-error" class="alert-error">⚠️ Passwords do not match.</p>
 
 
@@ -241,6 +252,10 @@
             <input type="number" name="required_hours" min="1" required>
         </div>
 
+
+
+
+
         <button type="submit">Create</button>
     </form>
 </div>
@@ -264,8 +279,8 @@
         if (alertBox) {
             setTimeout(() => {
                 alertBox.style.opacity = '0';
-                setTimeout(() => alertBox.remove(), 500); // Remove from DOM
-            }, 3000); // 3 seconds
+                setTimeout(() => alertBox.remove(), 500);
+            }, 3000);
         }
     });
 
@@ -276,9 +291,9 @@
         const alertBox = document.querySelector('.alert-error');
 
         if (pass.value !== confirm.value) {
-            e.preventDefault(); // ✅ STOP submission
+            e.preventDefault();
             errorMsg.style.display = 'block';
-            confirm.focus(); // optional: focus on confirm field
+            confirm.focus();
         } else {
             errorMsg.style.display = 'none';
         }
@@ -286,8 +301,8 @@
         if (alertBox) {
             setTimeout(() => {
                 alertBox.style.opacity = '0';
-                setTimeout(() => alertBox.remove(), 500); // Remove from DOM
-            }, 3000); // 3 seconds
+                setTimeout(() => alertBox.remove(), 500);
+            }, 3000);
         }
     });
 

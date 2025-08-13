@@ -1,13 +1,11 @@
-
-{{-- !THIS WILL BE USED FOR ALL ROLE PAGES --}}
-
-
+{{-- !THIS IS THE STUDENT LAYOUT --}}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'TCM OJT Dashboard')</title>
+    <title>@yield('title', 'Student Dashboard')</title>
+
 
     <link rel="stylesheet" href="{{ asset('css/admin/adminDashboard.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -26,73 +24,112 @@
                 <span class="sidebar-title">OJT Monitoring</span>
             </div>
 
-            <!-- Admin profile or Name -->
+            <!-- Student Info -->
             <div class="admin-section">
-                <img src="{{ asset('uploads/admin_photos/1751962972_369e6f6bb444b8c225b430c41c33ba41.jpg') }}" alt="Admin avatar" class="admin-avatar">
-                <span class="admin-text">{{ $student->name ?? 'Admin' }}</span>
+                <img src="{{ asset('uploads/student_photos/' . ($student->photo ?? 'default.png')) }}" alt="Profile Photo" class="admin-avatar">
+
+                <span class="admin-text">{{ $student->name ?? 'Student' }}</span>
             </div>
 
             <!-- MENU -->
             <nav class="sidebar-nav">
                 <ul class="nav-list">
 
-                    <li class="nav-item {{ request()->routeIs('admin/dashboard') ? 'active' : '' }}">
-                        <a href="{{ route('admin.dashboard') }}" class="nav-link" style="color: inherit; text-decoration: none;">
+                    <!-- 1. Dashboard Overview -->
+                    <li class="nav-item {{ request()->routeIs('student.dashboard') ? 'active' : '' }}">
+                        <a href="{{ route('student.dashboard') }}" class="nav-link">
                             <i class="fas fa-tachometer-alt nav-icon"></i>
                             <span class="nav-text">Dashboard</span>
                         </a>
                     </li>
 
-                    <li class="nav-item {{ request()->routeIs('admin.students.*') ? 'active' : '' }}">
-                        <a href="{{ route('admin.students.index') }}" class="nav-link" style="color: inherit; text-decoration: none;">
-                            <i class="fas fa-user-graduate nav-icon"></i>
-                            <span class="nav-text">Manage Students</span>
+                    <!-- 2. Profile -->
+                    <li class="nav-item {{ request()->routeIs('student.profile') ? 'active' : '' }}">
+                        <a href="{{ route('student.profile') }}" class="nav-link">
+                            <i class="fas fa-user nav-icon"></i>
+                            <span class="nav-text">My Profile</span>
                         </a>
                     </li>
 
-                   <li class="nav-item">
-                        <a href="{{ route('admin.faculties.index') }}" class="nav-link {{ request()->routeIs('admin.faculties.index') ? 'active' : '' }}" style="color: inherit; text-decoration: none;">
-                            <i class="fas fa-chalkboard-teacher nav-icon"></i>
-                            <span class="nav-text">Manage Advisers</span>
+                    {{-- <!-- 3. QR Code Attendance -->
+                    <li class="nav-item {{ request()->routeIs('student.qr') ? 'active' : '' }}">
+                        <a href="#" class="nav-link">
+                            <i class="fas fa-qrcode nav-icon"></i>
+                            <span class="nav-text">QR Code Attendance</span>
+                        </a>
+                    </li> --}}
+
+
+
+                    <!-- 5. Tasks -->
+                    <li class="nav-item {{ request()->routeIs('student.journals.create') ? 'active' : '' }}">
+                        <a href="{{ route('student.journals.create') }}" class="nav-link">
+                            <i class="fas fa-pen nav-icon"></i>
+                            <span class="nav-text">Journal Submission</span>
                         </a>
                     </li>
 
-                    <li class="nav-item">
-                        <a href="{{ route('admin.companies.index') }}" class="nav-link {{ request()->routeIs('admin.companies.index') ? 'active' : '' }}" style="color: inherit; text-decoration: none;">
-                            <i class="fas fa-building nav-icon"></i>
-                            <span class="nav-text">Manage Companies</span>
+
+
+                    <!-- 6. Feedback Section -->
+                    <li class="nav-item {{ request()->routeIs('student.feedbacks.index') ? 'active' : '' }}">
+                        <a href="{{ route('student.feedbacks.index') }}" class="nav-link">
+                            <i class="fas fa-comments nav-icon"></i>
+                            <span class="nav-text">Feedback</span>
+                        </a>
+                    </li>
+
+                    <!-- 7. Attendance Appeals -->
+                    <li class="nav-item {{ request()->routeIs('student.attendance-appeals.index') ? 'active' : '' }}">
+                        <a href="{{ route('student.attendance-appeals.index') }}" class="nav-link">
+                            <i class="fas fa-exclamation-triangle nav-icon"></i>
+                            <span class="nav-text">Attendance Appeals</span>
+                        </a>
+                    </li>
+
+                    <!-- 4. Attendance Logs -->
+                    <li class="nav-item {{ request()->routeIs('student.attendance.index') ? 'active' : '' }}">
+                        <a href="{{ route('student.attendance.index') }}" class="nav-link">
+                            <i class="fas fa-calendar-check nav-icon"></i>
+                            <span class="nav-text">Attendance Logs</span>
+                        </a>
+                    </li>
+
+                    <li class="nav-item {{ request()->routeIs('student.journals.index') ? 'active' : '' }}">
+                        <a href="{{ route('student.journals.index') }}" class="nav-link">
+                            <i class="fas fa-tasks nav-icon"></i>
+                            <span class="nav-text">Journal logs</span>
+                        </a>
+                    </li>
+
+                    <!-- 10. Notifications -->
+                     <li class="nav-item {{ request()->routeIs('student.notifications.index') ? 'active' : '' }}">
+                        <a href="{{ route('student.notifications.index') }}" class="nav-link">
+                            <div class="nav-icon-wrapper">
+                                <i class="fas fa-bell nav-icon"></i>
+                                @php
+                                    use App\Models\Notification;
+                                    $unreadCount = Notification::where('user_id', auth('student')->id())
+                                        ->where('user_type', 'student')
+                                        ->where('is_read', false)
+                                        ->count();
+                                @endphp
+
+                                @if($unreadCount > 0)
+                                    <span class="notification-badge">
+                                        {{ $unreadCount > 99 ? '99+' : $unreadCount }}
+                                    </span>
+                                @endif
+                            </div>
+                            <span class="nav-text">Notifications</span>
                         </a>
                     </li>
 
 
-                    <li class="nav-item">
-                        <i class="fas fa-clipboard-list nav-icon"></i>
-                        <span class="nav-text">Attendance Logs</span>
-                    </li>
-                    <li class="nav-item">
-                        <i class="fas fa-exclamation-triangle nav-icon"></i>
-                        <span class="nav-text">Attendance Appeals</span>
-                    </li>
-                    <li class="nav-item">
-                        <i class="fas fa-tasks nav-icon"></i>
-                        <span class="nav-text">Task Monitoring</span>
-                    </li>
-                    <li class="nav-item">
-                        <i class="fas fa-comments nav-icon"></i>
-                        <span class="nav-text">Feedback & Remarks</span>
-                    </li>
-                    <li class="nav-item">
-                        <i class="fas fa-bell nav-icon"></i>
-                        <span class="nav-text">Notifications</span>
-                    </li>
-                    <li class="nav-item">
-                        <i class="fas fa-cog nav-icon"></i>
-                        <span class="nav-text">System Settings</span>
-                    </li>
                 </ul>
             </nav>
 
-            <!-- Logout Button -->
+            <!-- Logout -->
             <form action="{{ route('logout') }}" method="POST">
                 @csrf
                 <div class="logout-section">
@@ -104,13 +141,13 @@
         <div class="main-content">
             <div class="top-bar">
                 <button class="hamburger-menu">
-                    <span class="hamburger-line"></span>
+                   <span span class="hamburger-line"></span>
                     <span class="hamburger-line"></span>
                     <span class="hamburger-line"></span>
                 </button>
             </div>
 
-            <!-- Dashboard Content -->
+            <!-- Main Dashboard Content -->
             <div class="dashboard-content">
                 @yield('content')
             </div>

@@ -93,7 +93,7 @@
     flex-wrap: wrap;
 }
 
-/* Input Styling */
+
 .search-input,
 .search-select {
     padding: 12px 14px;
@@ -111,14 +111,13 @@
     width: auto;
 }
 
-/* Focus Effects */
 .search-input:focus,
 .search-select:focus {
     border: 2px solid #1b5e20;
     background-color: #e8f5e9;
 }
 
-/* Button Styling */
+
 .search-button {
     padding: 10px 20px;
     background-color: #2e7d32;
@@ -169,20 +168,20 @@
     transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
-/* Hover effects */
+
 .page-link:hover {
     background-color: #1e7c43;
     transform: translateY(-1px);
 }
 
-/* Disabled buttons */
+
 .page-item.disabled .page-link {
     background-color: #5c7f6e;
     color: #ccc;
     cursor: not-allowed;
 }
 
-/* Page number indicator */
+
 .page-indicator .page-link.static {
     background-color: transparent;
     color: #98afa2;
@@ -192,6 +191,18 @@
     border: none;
     opacity: 0.5;
 }
+
+.number{
+    color: #043607;
+}
+.number:hover{
+    color: red;
+}
+
+tbody tr:hover {
+        background-color: #d1e7dd;
+    }
+
 
 </style>
 
@@ -250,13 +261,13 @@
                 <td>{{ $faculty->email }}</td>
                 <td>{{ $faculty->course->name ?? 'N/A' }}</td>
                 <td>
-                    <a href="#">
+                    <a href="{{ route('admin.faculties.students', $faculty) }}" class="number">
                         {{ $faculty->students_count }}
                     </a>
                 </td>
 
                 <td>
-                    <a href="#">
+                    <a href="{{ route('admin.faculties.companies', $faculty) }}" class="number">
                         {{ $faculty->companies->count() }}
                     </a>
                 </td>

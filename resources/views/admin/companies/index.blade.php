@@ -147,6 +147,17 @@
         background-color: #5c7f6e;
         color: #ccc;
     }
+
+    .number{
+        color:#043607;
+    }
+    .number:hover{
+        color:red;
+    }
+    tbody tr:hover {
+        background-color: #d1e7dd;
+    }
+
 </style>
 
     <div class="page-header">
@@ -183,7 +194,7 @@
                 <td>{{ $company->address ?? 'N/A' }}</td>
 
                 <td>
-                    <a href="#">
+                    <a href="{{ route('admin.companies.students', $company->id) }}" class="number">
                     {{ $company->students_count }}
                     </a>
                 </td>

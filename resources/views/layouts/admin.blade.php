@@ -50,37 +50,47 @@
                         </a>
                     </li>
 
-                   <li class="nav-item">
-                        <a href="{{ route('admin.faculties.index') }}" class="nav-link {{ request()->routeIs('admin.faculties.index') ? 'active' : '' }}" style="color: inherit; text-decoration: none;">
+                   <li class="nav-item {{ request()->routeIs('admin.faculties.index') ? 'active' : '' }}">
+                        <a href="{{ route('admin.faculties.index') }}" class="nav-link " style="color: inherit; text-decoration: none;">
                             <i class="fas fa-chalkboard-teacher nav-icon"></i>
                             <span class="nav-text">Manage Advisers</span>
                         </a>
                     </li>
 
-                    <li class="nav-item">
-                        <a href="{{ route('admin.companies.index') }}" class="nav-link {{ request()->routeIs('admin.companies.index') ? 'active' : '' }}" style="color: inherit; text-decoration: none;">
+                    <li class="nav-item {{ request()->routeIs('admin.companies.index') ? 'active' : '' }}" >
+                        <a href="{{ route('admin.companies.index') }}" class="nav-link " style="color: inherit; text-decoration: none;">
                             <i class="fas fa-building nav-icon"></i>
                             <span class="nav-text">Manage Companies</span>
                         </a>
                     </li>
 
 
-                    <li class="nav-item">
-                        <i class="fas fa-clipboard-list nav-icon"></i>
-                        <span class="nav-text">Attendance Logs</span>
+                    <li class="nav-item {{ request()->routeIs('admin.attendance') ? 'active' : '' }}">
+                        <a href="{{ route('admin.attendance') }}" class="nav-link " style="color: inherit; text-decoration: none;">
+                            <i class="fas fa-clipboard-list nav-icon"></i>
+                            <span class="nav-text">Attendance Logs</span>
+                        </a>
                     </li>
-                    <li class="nav-item">
+
+
+                    {{-- <li class="nav-item">
                         <i class="fas fa-exclamation-triangle nav-icon"></i>
                         <span class="nav-text">Attendance Appeals</span>
+                    </li> --}}
+
+
+
+                    <li class="nav-item {{ request()->routeIs('admin.index') ? 'active' : '' }}">
+                        <a href="{{ route('admin.index') }}" class="nav-link" style="color: inherit; text-decoration: none;">
+                            <i class="fas fa-tasks nav-icon"></i>
+                            <span class="nav-text">Task Monitoring</span>
+                        </a>
                     </li>
-                    <li class="nav-item">
-                        <i class="fas fa-tasks nav-icon"></i>
-                        <span class="nav-text">Task Monitoring</span>
-                    </li>
-                    <li class="nav-item">
+                    {{-- <li class="nav-item">
                         <i class="fas fa-comments nav-icon"></i>
                         <span class="nav-text">Feedback & Remarks</span>
-                    </li>
+                    </li> --}}
+
                     <li class="nav-item">
                         <i class="fas fa-bell nav-icon"></i>
                         <span class="nav-text">Notifications</span>

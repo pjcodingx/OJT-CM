@@ -109,6 +109,15 @@ class CompanyController extends Controller
         return redirect()->route('admin.companies.index')->with('success', 'Company deleted successfully.');
     }
 
+    public function showStudents(Company $company){
+        $admin = Auth::guard('admin')->user();
+
+        //so need nato ang company i show ang ->students(), with->([dire relations nga i show pod like course sa students faculty sa students etc])
+        $students = $company->students()->with(['course', 'faculty'])->paginate(10);
+
+        return view('admin.companies.students', compact('admin', 'students', 'company'));
+    }
+
 
 }
 

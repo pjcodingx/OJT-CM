@@ -18,12 +18,29 @@ class Company extends Authenticatable
 
         public function faculties()
         {
-            return $this->belongsToMany(Faculty::class, 'company_faculty');
+            return $this->belongsToMany(Faculty::class, 'company_faculty', 'company_id', 'faculty_id');
         }
 
         public function students(){
             return $this->hasMany(Student::class);
         }
+
+        // public function timeOverrides()
+        // {
+        //     return $this->hasMany(CompanyTimeOverride::class);
+        // }
+
+        public function overrides() {
+            return $this->hasMany(CompanyTimeOverride::class);
+        }
+
+        public function ratings()
+        {
+            return $this->hasMany(StudentRating::class);
+        }
+
+
+
 
 
 

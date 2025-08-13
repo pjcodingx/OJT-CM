@@ -76,24 +76,28 @@
                     </li>
 
                     <li class="nav-item">
-                        <i class="fas fa-clipboard-list nav-icon"></i>
-                        <span class="nav-text">Attendance Logs</span>
+                        <a href="{{ route('admin.attendance') }}" class="nav-link {{ request()->routeIs('admin.attendance') ? 'active' : ''}}" style="color: inherit; text-decoration: none;">
+                            <i class="fas fa-clipboard-list nav-icon"></i>
+                            <span class="nav-text">Attendance Logs</span>
+                        </a>
                     </li>
 
-                    <li class="nav-item">
+                    {{-- <li class="nav-item">
                         <i class="fas fa-exclamation-triangle nav-icon"></i>
                         <span class="nav-text">Attendance Appeals</span>
-                    </li>
+                    </li> --}}
+
+
 
                     <li class="nav-item">
                         <i class="fas fa-tasks nav-icon"></i>
                         <span class="nav-text">Task Monitoring</span>
                     </li>
 
-                    <li class="nav-item">
+                    {{-- <li class="nav-item">
                         <i class="fas fa-comments nav-icon"></i>
                         <span class="nav-text">Feedback & Remarks</span>
-                    </li>
+                    </li> --}}
 
                     <li class="nav-item">
                         <i class="fas fa-bell nav-icon"></i>

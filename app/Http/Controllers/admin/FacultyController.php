@@ -5,7 +5,10 @@ namespace App\Http\Controllers\admin;
 use App\Models\Course;
 use App\Models\Company;
 use App\Models\Faculty;
+use App\Models\Journal;
+use App\Models\Student;
 use Illuminate\Http\Request;
+use App\Models\StudentRating;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -55,7 +58,7 @@ class FacultyController extends Controller
     }
 
     public function update(Request $request, Faculty $faculty){
-        //update faculty
+
 
 
         $faculty = Faculty::findOrFail($faculty->id);
@@ -79,6 +82,8 @@ class FacultyController extends Controller
 
     $faculty->save();
 
+    $faculty->companies()->sync($validated['company_ids'] ?? []);
+
         $faculty->companies()->sync($validated['company_ids'] ?? []);
 
         return redirect()->route('admin.faculties.index')
@@ -86,7 +91,7 @@ class FacultyController extends Controller
         }
 
         public function destroy($id){
-            //delete faculty
+
             $faculty = Faculty::findOrFail($id);
             $faculty->delete();
 
@@ -95,7 +100,7 @@ class FacultyController extends Controller
         }
 
         public function create(){
-            //create faculty
+
             $admin = Auth::guard('admin')->user();
             $courses = Course::all();
             $companies = Company::all();
@@ -122,6 +127,10 @@ class FacultyController extends Controller
                 'course_id' => $validated['course_id'],
             ]);
 
+            if (!empty($validated['company_ids'])) {
+                $faculty->companies()->attach($validated['company_ids']);
+            }
+
 
             if (isset($validated['company_ids'])) {
                 $faculty->companies()->attach($validated['company_ids']);
@@ -131,5 +140,51 @@ class FacultyController extends Controller
             return redirect()->route('admin.faculties.index')
                 ->with('success', 'Adviser created successfully.');
         }
+
+        public function viewJournals(){
+            $faculty = Auth::guard('faculty')->user();
+
+            $journals = Journal::with([
+                'student.course', 'attachments'
+            ])->whereHas('student', function($query) use ($faculty){
+                $query->where('faculty_id', $faculty->id);
+            })->orderBy('journal_date')
+                ->paginate(7);
+
+                return view('faculty.journals.index', compact('journals'));
+        }
+
+        public function showStudents(Faculty $faculty){
+            $admin = Auth::guard('admin')->user();
+            //use with to show other realations and display like company name address etc
+            $students = $faculty->students()->with(['course', 'company'])->paginate(15);
+
+            return view('admin.faculties.students', compact('admin', 'students', 'faculty'));
+        }
+
+        public function showCompanies(Faculty $faculty){
+            $admin = Auth::guard('admin')->user();
+
+            $companies = $faculty->companies()->paginate(15);
+            $faculty->load('companies');
+
+            return view('admin.faculties.companies', compact('admin', 'companies', 'faculty'));
+        }
+
+        public function feedbacks(){
+                $faculty = Auth::guard('faculty')->user();
+
+
+            $students = Student::where('faculty_id', $faculty->id)
+                ->with(['ratings.company'])  // load all ratings with company for each student
+                ->paginate(8);
+
+
+
+
+            return view('faculty.feedbacks.index', compact('students', 'faculty'));
+        }
+
+
 
 }

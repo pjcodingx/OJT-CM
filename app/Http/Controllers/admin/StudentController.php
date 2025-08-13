@@ -19,13 +19,13 @@ class StudentController extends Controller
 {
 
     public function index(Request $request){
-        // Get method to list all students
+
         $admin = Auth::guard('admin')->user();
         $courseCounts = Course::withCount('students')->get();
 
         $courses = Course::all();
 
-        //accepts course_id from filter
+
 
         $students = Student::with('company', 'faculty', 'course')->when($request->course_id,
         function($query) use ($request){
@@ -51,7 +51,7 @@ class StudentController extends Controller
         return view('admin.students.create', compact('admin','companies', 'faculties', 'courses'));
     }
 
-    public function store(Request $request){ //submit form and store in database
+    public function store(Request $request){
 
 
         $validated = $request->validate([
@@ -74,7 +74,7 @@ class StudentController extends Controller
 
     }
 
-    public function destroy($id){ //delete student account
+    public function destroy($id){
         $student = Student::findOrFail($id);
         $student->delete();
 
@@ -86,7 +86,7 @@ class StudentController extends Controller
         $student = Student::findOrFail($id);
         $courseName = $student->course ? $student->course->name : 'N/A';
 
-        $qrText = $student->name . ' | ' . $courseName;
+        $qrText = (string) $student->id;
 
         $filename = 'qr_codes/student_qr_' . $student->id . '.png';
 
@@ -97,7 +97,7 @@ class StudentController extends Controller
             ->margin(10)
             ->build();
 
-    // Save to storage/app/public/qr_codes/
+
         Storage::disk('public')->put($filename, $result->getString());
 
         $student->qr_code_path = $filename;
@@ -133,7 +133,7 @@ class StudentController extends Controller
         ]);
 
 
-          $student->update([
+            $student->update([
             'name' => $validated['name'],
             'email' => $validated['email'],
             'course_id' => $validated['course_id'],
@@ -141,7 +141,7 @@ class StudentController extends Controller
             'faculty_id' => $validated['faculty_id'],
             'required_hours' => $validated['required_hours'],
     ]);
-
+        //para di ka ma force ug update ug password!
         if (!empty($validated['password'])) {
             $student->password = Hash::make($validated['password']);
             $student->save();

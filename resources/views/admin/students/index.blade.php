@@ -116,7 +116,7 @@
     font-size: 14px;
 }
 
-    /* Modal styles */
+
     .modal {
         display: none;
         position: fixed;
@@ -193,20 +193,20 @@
     transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
-/* Hover effects */
+
 .page-link:hover {
     background-color: #1e7c43;
     transform: translateY(-1px);
 }
 
-/* Disabled buttons */
+
 .page-item.disabled .page-link {
     background-color: #5c7f6e;
     color: #ccc;
     cursor: not-allowed;
 }
 
-/* Page number indicator */
+
 .page-indicator .page-link.static {
     background-color: transparent;
     color: #98afa2;
@@ -216,6 +216,10 @@
     border: none;
     opacity: 0.5;
 }
+
+tbody tr:hover {
+        background-color: #d1e7dd;
+    }
 
 
 
@@ -272,7 +276,7 @@
 
         <form method="GET" action="{{ route('admin.students.index') }}" style="margin-bottom: 20px;">
     <div style="display: flex; gap: 10px; align-items: center;">
-        <!-- Search Bar -->
+
         <input
             type="text"
             name="search"
@@ -281,7 +285,7 @@
             style="padding: 14px; width: 250px;"
         >
 
-        <!-- Course Filter -->
+
         <select name="course_id" onchange="this.form.submit()" style="padding: 14px;">
             <option value=""> Filter by Course </option>
             @foreach($courseCounts as $course)
@@ -291,7 +295,7 @@
             @endforeach
         </select>
 
-        <!-- Submit Button -->
+
         <button type="submit" class="search-button">Search</button>
         </div>
     </form>
@@ -314,7 +318,7 @@
             </tr>
         </thead>
         <tbody>
-            {{-- Example row --}}
+
             @foreach($students as $student)
             <tr>
                 <td>{{ $student->id }}</td>
@@ -383,7 +387,7 @@
 
 
 
-<!-- QR Modal -->
+
 <div id="qrModal" class="modal">
     <div class="modal-content">
         <span class="close" onclick="closeModal()">&times;</span>
@@ -405,7 +409,7 @@
         document.getElementById('qrModal').style.display = "none";
     }
 
-    // Optional: Close modal on outside click
+
     window.onclick = function(event) {
         if (event.target == document.getElementById('qrModal')) {
             closeModal();
