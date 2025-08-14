@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Models\AttendanceAppeal;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 
 class StudentDashboardController extends Controller
@@ -53,6 +54,27 @@ class StudentDashboardController extends Controller
         $student->save();
 
         return back()->with('success', 'Photo updated successfully.');
+    }
+
+    public function updatePassword(Request $request){
+        $student = Auth::guard('student')->user();
+
+        $validated = $request->validate([
+            'password' => 'required|min:8|confirmed',
+
+        ]);
+
+
+    Student::where('id', $student->id)
+        ->update(['password' => Hash::make($validated['password'])]);
+
+        return redirect()->back()->with('success', 'Password Successfuly Changed!');
+    }
+
+    public function change(){
+        $student = Auth::guard('student')->user();
+
+        return view('student.change-password', compact('student'));
     }
 
     public function index()

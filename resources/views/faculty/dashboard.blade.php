@@ -73,6 +73,8 @@
         .card-number { font-size: 18px; }
         .card-link { font-size: 11px; }
     }
+
+
 </style>
 
 <div class="dashboard-content">

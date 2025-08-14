@@ -149,6 +149,9 @@ Route::middleware(['student'])->prefix('student')->group(function () {
 
     Route::delete('/notifications/delete-all', [StudentNotificationController::class, 'deleteAll'])->name('student.notifications.deleteAll');
 
+    Route::get('/change-password', [StudentDashboardController::class,'change'])->name('student.change-password');
+
+    Route::post('/{student}/update-password', [StudentDashboardController::class, 'updatePassword'])->name('student.update.password');
 });
 
 

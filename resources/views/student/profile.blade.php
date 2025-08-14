@@ -132,13 +132,17 @@
             <h2>{{ $student->name }}</h2>
         </div>
 
-        <form id="photoForm" action="{{ route('student.update.photo', $student->id) }}}}" method="POST" enctype="multipart/form-data">
+
+        <form id="photoForm" action="{{ route('student.update.photo', $student->id) }}" method="POST" enctype="multipart/form-data" style="display: flex; gap: 10px; align-items: center;">
             @csrf
             <input type="file" name="photo" id="photo" accept="image/*" class="upload-hidden" onchange="document.getElementById('photoForm').submit();">
 
             <label for="photo" class="upload-btn">Upload photo</label>
-        </form>
 
+            <a href="{{ route('student.change-password') }}" class="upload-btn" style="text-decoration: none;">
+                Change Password
+            </a>
+        </form>
 
         <div class="profile-details">
             <div class="detail-box">
