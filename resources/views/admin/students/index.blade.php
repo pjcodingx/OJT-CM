@@ -260,6 +260,44 @@ tbody tr:hover {
     background-color: #1b5e20;
 }
 
+
+.btn-success {
+    background-color: #02643d;
+    color: #fff;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: bold;
+    text-decoration: none;
+    display: inline-block;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    margin-top: 15px;
+}
+.btn-success:hover {
+    background-color: #03ce87;
+}
+
+.btn-red {
+    background-color: #b02a37;
+    color: #fff;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    text-decoration: none;
+    display: inline-block;
+    transition: background-color 0.2s ease;
+}
+
+.btn-red:hover {
+    background-color: #d63343;
+}
+
+
 </style>
 
 
@@ -297,6 +335,13 @@ tbody tr:hover {
 
 
         <button type="submit" class="search-button">Search</button>
+        <div style="margin-bottom: 15px;">
+
+            <a href="{{ route('admin.students.export.excel', request()->query()) }}" class="btn btn-success">Export to Excel</a>
+
+            <a href="{{ route('admin.students.export.pdf', request()->query()) }}" class="btn btn-red">Export to pdf</a>
+        </div>
+
         </div>
     </form>
 

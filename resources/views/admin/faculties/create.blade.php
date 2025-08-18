@@ -156,7 +156,7 @@
         <div class="password-wrapper">
             <label for="password_confirmation">Confirm Password</label>
             <input type="password" name="password_confirmation" id="password_confirmation" required>
-            <span class="toggle-password" onclick="togglePassword('password_confirmation', this)">👁</span>
+            {{-- <span class="toggle-password" onclick="togglePassword('password_confirmation', this)">👁</span> --}}
         </div>
 
 </div>
@@ -199,7 +199,7 @@
         const input = document.getElementById(id);
         const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
         input.setAttribute('type', type);
-        el.textContent = type === 'password' ? '👁' : '🙈';
+        el.textContent = type === 'password' ? '👁' : '👁';
     }
 
     function validatePasswords() {

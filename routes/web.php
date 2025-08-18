@@ -14,6 +14,7 @@ use App\Http\Controllers\JournalManagementController;
 use App\Http\Controllers\admin\AttendanceLogController;
 use App\Http\Controllers\admin\AdminDashboardController;
 use App\Http\Controllers\company\StudentRatingController;
+use App\Http\Controllers\faculty\FacultyReportController;
 use App\Http\Controllers\student\StudentJournalController;
 use App\Http\Controllers\Company\CompanySettingsController;
 use App\Http\Controllers\company\AssignedStudentsController;
@@ -81,6 +82,15 @@ Route::middleware(['admin'])->prefix('admin')->group(function () {
     Route::get('/faculties/{faculty}/companies', [FacultyController::class, 'showCompanies'])->name('admin.faculties.companies');
 
     Route::get('/journals', [AdminDashboardController::class, 'index'])->name('admin.index');
+
+
+    //!exporting routes
+    Route::get('/attendance/export-excel', [AttendanceLogController::class, 'exportExcel'])->name('admin.attendance.export.excel');
+    Route::get('/admin/attendance/export-pdf', [AttendanceLogController::class, 'exportPDF'])
+    ->name('admin.attendance.export.pdf');
+
+    Route::get('/students/export', [StudentController::class, 'exportExcel'])->name('admin.students.export.excel');
+    Route::get('/students/export-pdf', [StudentController::class, 'exportPdf'])->name('admin.students.export.pdf');
 
 
     //* Route for students management
@@ -152,6 +162,8 @@ Route::middleware(['student'])->prefix('student')->group(function () {
     Route::get('/change-password', [StudentDashboardController::class,'change'])->name('student.change-password');
 
     Route::post('/{student}/update-password', [StudentDashboardController::class, 'updatePassword'])->name('student.update.password');
+
+
 });
 
 
@@ -173,6 +185,22 @@ Route::middleware(['faculty'])->prefix('faculty')->group(function (){
 
 
     Route::delete('/notifications/delete-all', [FacultyNotificationController::class, 'deleteAll'])->name('faculty.notifications.deleteAll');
+
+
+   //! exporting files
+   Route::get('/students/export-excel', [FacultyReportController::class, 'exportExcel'])->name('faculty.students.exportExcel');
+    Route::get('/students/export-pdf', [FacultyReportController::class, 'exportPdf'])->name('faculty.students.exportPdf');
+
+
+
+
+
+
+
+    Route::get('/summary', [FacultyReportController::class, 'index'])->name('faculty.reports.index');
+    Route::get('/students/summary-report', [FacultyReportController::class, 'summaryReport'])->name('faculty.students.summaryReport');
+
+
 
 });
 

@@ -7,11 +7,14 @@ use App\Models\Company;
 use App\Models\Faculty;
 use App\Models\Student;
 use Illuminate\Http\Request;
+use App\Exports\StudentsExport;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Endroid\QrCode\Builder\Builder;
 use App\Http\Controllers\Controller;
 use Endroid\QrCode\Writer\PngWriter;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Storage;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
@@ -175,4 +178,26 @@ class StudentController extends Controller
 
 
     }
+
+
+
+    //! Added export files
+
+    public function exportExcel(Request $request){
+        return Excel::download(new StudentsExport($request), 'students.xlsx');
+    }
+
+     public function exportPDF(Request $request)
+{
+
+    $students = (new StudentsExport($request))->collection();
+
+
+    $pdf = Pdf::loadView('admin.students_pdf', [
+        'students' => $students,
+        'date' => \Carbon\Carbon::now()->format('F d, Y'),
+    ]);
+
+    return $pdf->download('students_summary.pdf');
+}
 }

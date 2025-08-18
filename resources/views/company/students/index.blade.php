@@ -181,7 +181,7 @@
     <div class="filters" style="margin-bottom: 20px;">
         <form method="GET" action="{{ route('company.students.index') }}">
             <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
-                <!-- Search -->
+
                 <input
                     type="text"
                     name="search"
@@ -189,12 +189,13 @@
                     placeholder="Search by name"
                 >
 
-                <!-- Sort -->
-                <select name="sort" onchange="this.form.submit()">
+                {{-- I think this is not needed --}}
+                {{-- <select name="sort" onchange="this.form.submit()">
                     <option value="">Sort by Hours</option>
                     <option value="asc" {{ request('sort') == 'asc' ? 'selected' : '' }}>Least to Greatest</option>
                     <option value="desc" {{ request('sort') == 'desc' ? 'selected' : '' }}>Greatest to Least</option>
-                </select>
+                </select> --}}
+
             </div>
         </form>
     </div>

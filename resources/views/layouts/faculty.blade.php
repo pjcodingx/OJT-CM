@@ -116,8 +116,8 @@
 
 
                     <!-- 10. Reports / PDF Summary -->
-                    <li class="nav-item {{ request()->routeIs('faculty.reports') ? 'active' : '' }}">
-                        <a href="" class="nav-link">
+                    <li class="nav-item {{ request()->routeIs('faculty.reports.index') ? 'active' : '' }}">
+                        <a href="{{ route('faculty.reports.index') }}" class="nav-link">
                             <i class="fas fa-file-pdf nav-icon"></i>
                             <span class="nav-text">Summary Reports</span>
                         </a>

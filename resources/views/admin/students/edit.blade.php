@@ -135,7 +135,7 @@
                     <label>Confirm Password</label>
                     <div class="input-wrapper">
                         <input type="password" name="password_confirmation" id="password_confirmation" class="input-field">
-                        <button type="button" class="toggle-password" onclick="toggleVisibility('password_confirmation', this)">👁</button>
+                        {{-- <button type="button" class="toggle-password" onclick="toggleVisibility('password_confirmation', this)">👁</button> --}}
                     </div>
                 </div>
             </div>
@@ -204,7 +204,7 @@
             <div class="checkbox-wrapper">
                 <input type="hidden" name="regenerate_qr" value="0">
                 <input type="checkbox" name="regenerate_qr" id="regenerate_qr" value="1" {{ old('regenerate_qr') ? 'checked' : '' }}>
-                <label for="regenerate_qr">Regenerate QR Code</label>
+                <label for="regenerate_qr">Generate QR Code</label>
 
             </div>
 
@@ -229,7 +229,7 @@
         const input = document.getElementById(id);
         if (input.type === 'password') {
             input.type = 'text';
-            el.textContent = '🙈';
+            el.textContent = '👁';
         } else {
             input.type = 'password';
             el.textContent = '👁';

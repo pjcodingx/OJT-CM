@@ -157,7 +157,7 @@
                 <label>Confirm Password</label>
                 <div class="input-wrapper">
                     <input type="password" name="password_confirmation" id="password_confirmation" class="input-field" placeholder="Confirm password">
-                    <button type="button" class="toggle-password" onclick="toggleVisibility('password_confirmation', this)">👁</button>
+                    {{-- <button type="button" class="toggle-password" onclick="toggleVisibility('password_confirmation', this)">👁</button> --}}
                 </div>
             </div>
         </div>
@@ -194,7 +194,7 @@
         const input = document.getElementById(id);
         if (input.type === 'password') {
             input.type = 'text';
-            btn.textContent = '🙈';
+            btn.textContent = '👁';
         } else {
             input.type = 'password';
             btn.textContent = '👁';

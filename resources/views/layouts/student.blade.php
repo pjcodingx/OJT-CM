@@ -125,6 +125,15 @@
                         </a>
                     </li>
 
+                    <li class="nav-item {{ request()->routeIs('faculty.reports.index') ? 'active' : '' }}">
+                        <a href="" class="nav-link">
+                            <i class="fas fa-file-pdf nav-icon"></i>
+                            <span class="nav-text">Summary Report</span>
+                        </a>
+                    </li>
+
+
+
 
                 </ul>
             </nav>

@@ -220,7 +220,7 @@
                 <label for="password_confirmation">Confirm Password</label>
                 <div class="input-icon">
                     <input type="password" name="password_confirmation" id="password_confirmation" class="form-control" placeholder="Confirm new password">
-                    <button type="button" class="toggle-password" data-target="password_confirmation">👁</button>
+                    {{-- <button type="button" class="toggle-password" data-target="password_confirmation">👁</button> --}}
                 </div>
                 <small id="password-match-message" style="color: red; display: none;">Passwords do not match</small>
             </div>

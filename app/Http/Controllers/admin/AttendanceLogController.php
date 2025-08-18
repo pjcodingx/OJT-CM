@@ -6,8 +6,13 @@ use App\Models\Course;
 use App\Models\Faculty;
 use App\Models\Attendance;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
+
+use Barryvdh\DomPDF\Facade\Pdf;
+use App\Exports\AttendanceExport;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+// use Illuminate\Support\Facades\Request;
 
 class AttendanceLogController extends Controller
 {
@@ -68,4 +73,16 @@ class AttendanceLogController extends Controller
         'admin' => $admin,
     ]);
 }
+
+    public function exportExcel(Request $request){
+
+        return Excel::download(new AttendanceExport($request), 'attendance_logs.xlsx');
+    }
+
+            public function exportPDF(Request $request)
+        {
+            $attendances = (new AttendanceExport($request))->collection();
+            $pdf = Pdf::loadView('admin.attendance_pdf', ['attendances' => $attendances]);
+            return $pdf->download('attendance_logs.pdf');
+        }
 }

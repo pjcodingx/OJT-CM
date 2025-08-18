@@ -176,6 +176,44 @@ th {
   }
 }
 
+.btn-green {
+    background-color: #02643d;
+    color: #fff;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    text-decoration: none;
+    display: inline-block;
+    transition: background-color 0.2s ease;
+}
+
+.btn-green:hover {
+    background-color: #03ce87;
+}
+
+.btn-red {
+    background-color: #b02a37;
+    color: #fff;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    text-decoration: none;
+    display: inline-block;
+    transition: background-color 0.2s ease;
+}
+
+.btn-red:hover {
+    background-color: #d63343;
+}
+
+
+
 
 tbody tr:hover {
         background-color: #d1e7dd;
@@ -188,6 +226,8 @@ tbody tr:hover {
 
     <form method="GET" class="filter-form" action="{{ route('admin.attendance') }}">
         <input type="search" name="search" placeholder="Search student name" value="{{ old('search', $search) }}">
+
+
 
         <select name="course_id">
             <option value="">-- Filter by Course --</option>
@@ -214,6 +254,16 @@ tbody tr:hover {
 
         <button type="submit">Filter</button>
     </form>
+
+     <div style="margin-bottom: 15px;">
+
+            <a href="{{ route('admin.attendance.export.excel', request()->query()) }}"
+            class="btn btn-green">Export to Excel</a>
+
+            <a href="{{ route('admin.attendance.export.pdf', request()->query()) }}"
+            class="btn btn-red">Export to PDF</a>
+    </div>
+
 
     @if ($attendances->count())
     <div class="table-responsive">
