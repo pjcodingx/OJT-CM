@@ -80,15 +80,17 @@
 
 .scanner-status {
     margin: 10px 0;
-    padding: 8px;
+    padding: 5px;
     border-radius: 4px;
     font-size: 14px;
+
 }
 
 .status-ready {
     background-color: #d4edda;
     color: #155724;
     border: 1px solid #c3e6cb;
+
 }
 
 .status-processing {
@@ -103,10 +105,11 @@
 
     <div id="scanner-status" class="scanner-status status-ready">
         Scanner ready - Point camera at QR code
+        <p style="color: rgba(0, 0, 0, 0.3); font-size: 14px; margin-left: 88%;">{{ (\Carbon\Carbon::now()->format('F d, Y')) }}</p>
     </div>
 
     <div class="qr-layout">
-        <!-- QR Scanner -->
+
         <div style="flex: 1;">
             <div id="reader"></div>
             <div id="result"></div>
@@ -114,8 +117,10 @@
 
 
         <div id="log-box">
-            <h4 style="color: rgba(3, 71, 3, 0.7); margin-bottom: 15px;">Recent Scans</h4>
-            <p style="color: #666; font-size: 12px;">Scan history will appear here...</p>
+
+            <p style="color: #838282; font-size: 12px;">Scan history will appear here...</p>
+            <h4 style="color: rgba(3, 71, 3, 0.7); margin-bottom: 15px;">Recent Scans </h4>
+
         </div>
     </div>
 </div>

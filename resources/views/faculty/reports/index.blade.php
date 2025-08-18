@@ -12,15 +12,16 @@
     .page-header h2 {
         font-size: 24px;
         font-weight: bold;
-        color: #064e17; /* Dark green theme */
+        color: #064e17;
     }
 
-    /* Filters */
+
     .filters {
         display: flex;
         gap: 15px;
         margin-bottom: 20px;
     }
+
     .filters input {
         padding: 8px 12px;
         border: 1px solid #064e17;
@@ -38,10 +39,12 @@
         transition: background-color 0.3s ease;
     }
     .search-button:hover {
-        background-color: #14532d;
+        background-color: #178041;
     }
 
-    /* Table */
+
+
+
     .table-container {
         overflow-x: auto;
     }
@@ -78,16 +81,26 @@
 
 <div class="page-header">
     <h2>My Students Summary Report</h2>
+
+    <p style="color: rgba(21, 51, 2, 0.6); margin: 0 ; font-size: 16px;">
+        {{ \Carbon\Carbon::now()->format('F d, Y') }}
+    </p>
 </div>
+
 
 <div class="filters">
     <form method="GET" action="{{ route('faculty.reports.index') }}">
         <input type="text" name="search" placeholder="Search by name or address" value="{{ request('search') }}">
         <button type="submit" class="search-button">Search</button>
-        <a href="{{ route('faculty.students.exportExcel', request()->query()) }}" class="search-button" style="background-color:#1e7c43; text-decoration: none;">Export Excel</a>
-        <a href="{{ route('faculty.students.exportPdf', request()->query()) }}" class="search-button" style="background-color:#0b4222; text-decoration: none;">Export PDF</a>
+
+        <a href="{{ route('faculty.students.exportExcel', request()->query()) }}" class="search-button" style="background-color:#0b4222; text-decoration: none;">Export Excel</a>
+        <a href="{{ route('faculty.students.exportPdf', request()->query()) }}" class="search-button" style="background-color:#b91206; text-decoration: none;">Export PDF</a>
+
+
     </form>
 </div>
+
+
 
 <div class="table-container">
     <table class="student-table">
@@ -110,8 +123,8 @@
                 <td>{{ $student->company->name ?? '--' }}</td>
                 <td>{{ $student->company->address ?? '--' }}</td>
                 <td>{{ $student->total_journals }}</td>
-                <td>{{ number_format($student->average_rating ?? 0, 2) }}</td>
-                <td>{{ round($student->total_hours ?? 0, 1) }}</td>
+                <td>{{ number_format($student->average_rating ?? 0, 0) . '/' . '5'}}</td>
+                <td>{{ round($student->total_hours ?? 0, 1,) }}</td>
             </tr>
             @endforeach
         </tbody>

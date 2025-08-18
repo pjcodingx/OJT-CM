@@ -63,7 +63,7 @@ class FacultyStudentsExport implements FromCollection, WithHeadings, WithColumnW
                 'Company' => $student->company->name ?? '--',
                 'Address' => $student->company->address ?? '--',
                 'Total Journals' => $student->total_journals,
-                'Rating' => $student->average_rating,
+                'Rating' => $student->average_rating ?? '--',
                 'Total Hours' => $student->total_hours,
             ]);
         });

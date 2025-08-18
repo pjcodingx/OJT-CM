@@ -135,11 +135,11 @@
                 style="padding: 14px; width: 250px;"
             >
 
-            <select name="sort" onchange="this.form.submit()" style="padding: 14px;">
+            {{-- <select name="sort" onchange="this.form.submit()" style="padding: 14px;">
                 <option value="">Sort by Hours</option>
                 <option value="asc" {{ request('sort') == 'asc' ? 'selected' : '' }}>Least to Greatest</option>
                 <option value="desc" {{ request('sort') == 'desc' ? 'selected' : '' }}>Greatest to Least</option>
-            </select>
+            </select> --}}
 
             {{-- <button type="submit" class="search-button">Search</button> --}}
         </div>

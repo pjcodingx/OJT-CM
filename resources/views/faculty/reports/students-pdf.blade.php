@@ -44,10 +44,11 @@
 <div class="header">
     <img src="{{ public_path('images/welcome/cmlogo.png') }}" alt="Logo">
     <h1>The College of Maasin</h1>
-    <h3><em>Nisi Dominus Frustra</em></h3>
-    <p>Tunga Tunga, Maasin City</p>
-    <p>{{ \Carbon\Carbon::now()->format('F d, Y') }}</p>
-    <h2>Summary of Report in OJT</h2>
+    <h3><em>"Nisi Dominus Frustra"</em></h3>
+    <p>R. Kangleon St. Tunga Tunga, Maasin City</p>
+     <h2 style="color: #02360f">Summary of Report in OJT</h2>
+    <p style="margin-top: 10px;">{{ \Carbon\Carbon::now()->format('F d, Y') }}</p>
+
 </div>
 
 <table>
@@ -70,7 +71,7 @@
             <td>{{ $student->company->name ?? '--' }}</td>
             <td>{{ $student->company->address ?? '--' }}</td>
             <td>{{ $student->total_journals }}</td>
-            <td>{{ number_format($student->average_rating ?? 0, 2) }}</td>
+            <td>{{ number_format($student->average_rating ?? 0, 0) . '/' . '5' }}</td>
             <td>{{ round($student->total_hours ?? 0, 1) }}</td>
         </tr>
         @endforeach

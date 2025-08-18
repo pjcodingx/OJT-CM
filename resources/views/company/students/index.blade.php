@@ -216,7 +216,7 @@
                         <td>{{ $student->name }}</td>
                         <td>{{ $student->email }}</td>
                         <td>{{ $student->faculty->name ?? '--' }}</td>
-                        <td>{{ $student->accumulated_hours }} / {{ $student->required_hours }}</td>
+                        <td>{{ number_format($student->accumulated_hours ?? 0, 1) }} / {{ $student->required_hours }}</td>
                     </tr>
                 @empty
                     <tr>
