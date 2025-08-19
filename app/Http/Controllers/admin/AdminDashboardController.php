@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\admin;
 
+use Carbon\Carbon;
 use App\Models\Course;
 use App\Models\Company;
 use App\Models\Faculty;
@@ -40,11 +41,11 @@ class AdminDashboardController extends Controller
             $query->whereHas('student', function ($q) use ($facultyId){
                 $q->where('faculty_id', $facultyId);
             });
-        })->when($startDate && $endDate, function ($query) use ($startDate, $endDate){
-            $query->whereBetween('created_at', [
-                $startDate . '00:00:00',
-                $endDate . '23:59:59'
-            ]);
+        })->when($startDate && $endDate, function ($query) use ($startDate, $endDate) {
+    $query->whereBetween('created_at', [
+        Carbon::parse($startDate)->startOfDay(),
+        Carbon::parse($endDate)->endOfDay(),
+    ]);
         })
         ->latest()->paginate(10);
 
