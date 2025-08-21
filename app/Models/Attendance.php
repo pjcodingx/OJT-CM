@@ -11,7 +11,7 @@ class Attendance extends Model
     use HasFactory;
 
     protected $fillable = [
-        'student_id', 'date', 'time_in', 'time_out'
+        'student_id','company_id', 'date', 'time_in', 'time_out'
     ];
 
     public function student(){
@@ -22,5 +22,10 @@ class Attendance extends Model
 {
     return $this->hasMany(AttendanceAppeal::class);
 }
+ public function company()
+    {
+        return $this->belongsTo(Company::class);
+    }
+
 
 }
