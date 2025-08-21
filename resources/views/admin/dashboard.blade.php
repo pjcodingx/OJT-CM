@@ -47,7 +47,7 @@
 
             <!-- mENU -->
             <nav class="sidebar-nav">
-                <ul class="nav-list">
+                < class="nav-list">
 
                     <li class="nav-item active">
                         <i class="fas fa-tachometer-alt nav-icon"></i>
@@ -104,11 +104,13 @@
                         <span class="nav-text">Notifications</span>
                     </li>
 
-                    <li class="nav-item">
+                    {{-- <li class="nav-item">
                         <i class="fas fa-cog nav-icon"></i>
                         <span class="nav-text">System Settings</span>
-                    </li>
-                </ul>
+                    </li> --}}
+
+
+                </>
             </nav>
 
             <!-- Logout Button -->

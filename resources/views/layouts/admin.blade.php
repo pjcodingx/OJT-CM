@@ -95,10 +95,10 @@
                         <i class="fas fa-bell nav-icon"></i>
                         <span class="nav-text">Notifications</span>
                     </li>
-                    <li class="nav-item">
+                    {{-- <li class="nav-item">
                         <i class="fas fa-cog nav-icon"></i>
                         <span class="nav-text">System Settings</span>
-                    </li>
+                    </li> --}}
                 </ul>
             </nav>
 
