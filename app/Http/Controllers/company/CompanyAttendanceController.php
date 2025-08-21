@@ -41,6 +41,14 @@ class CompanyAttendanceController extends Controller
         $company = Auth::guard('company')->user();
         $today = Carbon::today();
 
+         if ($student->company_id !== $company->id) {
+            return response()->json([
+                'success' => false,
+                'name'    => $student->name,
+                'message' => 'This student is not assigned to your company.'
+            ]);
+        }
+
 
         $timeInStart  = $company->allowed_time_in_start  ? Carbon::parse($company->allowed_time_in_start)  : Carbon::createFromTime(0, 0, 0);
         $timeInEnd    = $company->allowed_time_in_end    ? Carbon::parse($company->allowed_time_in_end)    : Carbon::createFromTime(23, 59, 59);
@@ -65,6 +73,7 @@ class CompanyAttendanceController extends Controller
 
 
         $attendance = Attendance::where('student_id', $student->id)
+            ->where('company_id', $company->id)
             ->whereDate('date', $today)
             ->first();
 
@@ -75,6 +84,7 @@ class CompanyAttendanceController extends Controller
             if ($now->between($timeInStart, $timeInEnd)) {
                 Attendance::create([
                     'student_id' => $student->id,
+                    'company_id' => $company->id, //
                     'time_in'    => $now,
                     'date'       => $today,
                 ]);
@@ -126,6 +136,9 @@ class CompanyAttendanceController extends Controller
             'message' => 'Server error: '.$e->getMessage()
         ], 500);
     }
+
+
+
 
     }
 
