@@ -88,7 +88,7 @@ class FacultyStudentsExport implements FromCollection, WithHeadings, WithColumnW
             'A' => 25, // Name
             'B' => 30, // Email
             'C' => 25, // Company
-            'D' => 20, // Address
+            'D' => 30, // Address
             'E' =>  30, // Total Journals
             'F' => 15, // Rating
             'G' => 25, // Total Hours

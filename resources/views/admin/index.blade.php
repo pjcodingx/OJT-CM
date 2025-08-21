@@ -151,6 +151,12 @@
     border: none;
     opacity: 0.5;
 }
+
+
+tbody tr:hover{
+    background-color: #c3f1d5;
+
+}
 </style>
 
 <div class="page-container">
@@ -216,7 +222,7 @@
         </tbody>
     </table>
 
-    <div class="pagination">
+  bodydiv class="pagination">
         {{ $journals->withQueryString()->links('vendor.pagination.prev-next-only') }}
     </div>
 </div>

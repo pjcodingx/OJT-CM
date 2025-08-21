@@ -6,7 +6,7 @@
 .dashboard-title {
         color: #043306;
         margin-top: -30px;
-        margin-bottom: 50px;
+        margin-bottom: 20px;
     }
 
     .info-cards {
@@ -74,11 +74,29 @@
         .card-link { font-size: 11px; }
     }
 
+  .live-clock {
+            font-size: 24px;
+            font-weight: 600;
+            color: white;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            padding: 20px 35px;
+            border-radius: 20px;
+            margin: 20px 0;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            width: 250px;
+        }
+
 
 </style>
 
 <div class="dashboard-content">
     <h1 class="dashboard-title">Faculty Overview</h1>
+
+     {{-- Optional Add time
+     <div class="live-clock" id="live-clock"></div> --}}
 
 
     <div class="info-cards">
@@ -112,6 +130,34 @@
 
     </div>
 </div>
+
+<script>
+    function updateClock() {
+        let now = new Date();
+
+        let hours = now.getHours();
+        let minutes = now.getMinutes();
+        let seconds = now.getSeconds();
+        let ampm = hours >= 12 ? 'PM' : 'AM';
+
+        // Convert 24h to 12h format
+        hours = hours % 12;
+        hours = hours ? hours : 12;
+
+        // Add leading zeros
+        minutes = minutes < 10 ? '0' + minutes : minutes;
+        seconds = seconds < 10 ? '0' + seconds : seconds;
+
+        let timeString = hours + ':' + minutes + ':' + seconds + ' ' + ampm;
+
+        document.getElementById('live-clock').innerText = timeString;
+    }
+
+    // Run immediately then every second
+    updateClock();
+    setInterval(updateClock, 1000);
+</script>
+
 
 
 
