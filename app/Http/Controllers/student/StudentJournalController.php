@@ -39,10 +39,13 @@ class StudentJournalController extends Controller
 
         $student = Auth::guard('student')->user();
         $validated = $request->validate([
-            'journal_date' => 'required|date',
+            'journal_date' => 'required|date|before_or_equal:today',
             'content' => 'required|string',
-            'attachments.*' => 'nullable|file|mimes: pdf,doc,docx,jpg,jpeg,png,gif,bmp|max:2048',
-        ]);
+            'attachments.*' => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png,gif,bmp|max:2048',
+        ],
+    [
+         'journal_date.before_or_equal' => 'You cannot submit a journal entry for a future date.',
+    ]);
 
         //
         $journal = Journal::create([
