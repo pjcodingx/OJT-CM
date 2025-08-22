@@ -87,7 +87,7 @@ class CompanyController extends Controller
         $company->name = $validated['name'];
         $company->email = $validated['email'];
         $company->address = $validated['address'] ?? null;
-        $company->location = $validated['location'] ?? null;
+
 
         if (!empty($validated['password'])) {
             $company->password = Hash::make($validated['password']);

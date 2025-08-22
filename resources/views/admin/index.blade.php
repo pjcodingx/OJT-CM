@@ -222,7 +222,7 @@ tbody tr:hover{
         </tbody>
     </table>
 
-  bodydiv class="pagination">
+  <div class="pagination">
         {{ $journals->withQueryString()->links('vendor.pagination.prev-next-only') }}
     </div>
 </div>
