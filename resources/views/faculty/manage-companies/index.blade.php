@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+@extends('layouts.faculty')
 
 @section('content')
 
@@ -160,9 +160,12 @@
 
 </style>
 
+    <div class="page-header">
+        <h2>Manage Companies</h2>
+        <a href="{{ route('faculty.manage-companies.create') }}" class="add-btn">+ Add Company</a>
+    </div>
 
-
-    <form method="GET" action="{{ route('admin.companies.index') }}" class="search-form">
+    <form method="GET" action="{{ route('faculty.manage-companies.index') }}" class="search-form">
         <div class="search-form-group">
             <input type="text" name="search" value="{{ request('search') }}" placeholder="Search by name, email, address, or location" class="search-input">
             <button type="submit" class="search-button">Search</button>
@@ -179,7 +182,7 @@
                 <th>Address</th>
 
                 <th>Trainees Assigned</th>
-
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -191,11 +194,18 @@
                 <td>{{ $company->address ?? 'N/A' }}</td>
 
                 <td>
-                    <a href="{{ route('admin.companies.students', $company->id) }}" class="number">
+                    <a href="{{ route('faculty.manage-companies.students', $company->id) }}" class="number">
                     {{ $company->students_count }}
                     </a>
                 </td>
+                <td>
+                    <div class="actions-inline">
+                        <a href="{{ route('faculty.manage-companies.edit', $company->id) }}">
+                            <button class="action-btn edit-btn">Edit</button>
+                        </a>
 
+                    </div>
+                </td>
             </tr>
             @empty
             <tr>

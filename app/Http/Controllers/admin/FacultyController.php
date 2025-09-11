@@ -21,7 +21,7 @@ class FacultyController extends Controller
         $admin = Auth::guard('admin')->user();
         $faculties = Faculty::with('course')->paginate(8)->withQueryString(); // ✅
 
-
+         $companies = Company::with('faculty')->get();
         $courses = Course::all();
         $courseCounts = Course::withCount('faculties')->get();
 
@@ -42,7 +42,7 @@ class FacultyController extends Controller
 
     $faculties = $query->paginate(8)->withQueryString();
 
-        return view('admin.faculties.index', compact('admin', 'courses', 'courseCounts', 'faculties'));
+        return view('admin.faculties.index', compact('admin', 'courses', 'courseCounts', 'faculties', 'companies'));
 
     }
 
@@ -127,9 +127,11 @@ class FacultyController extends Controller
                 'course_id' => $validated['course_id'],
             ]);
 
-            if (!empty($validated['company_ids'])) {
-                $faculty->companies()->attach($validated['company_ids']);
-            }
+                if (!empty($validated['company_ids'])) {
+                    Company::whereIn('id', $validated['company_ids'])
+                        ->update(['faculty_id' => $faculty->id]);
+                }
+
 
 
             // if (isset($validated['company_ids'])) {

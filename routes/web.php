@@ -12,6 +12,7 @@ use App\Http\Controllers\student\FeedbackController;
 use App\Http\Controllers\faculty\MyStudentController;
 use App\Http\Controllers\JournalManagementController;
 use App\Http\Controllers\admin\AttendanceLogController;
+use App\Http\Controllers\faculty\MyCompaniesController;
 use App\Http\Controllers\admin\AdminDashboardController;
 use App\Http\Controllers\company\StudentRatingController;
 use App\Http\Controllers\faculty\FacultyReportController;
@@ -192,6 +193,26 @@ Route::middleware(['faculty'])->prefix('faculty')->group(function (){
     Route::get('/students/export-pdf', [FacultyReportController::class, 'exportPdf'])->name('faculty.students.exportPdf');
 
 
+
+    //!Managing Students create edit
+    Route::get('/students', [MyStudentController::class, 'allStudents'])->name('faculty.manage-students.index');
+    Route::get('/students/create', [MyStudentController::class, 'create'])->name('faculty.manage-students.create');
+    Route::post('/students', [MyStudentController::class, 'store'])->name('faculty.manage-students.store');
+    Route::get('/students/{id}/edit', [MyStudentController::class, 'edit'])->name('faculty.manage-students.edit');
+    Route::put('/students/{id}', [MyStudentController::class, 'update'])->name('faculty.manage-students.update');
+     Route::post('/students/{id}/generateQR', [MyStudentController::class, 'generateQR'])->name('faculty.manage-students.generateQR');
+
+     //! Managing Companies
+     Route::get('/companies', [MyCompaniesController::class, 'index'])->name('faculty.manage-companies.index');
+    Route::get('/companies/create', [MyCompaniesController::class, 'create'])->name('faculty.manage-companies.create');
+    Route::post('/companies', [MyCompaniesController::class, 'store'])->name('faculty.manage-companies.store');
+    Route::get('/companies/{id}/edit', [MyCompaniesController::class, 'edit'])->name('faculty.manage-companies.edit');
+    Route::put('/companies/{company}', [MyCompaniesController::class, 'update'])->name('faculty.manage-companies.update');
+    Route::get('companies/{id}/students', [MyCompaniesController::class, 'showStudents'])->name('faculty.manage-companies.students');
+
+     //!exporting files that need to fixed later
+     Route::get('/manage-students/export-excel', [MyStudentController::class, 'exportExcel'])->name('faculty.manage-students.export.excel');
+    Route::get('/manage-students/export-pdf', [MyStudentController::class, 'exportPdf'])->name('faculty.manage-students.export.pdf');
 
 
 

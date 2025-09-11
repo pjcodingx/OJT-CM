@@ -25,7 +25,7 @@ class StudentController extends Controller
 
         $admin = Auth::guard('admin')->user();
         $courseCounts = Course::withCount('students')->get();
-
+        $companies = Company::all();
         $courses = Course::all();
 
 
@@ -42,7 +42,7 @@ class StudentController extends Controller
         })->paginate(5)->withQueryString();
 
 
-        return view('admin.students.index', compact('admin','students', 'courseCounts', 'courses'));
+        return view('admin.students.index', compact('admin','students', 'courseCounts', 'courses', 'companies'));
     }
 
     public function create(){ //create accounts

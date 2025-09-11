@@ -18,11 +18,11 @@ class Company extends Authenticatable
 
         public function faculties()
         {
-            return $this->belongsToMany(Faculty::class, 'company_faculty', 'company_id', 'faculty_id');
+            return $this->belongsToMany(Faculty::class, 'faculty_id');
         }
 
         public function students(){
-            return $this->hasMany(Student::class);
+            return $this->hasMany(Student::class, 'company_id', 'id');
         }
 
         // public function timeOverrides()
@@ -38,6 +38,13 @@ class Company extends Authenticatable
         {
             return $this->hasMany(StudentRating::class);
         }
+
+        // app/Models/Company.php
+public function faculty()
+{
+    return $this->belongsTo(\App\Models\Faculty::class, 'faculty_id');
+}
+
 
 
 

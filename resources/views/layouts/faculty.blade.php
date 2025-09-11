@@ -42,19 +42,35 @@
                         </a>
                     </li>
 
+
+                    <li class="nav-item {{ request()->routeIs('faculty.manage-companies.index') ? 'active' : '' }}">
+                        <a href="{{ route('faculty.manage-companies.index') }}" class="nav-link " style="color: inherit; text-decoration: none;">
+                            <i class="fas fa-chalkboard-teacher nav-icon"></i>
+                            <span class="nav-text">Manage Companies</span>
+                        </a>
+                    </li>
+
+                    <li class="nav-item {{ request()->routeIs('faculty.manage-students.*') ? 'active' : '' }}">
+                        <a href="{{ route('faculty.manage-students.index') }}" class="nav-link" style="color: inherit; text-decoration: none;">
+                            <i class="fas fa-user-graduate nav-icon"></i>
+                            <span class="nav-text">Manage Students</span>
+                        </a>
+                    </li>
+
+
                     <!-- 2. My Students -->
-                    <li class="nav-item {{ request()->routeIs('faculty.students.index') ? 'active' : '' }}">
+                    {{-- <li class="nav-item {{ request()->routeIs('faculty.students.index') ? 'active' : '' }}">
                         <a href="{{ route('faculty.students.index') }}" class="nav-link">
                             <i class="fas fa-users nav-icon"></i>
                             <span class="nav-text">My Students</span>
                         </a>
-                    </li>
+                    </li> --}}
 
                     <!-- 3. Task Management -->
                     <li class="nav-item {{ request()->routeIs('faculty.journals.index') ? 'active' : '' }}">
                         <a href="{{ route('faculty.journals.index') }}" class="nav-link">
                             <i class="fas fa-tasks nav-icon"></i>
-                            <span class="nav-text">Journal Management</span>
+                            <span class="nav-text">Journal Submissions</span>
                         </a>
                     </li>
 
@@ -127,7 +143,7 @@
                     <li class="nav-item {{ request()->routeIs('faculty.profile') ? 'active' : '' }}">
                         <a href="" class="nav-link">
                             <i class="fas fa-user-cog nav-icon"></i>
-                            <span class="nav-text"> Settings</span>
+                            <span class="nav-text"> Profile</span>
                         </a>
                     </li>
 

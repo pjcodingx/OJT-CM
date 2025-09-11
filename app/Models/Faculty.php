@@ -29,7 +29,7 @@ class Faculty extends Authenticatable
     public function companies(){
         // return $this->belongsToMany(Company::class, 'company_faculty');
 
-       return $this->belongsToMany(Company::class, 'company_faculty', 'faculty_id', 'company_id');
+       return $this->hasMany(Company::class, 'faculty_id');
     }
 
 

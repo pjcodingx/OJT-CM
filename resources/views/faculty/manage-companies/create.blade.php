@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+@extends('layouts.faculty')
 
 @section('styles')
 <style>
@@ -105,14 +105,30 @@
         flex: 1;
         min-width: 250px;
     }
+
+     .alert-success {
+    background-color: #d4edda;
+    border: 1px solid #c3e6cb;
+    color: #155724;
+    padding: 12px 20px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    font-size: 14px;
+    font-family: Verdana, sans-serif;
+    transition: opacity 0.5s ease-out;
+}
 </style>
 @endsection
 
 @section('content')
 <div class="company-create-form">
     <h2>Create Company</h2>
-
-    <form action="{{ route('admin.companies.store') }}" method="POST">
+        @if(session('success'))
+            <div class="alert-success">
+                {{ session('success') }}
+            </div>
+        @endif
+    <form action="{{ route('faculty.manage-companies.store') }}" method="POST">
         @csrf
 
         <div class="form-group">
@@ -165,5 +181,27 @@
             el.textContent = '👁';
         }
     }
+
+      document.getElementById('create-student-form').addEventListener('submit', function (e) {
+        const pass = document.getElementById('password');
+        const confirm = document.getElementById('password_confirmation');
+        const errorMsg = document.getElementById('password-error');
+        const alertBox = document.querySelector('.alert-error');
+
+        if (pass.value !== confirm.value) {
+            e.preventDefault();
+            errorMsg.style.display = 'block';
+            confirm.focus();
+        } else {
+            errorMsg.style.display = 'none';
+        }
+
+        if (alertBox) {
+            setTimeout(() => {
+                alertBox.style.opacity = '0';
+                setTimeout(() => alertBox.remove(), 500);
+            }, 3000);
+        }
+    });
 </script>
 @endsection

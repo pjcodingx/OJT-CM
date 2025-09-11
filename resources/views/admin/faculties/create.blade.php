@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('styles')
+@section('content')
 <style>
     body {
         font-family: Arial, sans-serif;
@@ -90,8 +90,10 @@
 }
 
 
-    button[type="submit"] {
-        background-color: #064d1c;
+
+
+    button{
+         background-color: #064d1c;
         color: white;
         border: none;
         padding: 10px 20px;
@@ -99,13 +101,11 @@
         border-radius: 5px;
         cursor: pointer;
         display: block;
-        margin: 0 auto;
+        margin: 0 0;
         transition: background-color 0.3s ease;
     }
 
-    button[type="submit"]:hover {
-        background-color: #046d28;
-    }
+
 
     small {
         display: block;
@@ -117,9 +117,9 @@
 
 
 </style>
-@endsection
 
-@section('content')
+
+
 <div class="container">
     <h2>Create New Adviser</h2>
 
@@ -177,7 +177,7 @@
 
 
 
-        <div class="form-group">
+        {{-- <div class="form-group">
             <label>Partnered Companies</label>
             <select name="company_ids[]" multiple>
                 @foreach ($companies as $company)
@@ -188,7 +188,7 @@
                 @endforeach
             </select>
             <small>Hold Ctrl (Windows) or Command (Mac) to select multiple.</small>
-        </div>
+        </div> --}}
 
         <button type="submit">Create Adviser</button>
     </form>

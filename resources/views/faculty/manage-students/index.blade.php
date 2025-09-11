@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+@extends('layouts.faculty')
 
 @section('content')
 
@@ -302,14 +302,17 @@ tbody tr:hover {
 
 
 
-
+<div class="page-header">
+    <h2>Manage Students</h2>
+    <a href="{{ route('faculty.manage-students.create') }}" class="add-btn">+ Add Student</a>
+</div>
 
 <div class="filters">
 
 
     {{-- ?ADDED THIS FOR FILTERING COURSE --}}
 
-        <form method="GET" action="{{ route('admin.students.index') }}" style="margin-bottom: 20px;">
+        <form method="GET" action="{{ route('faculty.manage-students.index') }}" style="margin-bottom: 20px;">
     <div style="display: flex; gap: 10px; align-items: center;">
 
         <input
@@ -321,22 +324,33 @@ tbody tr:hover {
         >
 
 
-        <select name="course_id" onchange="this.form.submit()" style="padding: 14px;">
+        {{-- <select name="course_id" onchange="this.form.submit()" style="padding: 14px;">
             <option value=""> Filter by Course </option>
             @foreach($courseCounts as $course)
                 <option value="{{ $course->id }}" {{ request('course_id') == $course->id ? 'selected' : '' }}>
                     {{ $course->name }} ({{ $course->students_count }})
                 </option>
             @endforeach
+        </select> --}}
+
+        <select name="company_id" onchange="this.form.submit()" style="padding:14px;">
+            <option value="">Filter by Company</option>
+            @foreach($companies as $company)
+                <option value="{{ $company->id }}" {{ request('company_id') == $company->id ? 'selected' : '' }}>
+                    {{ $company->name }} ({{ $company->students_count }})
+                </option>
+            @endforeach
         </select>
+
+
 
 
         <button type="submit" class="search-button">Search</button>
         <div style="margin-bottom: 15px;">
 
-            <a href="{{ route('admin.students.export.excel', request()->query()) }}" class="btn btn-success">Export to Excel</a>
+            <a href="{{ route('faculty.manage-students.export.excel', request()->query()) }}" class="btn btn-success">Export to Excel</a>
 
-            <a href="{{ route('admin.students.export.pdf', request()->query()) }}" class="btn btn-red">Export to pdf</a>
+            <a href="{{ route('faculty.manage-students.export.pdf', request()->query()) }}" class="btn btn-red">Export to pdf</a>
         </div>
 
         </div>
@@ -356,7 +370,8 @@ tbody tr:hover {
                 <th>OJT Adviser</th>
                 <th>QR Code</th>
                 <th>Total Hours</th>
-
+                <th>Actions</th>
+            </tr>
         </thead>
         <tbody>
 
@@ -390,7 +405,22 @@ tbody tr:hover {
                 </td>
                 <td>{{ $student->required_hours }}</td>
 
+                <td>
+                    <div class="actions-inline">
+                        <a href="{{ route('faculty.manage-students.edit', $student->id) }}">
+                            <button class="action-btn edit-btn">Edit</button>
+                        </a>
 
+
+
+                            <form action="{{ route('faculty.manage-students.generateQR', $student->id) }}" method="post">
+                                @csrf
+                                <button class="action-btn qr-btn">Generate QR</button>
+                            </form>
+
+
+                    </div>
+                </td>
 
             @endforeach
             </tr>
@@ -401,12 +431,6 @@ tbody tr:hover {
 <div class="pagination-wrapper">
     {{ $students->withQueryString()->links('vendor.pagination.prev-next-only') }}
 </div>
-
-
-
-
-
-
 
 
 
@@ -440,3 +464,5 @@ tbody tr:hover {
 </script>
 
 
+
+@endsection

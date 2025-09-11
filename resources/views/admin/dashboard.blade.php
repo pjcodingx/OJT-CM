@@ -54,14 +54,7 @@
                         <span class="nav-text">Dashboard</span>
                     </li>
 
-                    <li class="nav-item">
-                        <a href="{{ route('admin.students.index') }}" class="nav-link {{ request()->routeIs('admin.students.index') ? 'active' : '' }}"  style="color: inherit; text-decoration: none;">
-                            <i class="fas fa-user-graduate nav-icon"></i>
-                            <span class="nav-text">Manage Students</span>
-                        </a>
-                    </li>
-
-                    <li class="nav-item">
+                     <li class="nav-item">
                         <a href="{{ route('admin.faculties.index') }}" class="nav-link {{ request()->routeIs('admin.faculties.index') ? 'active' : '' }}" style="color: inherit; text-decoration: none;">
                             <i class="fas fa-chalkboard-teacher nav-icon"></i>
                             <span class="nav-text">Manage Advisers</span>
@@ -69,9 +62,18 @@
                     </li>
 
                     <li class="nav-item">
+                        <a href="{{ route('admin.students.index') }}" class="nav-link {{ request()->routeIs('admin.students.index') ? 'active' : '' }}"  style="color: inherit; text-decoration: none;">
+                            <i class="fas fa-user-graduate nav-icon"></i>
+                            <span class="nav-text">Students</span>
+                        </a>
+                    </li>
+
+
+
+                    <li class="nav-item">
                         <a href="{{ route('admin.companies.index') }}" class="nav-link {{ request()->routeIs('admin.companies.index') ? 'active' : ''}}" style="color: inherit; text-decoration: none;">
                             <i class="fas fa-building nav-icon"></i>
-                            <span class="nav-text">Manage Companies</span>
+                            <span class="nav-text">Companies</span>
                         </a>
                     </li>
 

@@ -278,11 +278,7 @@ tbody tr:hover {
                             <button class="action-btn edit-btn">Edit</button>
                         </a>
 
-                        <form action="{{ route('admin.faculties.destroy', $faculty->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this adviser?');">
-                            @csrf
-                            @method('DELETE')
-                            <button class="action-btn delete-btn">Delete</button>
-                        </form>
+
                     </div>
                 </td>
             </tr>
