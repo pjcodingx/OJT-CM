@@ -27,11 +27,12 @@ h2 {
 .filter-form select,
 .filter-form input[type="search"] {
     padding: 5px;
-    border: 1px solid #fcfcfc;
-    border-radius: 6px;
-    min-width: 150px;
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    border: 1px solid rgba(0,0,0,0.2);
+    border-radius: 0px;
+    min-width: 160px;
+    height: 40px;
+    border-radius: 2px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
 
 
 

@@ -17,7 +17,6 @@ body {
     min-height: 100vh;
 }
 
-
 .sidebar {
     width: 280px;
     background-color: #393E46;
@@ -86,7 +85,6 @@ body {
     background-color: rgba(212, 212, 212, 0.1);
 }
 
-
 .nav-item.active {
     background-color: rgba(212, 212, 212, 0.2);
 }
@@ -107,8 +105,8 @@ body {
     border-top: 1px solid #6e6e6e;
 }
 
-/* !Added to remove the underline from links */
-.nav-link{
+/* Added to remove the underline from links */
+.nav-link {
     text-decoration: none;
     color: #D4D4D4;
     display: flex;
@@ -119,9 +117,7 @@ body {
     display: block;
     width: 100%;
     height: 100%;
-
 }
-
 
 .logout-btn {
     background: none;
@@ -136,7 +132,6 @@ body {
 .logout-btn:hover {
     text-decoration: underline;
 }
-
 
 .main-content {
     flex: 1;
@@ -169,188 +164,135 @@ body {
     padding: 30px;
 }
 
+/* COMPANY-STYLE DASHBOARD CARDS - UPDATED DESIGN */
 .dashboard-title {
-    font-size: 32px;
-    font-weight: bold;
-    color: #333;
+    color: #2c3e50;
+    margin-top: 10px;
     margin-bottom: 30px;
+    font-weight: 600;
+    font-size: 32px;
 }
 
-
 .info-cards {
-    display: flex;
-    gap: 20px;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 24px;
 }
 
 .info-card {
-    flex: 1;
-    min-width: 250px;
-    border-radius: 12px;
-    padding: 0;
-    overflow: hidden;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease;
+    background-color: #ffffff;
+    padding: 24px;
+    border-radius: 16px;
+    color: #2c3e50;
     min-height: 180px;
-}
-
-.info-card:hover {
-    transform: translateY(-2px);
-}
-
-.card-content {
-    padding: 25px;
-    height: 100%;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    box-shadow:
+        0 4px 8px rgba(0, 0, 0, 0.05),
+        0 6px 20px rgba(0, 0, 0, 0.05),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.8);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(0,0,0,0.04);
+}
+
+.info-card:hover {
+    transform: translateY(-5px);
+    box-shadow:
+        0 12px 28px rgba(0, 0, 0, 0.1),
+        0 8px 12px rgba(0, 0, 0, 0.08),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.9);
+}
+
+.info-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(to right, #205501, #16d105);
+    z-index: 1;
+    border-radius: 16px 16px 0 0;
 }
 
 .card-title {
-    font-size: 16px;
-    font-weight: normal;
-    color: white;
-    margin-bottom: 15px;
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: #5a6978;
+    position: relative;
+    z-index: 2;
 }
 
-
-
 .card-number {
-    font-size: 48px;
-    font-weight: bold;
-    color: white;
-    margin-bottom: 15px;
-    flex-grow: 1;
-    display: flex;
-    align-items: center;
+    font-size: 36px;
+    font-weight: 800;
+    margin: 10px 0;
+    color: #2c3e50;
+    position: relative;
+    z-index: 2;
 }
 
 .card-link {
-    color: white;
-    text-decoration: none;
     font-size: 14px;
-    margin-top: auto;
+    font-weight: 500;
+    text-decoration: none;
+    margin-top: 15px;
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 5px;
-    padding: 8px 16px;
-    border-radius: 6px;
-    transition: background-color 0.3s ease;
-    text-align: center;
+    justify-content: flex-end;
+    color: #7f8c8d;
+    position: relative;
+    z-index: 2;
+    transition: all 0.2s ease;
+}
+
+.card-link i {
+    transition: transform 0.2s ease;
+    margin-left: 5px;
+    font-size: 12px;
 }
 
 .card-link:hover {
-    text-decoration: underline;
-    text-decoration: none;
+    color: #2c3e50;
 }
 
-
-.blue-card {
-    background-color: #007bff;
+.card-link:hover i {
+    transform: translateX(3px);
 }
 
-.blue-card .card-link {
-    background-color: #0056b3;
+.card-icon {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    font-size: 28px;
+    opacity: 0.1;
+    z-index: 1;
+    color: #2c3e50;
 }
 
-.blue-card .card-link:hover {
-    background-color: #004085;
+.card-bg-pattern {
+    position: absolute;
+    bottom: -20px;
+    right: -20px;
+    width: 120px;
+    height: 120px;
+    opacity: 0.03;
+    z-index: 0;
+    background: radial-gradient(circle, #7f8c8d 0%, transparent 70%);
 }
 
-.green-card {
-    background-color: #218838;
+/* REMOVE OLD CARD STYLES - These are no longer needed */
+/*
+.blue-card, .green-card, .red-card, .yellow-card {
+    // Old colored card styles removed
 }
+*/
 
-.green-card .card-link {
-    background-color: #1e7e34;
-}
-
-.green-card .card-link:hover {
-    background-color: #155724;
-}
-
-.red-card {
-    background-color: #dc3545;
-}
-
-.red-card .card-link {
-    background-color: #c82333;
-}
-
-.red-card .card-link:hover {
-    background-color: #bd2130;
-}
-
-.yellow-card {
-    background-color: #ffc107;
-}
-
-.yellow-card .card-title,
-.yellow-card .card-number,
-.yellow-card .card-number {
-    color: #333;
-}
-
-.yellow-card .card-link {
-    background-color: #e0a800;
-    color: #333;
-}
-
-.yellow-card .card-link:hover {
-    background-color: #d39e00;
-}
-
-
-@media (max-width: 1024px) {
-    .info-cards {
-        flex-direction: column;
-    }
-
-    .info-card {
-        min-width: 100%;
-    }
-}
-
-@media (max-width: 768px) {
-    .sidebar {
-        width: 250px;
-    }
-
-    .dashboard-content {
-        padding: 20px;
-    }
-
-    .dashboard-title {
-        font-size: 28px;
-    }
-
-    .card-number {
-        font-size: 36px;
-    }
-}
-
-@media (max-width: 480px) {
-    .dashboard-container {
-        flex-direction: column;
-    }
-
-    .sidebar {
-        width: 100%;
-        height: auto;
-    }
-
-    .sidebar-nav {
-        display: none;
-    }
-
-    .dashboard-content {
-        padding: 15px;
-    }
-}
-
-
-
+/* NOTIFICATION BADGES */
 .nav-icon-wrapper {
     position: relative;
     display: inline-flex;
@@ -359,7 +301,6 @@ body {
     width: 20px;
     margin-right: 12px;
 }
-
 
 .notification-badge {
     position: absolute;
@@ -383,7 +324,6 @@ body {
     line-height: 1;
 }
 
-
 @keyframes subtle-pulse {
     0%, 100% {
         transform: scale(1);
@@ -395,7 +335,6 @@ body {
     }
 }
 
-
 .notification-badge.high-count {
     background: linear-gradient(135deg, #ff6b35, #f7931e);
     animation-duration: 1.5s;
@@ -406,12 +345,10 @@ body {
     animation-duration: 1s;
 }
 
-
 .nav-item:hover .notification-badge {
     transform: scale(1.1);
     box-shadow: 0 4px 16px rgba(255, 71, 87, 0.6);
 }
-
 
 .nav-item.active .notification-badge {
     background: linear-gradient(135deg, #2ecc71, #27ae60);
@@ -419,8 +356,40 @@ body {
     animation: none;
 }
 
+/* RESPONSIVE DESIGN */
+@media (max-width: 1024px) {
+    .info-cards {
+        flex-direction: column;
+    }
+
+    .info-card {
+        min-width: 100%;
+    }
+}
+
+@media (max-width: 992px) {
+    .info-card {
+        flex: 1 1 calc(50% - 16px);
+    }
+}
 
 @media (max-width: 768px) {
+    .sidebar {
+        width: 250px;
+    }
+
+    .dashboard-content {
+        padding: 20px;
+    }
+
+    .dashboard-title {
+        font-size: 28px;
+    }
+
+    .card-number {
+        font-size: 36px;
+    }
+
     .notification-badge {
         top: -6px;
         right: -6px;
@@ -431,7 +400,52 @@ body {
     }
 }
 
+@media (max-width: 600px) {
+    .info-card {
+        flex: 1 1 100%;
+        min-height: 160px;
+        padding: 20px;
+    }
+
+    .dashboard-title {
+        font-size: 22px;
+    }
+
+    .card-title {
+        font-size: 16px;
+    }
+
+    .card-number {
+        font-size: 30px;
+    }
+
+    .card-link {
+        font-size: 13px;
+    }
+
+    .card-icon {
+        font-size: 24px;
+    }
+}
+
 @media (max-width: 480px) {
+    .dashboard-container {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+        height: auto;
+    }
+
+    .sidebar-nav {
+        display: none;
+    }
+
+    .dashboard-content {
+        padding: 15px;
+    }
+
     .notification-badge {
         top: -4px;
         right: -4px;
@@ -442,8 +456,6 @@ body {
     }
 }
 
-
-/* Media query for 1200px and above - ensures 4 equal cards in one row */
 /* Media query for 1200px and above - ensures equal card sizes */
 @media (min-width: 1200px) {
     .info-cards {
