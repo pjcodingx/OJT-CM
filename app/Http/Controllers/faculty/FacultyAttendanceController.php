@@ -16,7 +16,7 @@ class FacultyAttendanceController extends Controller
             $endDate = $request->end_date;
 
     $attendances = Attendance::whereHas('student', function ($query) use ($faculty) {
-            $query->where('faculty_id', $faculty->id);
+            $query->where('faculty_id', $faculty->id)->where('status', 1);
         })
         ->when($startDate, fn($q) => $q->whereDate('date', '>=', $startDate))
         ->when($endDate, fn($q) => $q->whereDate('date', '<=', $endDate))

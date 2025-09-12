@@ -34,6 +34,14 @@ class MultiLoginController extends Controller
         // Try Faculty guard
         if (Auth::guard('faculty')->attempt($credentials)) {
 
+             $faculty = Auth::guard('faculty')->user();
+
+            if($faculty->status == 0){
+                Auth::guard('faculty')->logout();
+                return back()->withErrors(['email' => 'Your account is disabled. Contact admin.']);
+            }
+
+
 
             return $this->showDashboard('faculty');
         }
@@ -41,6 +49,12 @@ class MultiLoginController extends Controller
         //try Student guard
 
         if (Auth::guard('student')->attempt($credentials)) {
+            $student = Auth::guard('student')->user();
+
+            if($student->status == 0){
+                Auth::guard('student')->logout();
+                return back()->withErrors(['email' => 'Your account is disabled. Contact admin.']);
+            }
 
 
             return $this->showDashboard('student');
@@ -48,6 +62,13 @@ class MultiLoginController extends Controller
 
         // Try Company guard
         if (Auth::guard('company')->attempt($credentials)) {
+
+              $company = Auth::guard('company')->user();
+
+            if($company->status == 0){
+                Auth::guard('company')->logout();
+                return back()->withErrors(['email' => 'Your account is disabled. Contact admin.']);
+            }
 
             return $this->showDashboard('company');
         }

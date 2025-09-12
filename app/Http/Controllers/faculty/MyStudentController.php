@@ -29,6 +29,7 @@ class MyStudentController extends Controller
 
     $students = Student::with(['course', 'company', 'attendances'])
         ->where('faculty_id', $faculty->id)
+        ->where('status', 1)
         ->when($request->search, function ($query) use ($request) {
             $query->where('name', 'like', '%' . $request->search . '%');
         })
@@ -57,9 +58,10 @@ class MyStudentController extends Controller
         $companies = Company::withCount('students')->where('faculty_id', $faculty->id)->get();
         //* So here I added where clause to specify the relation to be filtered meaning
         //* only shows the partnered company of the faculty
-        
+
         $students = Student::with('company', 'faculty', 'course')
             ->where('faculty_id', $faculty->id)
+            ->where('status', 1)
             ->when($request->company_id, function ($query) use ($request){
                 $query->where('company_id', $request->company_id);
 

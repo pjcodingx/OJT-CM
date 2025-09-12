@@ -21,7 +21,12 @@ class AttendanceLogController extends Controller
         $admin = Auth::guard('admin')->user();
 
         //? Mao ni ang ato gamiton ig search
-        $query = Attendance::with(['student.company', 'student.course', 'student.faculty']);
+        $query = Attendance::with(['student.company', 'student.course', 'student.faculty'])->whereHas('student', function ($q) {
+
+            $q->where('status', '!=', 'disabled');
+
+        });
+;
 
 
     if ($request->filled('search')) {

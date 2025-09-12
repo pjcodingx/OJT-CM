@@ -103,6 +103,9 @@ Route::middleware(['admin'])->prefix('admin')->group(function () {
     Route::get('/students/{id}/edit', [StudentController::class, 'edit'])->name('admin.students.edit');
     Route::put('/students/{id}', [StudentController::class, 'update'])->name('admin.students.update');
 
+    Route::patch('/students/{id}/toggle-status', [StudentController::class, 'toggleStatus'])->name('admin.students.toggleStatus');
+
+
     Route::get('/company/{company}/students', [CompanyController::class, 'showstudents'])->name('admin.companies.students');
     // Route::post('/student/attendance-appeals', [StudentAttendanceAppealController::class, 'store'])->name('student.appeals.store');
 
@@ -116,6 +119,9 @@ Route::middleware(['admin'])->prefix('admin')->group(function () {
     Route::delete('/faculty/{id}', [FacultyController::class, 'destroy'])->name('admin.faculties.destroy');
 
 
+    Route::patch('/faculties/{id}/toggle-status', [FacultyController::class, 'toggleStatus'])->name('faculties.toggleStatus');
+
+
 
 
 
@@ -127,6 +133,10 @@ Route::middleware(['admin'])->prefix('admin')->group(function () {
     Route::put('/companies/{company}', [CompanyController::class, 'update'])->name('admin.companies.update');
 
     Route::delete('/companies/{id}', [CompanyController::class, 'destroy'])->name('admin.companies.destroy');
+
+    Route::patch('/companies/{id}/toggle-status', [CompanyController::class, 'toggleStatus'])->name('companies.toggleStatus');
+
+
 
 
 });
@@ -257,4 +267,6 @@ Route::middleware(['company'])->prefix('company')->group(function(){
      Route::delete('/notifications/delete-all', [CompanyNotificationController::class, 'deleteAll'])->name('company.notifications.deleteAll');
 
       Route::post('/notifications/read-all', [CompanyNotificationController::class, 'markAllAsRead'])->name('faculty.notifications.readAll');
+
+
 });

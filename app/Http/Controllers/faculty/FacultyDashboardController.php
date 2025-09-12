@@ -20,7 +20,7 @@ class FacultyDashboardController extends Controller
                 $query->where('faculty_id', $faculty->id);
             })->count();
 
-            $totalStudents = Student::where('faculty_id', $faculty->id)->count();
+            $totalStudents = Student::where('faculty_id', $faculty->id)->where('status', 1)->count();
 
               $feedbackTotal = StudentRating::whereHas('student', callback: function ($q) use ($faculty) {
                         $q->where('faculty_id', $faculty->id);

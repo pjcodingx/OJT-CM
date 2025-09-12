@@ -204,6 +204,43 @@ tbody tr:hover {
     }
 
 
+.btn-success {
+    background-color: #02643d;
+    color: #fff;
+    border: none;
+    padding: 8px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+
+    text-decoration: none;
+    display: inline-block;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    margin-top: 15px;
+}
+.btn-success:hover {
+    background-color: #03ce87;
+}
+
+.btn-red {
+    background-color: #b02a37;
+    color: #fff;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+
+    text-decoration: none;
+    display: inline-block;
+    transition: background-color 0.2s ease;
+}
+
+.btn-red:hover {
+    background-color: #d63343;
+}
+
+
 </style>
 
 
@@ -234,6 +271,12 @@ tbody tr:hover {
                     @endforeach
                 </select>
 
+                 <select name="status" onchange="this.form.submit()" style="padding: 14px;" class="search-select">
+                    <option value="">Filter by Status</option>
+                    <option value="1" {{ request('status') == '1' ? 'selected' : '' }}>Active</option>
+                    <option value="0" {{ request('status') == '0' ? 'selected' : '' }}>Disabled</option>
+                </select>
+
 
                 <button type="submit" class="search-button">Search</button>
             </div>
@@ -247,6 +290,7 @@ tbody tr:hover {
                 <th>ID</th>
                 <th>Name</th>
                 <th>Email</th>
+                <th>Status</th>
                 <th>Department</th>
                 <th>Assigned Students</th>
                 <th>Partnered Companies </th>
@@ -259,6 +303,13 @@ tbody tr:hover {
                 <td>{{ $loop->iteration }}</td>
                 <td>{{ $faculty->name }}</td>
                 <td>{{ $faculty->email }}</td>
+                <td>
+                    @if($faculty->status)
+                        <span class="badge bg-success">Active</span>
+                    @else
+                        <span class="badge bg-danger">Disabled</span>
+                    @endif
+                </td>
                 <td>{{ $faculty->course->name ?? 'N/A' }}</td>
                 <td>
                     <a href="{{ route('admin.faculties.students', $faculty) }}" class="number">
@@ -278,9 +329,23 @@ tbody tr:hover {
                             <button class="action-btn edit-btn">Edit</button>
                         </a>
 
+                        <form action="{{ route('faculties.toggleStatus', $faculty->id) }}" method="POST" style="display:inline;">
+                            @csrf
+                            @method('PATCH')
+                            @if($faculty->status)
+                                <button type="submit" class="btn-red">Disable</button>
+                            @else
+                                <button type="submit" class="btn-success">Activate</button>
+                            @endif
+                        </form>
+
 
                     </div>
                 </td>
+
+
+
+
             </tr>
             @empty
             <tr>

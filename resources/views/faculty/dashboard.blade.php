@@ -177,7 +177,7 @@
 </style>
 
 <div class="dashboard-content">
-    <h1 class="dashboard-title">Faculty Overview</h1>
+    <h1 class="dashboard-title">DASHBOARD</h1>
 
     {{-- Optional Add time --}}
     {{-- <div class="live-clock" id="live-clock"></div> --}}

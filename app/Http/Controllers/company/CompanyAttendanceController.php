@@ -29,7 +29,10 @@ class CompanyAttendanceController extends Controller
         ]);
 
 
-        $student = Student::find($request->qr_code);
+        $student = Student::where('id', $request->qr_code)
+                                ->where('status', 1)
+                                ->first();
+
         if (!$student) {
             return response()->json([
                 'success' => false,
@@ -161,7 +164,8 @@ class CompanyAttendanceController extends Controller
 
         //Kuhaon attendances of students
         $attendances = Attendance::whereHas('student', function ($query) use ($company){
-            $query->where('company_id', $company->id);
+            $query->where('company_id', $company->id)
+            ->where('status',1);
         })->when($startDate, fn($q) => $q->whereDate('date', '>=' , $startDate))
             ->when($endDate, fn($q) => $q->whereDate('date', '<=' , $endDate))
             ->with('student')

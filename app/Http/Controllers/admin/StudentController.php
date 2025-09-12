@@ -39,6 +39,8 @@ class StudentController extends Controller
                 $subQuery->where('name', 'like', '%' . $request->search . '%'
                 )->orWhere('email', 'like', '%' . $request->search . '%');
             });
+        })->when($request->status !== null && $request->status !== '', function ($query) use ($request){
+            $query->where('status', $request->status);
         })->paginate(5)->withQueryString();
 
 
@@ -200,4 +202,14 @@ class StudentController extends Controller
 
     return $pdf->download('students_summary.pdf');
 }
+
+    public function toggleStatus($id){
+        $admin = Auth::guard('admin')->user();
+        $student = Student::findOrFail($id);
+
+        $student->status = !$student->status;
+        $student->save();
+
+        return redirect()->back()->with('success', 'Student status activated successfully');
+    }
 }

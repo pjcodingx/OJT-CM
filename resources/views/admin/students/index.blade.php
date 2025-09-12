@@ -330,6 +330,11 @@ tbody tr:hover {
             @endforeach
         </select>
 
+         <select name="status" onchange="this.form.submit()" style="padding: 14px;">
+            <option value="">Filter by Status</option>
+            <option value="1" {{ request('status') == '1' ? 'selected' : '' }}>Active</option>
+            <option value="0" {{ request('status') == '0' ? 'selected' : '' }}>Disabled</option>
+        </select>
 
         <button type="submit" class="search-button">Search</button>
         <div style="margin-bottom: 15px;">
@@ -338,6 +343,10 @@ tbody tr:hover {
 
             <a href="{{ route('admin.students.export.pdf', request()->query()) }}" class="btn btn-red">Export to pdf</a>
         </div>
+
+
+
+
 
         </div>
     </form>
@@ -354,8 +363,10 @@ tbody tr:hover {
                 <th>Course</th>
                 <th>Company</th>
                 <th>OJT Adviser</th>
+                <th>Status</th>
                 <th>QR Code</th>
                 <th>Total Hours</th>
+                <th>Action</th>
 
         </thead>
         <tbody>
@@ -369,6 +380,13 @@ tbody tr:hover {
 
                 <td>{{ $student->company->name ?? '--'}}</td>
                 <td>{{ $student->faculty->name ?? '--'}}</td>
+                 <td>
+                    @if ($student->status)
+                        <span class="badge bg-success">Active</span>
+                    @else
+                        <span class="badge bg-danger">Disabled</span>
+                    @endif
+                </td>
                 <td>
                     @if ($student->qr_code_path)
                     <a href="{{ asset('storage/' . $student->qr_code_path) }}" target="_blank">
@@ -389,6 +407,22 @@ tbody tr:hover {
 
                 </td>
                 <td>{{ $student->required_hours }}</td>
+
+
+                <td>
+                    <form action="{{ route('admin.students.toggleStatus', $student->id) }}" method="POST">
+                        @csrf
+                        @method('PATCH')
+                        @if ($student->status)
+                            <!-- Active student -> show red disable button -->
+                            <button type="submit" class="btn-red">Disable</button>
+                        @else
+                            <!-- Disabled student -> show green activate button -->
+                            <button type="submit" class="btn-success">Activate</button>
+                        @endif
+                    </form>
+                </td>
+
 
 
 

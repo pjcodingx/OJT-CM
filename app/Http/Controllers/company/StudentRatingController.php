@@ -17,7 +17,7 @@ class StudentRatingController extends Controller
          $company = Auth::guard('company')->user();
 
         // Get students assigned to this company with their ratings if any
-        $students = Student::where('company_id', $company->id)
+        $students = Student::where('company_id', $company->id)->where('status', 1)
             ->with(['ratings' => function($q) use ($company) {
                 $q->where('company_id', $company->id);
             }])

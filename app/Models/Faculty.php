@@ -15,7 +15,7 @@ class Faculty extends Authenticatable
     use HasFactory, Notifiable;
 
     protected $fillable = [
-        'name', 'email', 'password','',
+        'name', 'email', 'password','status',
     ];
 
     public function students(){
@@ -27,7 +27,7 @@ class Faculty extends Authenticatable
     }
 
     public function companies(){
-        // return $this->belongsToMany(Company::class, 'company_faculty');
+
 
        return $this->hasMany(Company::class, 'faculty_id');
     }

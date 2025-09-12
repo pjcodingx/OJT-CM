@@ -157,15 +157,69 @@
     tbody tr:hover {
         background-color: #d1e7dd;
     }
+    h1{
+        color: rgb(5, 51, 1);
+        margin-bottom: 19px;
+    }
+
+    .btn-success {
+    background-color: #02643d;
+    color: #fff;
+    border: none;
+    padding: 8px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+
+    text-decoration: none;
+    display: inline-block;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    margin-top: 15px;
+}
+.btn-success:hover {
+    background-color: #03ce87;
+}
+
+.btn-red {
+    background-color: #b02a37;
+    color: #fff;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+
+    text-decoration: none;
+    display: inline-block;
+    transition: background-color 0.2s ease;
+}
+
+.btn-red:hover {
+    background-color: #d63343;
+}
 
 </style>
+
+<h1>Companies</h1>
 
 
 
     <form method="GET" action="{{ route('admin.companies.index') }}" class="search-form">
         <div class="search-form-group">
             <input type="text" name="search" value="{{ request('search') }}" placeholder="Search by name, email, address, or location" class="search-input">
+
+             <select name="status" onchange="this.form.submit()" style="padding: 14px;" class="search-input">
+                    <option value="">Filter by Status</option>
+                    <option value="1" {{ request('status') == '1' ? 'selected' : '' }}>Active</option>
+                    <option value="0" {{ request('status') == '0' ? 'selected' : '' }}>Disabled</option>
+            </select>
+
             <button type="submit" class="search-button">Search</button>
+
+
+
+
+
         </div>
     </form>
 
@@ -173,27 +227,52 @@
     <table class="student-table">
         <thead>
             <tr>
-                <th>ID</th>
+
                 <th>Name</th>
                 <th>Email</th>
                 <th>Address</th>
+                <th>Status</th>
 
                 <th>Trainees Assigned</th>
+                <th>Action</th>
 
             </tr>
         </thead>
         <tbody>
             @forelse($companies as $company)
             <tr>
-                <td>{{ $loop->iteration }}</td>
+                {{-- <td>{{ $loop->iteration }}</td> --}}
                 <td>{{ $company->name }}</td>
                 <td>{{ $company->email }}</td>
                 <td>{{ $company->address ?? 'N/A' }}</td>
 
                 <td>
+                    @if($company->status)
+                        <span class="badge bg-success">Active</span>
+                    @else
+                        <span class="badge bg-success">Disabled</span>
+                    @endif
+                </td>
+
+
+                <td>
                     <a href="{{ route('admin.companies.students', $company->id) }}" class="number">
                     {{ $company->students_count }}
                     </a>
+                </td>
+
+                <td>
+                    <form action="{{ route('companies.toggleStatus', $company->id) }}" method="POST">
+                        @csrf
+                        @method('PATCH')
+
+                        @if($company->status)
+                           <button type="submit" class="btn-red">Disable</button>
+                        @else
+                            <button type="submit" class="btn-success">Activate</button>
+                        @endif
+
+                    </form>
                 </td>
 
             </tr>

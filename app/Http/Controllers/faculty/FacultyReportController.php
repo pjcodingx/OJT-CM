@@ -21,6 +21,7 @@ class FacultyReportController extends Controller
 
    $students = Student::with('company', 'journal', 'ratings', 'attendances')
     ->where('faculty_id', $faculty->id)
+    ->where('status', 1)
     ->when($request->search, function ($query) use ($request) {
         $search = $request->search;
 
@@ -92,6 +93,7 @@ class FacultyReportController extends Controller
 
     $students = Student::with('company', 'journal', 'ratings', 'attendances')
         ->where('faculty_id', $faculty->id)
+        ->where('status', 1)
         ->when($request->search, function ($query) use ($request) {
             $search = $request->search;
             $query->where(function($q) use ($search) {

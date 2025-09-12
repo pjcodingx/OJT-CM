@@ -19,13 +19,14 @@ class FacultyController extends Controller
     public function index(Request $request){
 
         $admin = Auth::guard('admin')->user();
-        $faculties = Faculty::with('course')->paginate(8)->withQueryString(); // ✅
+        $faculties = Faculty::with('course')->paginate(8)->withQueryString();
 
-         $companies = Company::with('faculty')->get();
+        $companies = Company::with('faculty')->get();
         $courses = Course::all();
         $courseCounts = Course::withCount('faculties')->get();
 
-        $query = Faculty::with('course')->withCount('students');
+        $query = Faculty::with('course')->withCount('students')
+                      ;
 
             if ($request->has('search')) {
                 $search = $request->input('search');
@@ -34,6 +35,19 @@ class FacultyController extends Controller
                     ->orWhere('email', 'like', "%{$search}%");
                 });
             }
+
+            $query = Faculty::with('course')->withCount('students');
+
+
+                if ($request->filled('status')) {
+
+                    $query->where('status', $request->status);
+                } else {
+
+                    $query->where('status', 1);
+                }
+
+
 
 
             if ($request->filled('course_id')) {
@@ -178,6 +192,7 @@ class FacultyController extends Controller
 
 
             $students = Student::where('faculty_id', $faculty->id)
+                ->where('status', 1)
                 ->with(['ratings.company'])  // load all ratings with company for each student
                 ->paginate(8);
 
@@ -185,6 +200,15 @@ class FacultyController extends Controller
 
 
             return view('faculty.feedbacks.index', compact('students', 'faculty'));
+        }
+
+        public function toggleStatus($id){
+            $faculties = Faculty::findOrFail($id);
+
+            $faculties->status = $faculties->status ? 0:1;
+            $faculties->save();
+
+            return redirect()->back()->with('success', 'Adviser status updated successfully');
         }
 
 

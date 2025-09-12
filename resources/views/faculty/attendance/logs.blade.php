@@ -104,7 +104,7 @@ tbody tr:hover {
 </style>
 
 <div class="container">
-    <h2>Attendance Logs of My Students</h2>
+    <h2>Attendance Logs</h2>
 
     <form method="GET" class="filter-form">
         <div>

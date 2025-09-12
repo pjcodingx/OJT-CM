@@ -18,10 +18,10 @@ class AdminDashboardController extends Controller
 
         $admin = Auth::guard('admin')->user();
 
-        //totals
-        $studentCount = Student::count();
-        $facultyCount = Faculty::count();
-        $companyCount = Company::count();
+        //counting only the active students
+        $studentCount = Student::where('status', 1)->count();
+        $facultyCount = Faculty::where('status', 1)->count();
+        $companyCount = Company::where('status', 1)->count();
         $courseCount = Course::count();
 
         //! DONE ADDING COURSES
@@ -37,17 +37,24 @@ class AdminDashboardController extends Controller
         $endDate = $request->get('end_date');
 
 
-        $journals = Journal::with(['student.faculty'])->when($facultyId, function ($query) use ($facultyId){
-            $query->whereHas('student', function ($q) use ($facultyId){
-                $q->where('faculty_id', $facultyId);
-            });
-        })->when($startDate && $endDate, function ($query) use ($startDate, $endDate) {
-    $query->whereBetween('created_at', [
-        Carbon::parse($startDate)->startOfDay(),
-        Carbon::parse($endDate)->endOfDay(),
-    ]);
-        })
-        ->latest()->paginate(10);
+        $journals = Journal::with(['student.faculty'])
+    ->whereHas('student', function ($q) {
+        $q->where('status', 1); // ✅ only active students
+    })
+    ->when($facultyId, function ($query) use ($facultyId) {
+        $query->whereHas('student', function ($q) use ($facultyId) {
+            $q->where('faculty_id', $facultyId);
+        });
+    })
+    ->when($startDate && $endDate, function ($query) use ($startDate, $endDate) {
+        $query->whereBetween('created_at', [
+            Carbon::parse($startDate)->startOfDay(),
+            Carbon::parse($endDate)->endOfDay(),
+        ]);
+    })
+    ->latest()
+    ->paginate(10);
+
 
         return view('admin.index', compact('facultyId', 'journals', 'startDate', 'endDate', 'admin'));
     }

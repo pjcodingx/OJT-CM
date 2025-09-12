@@ -306,7 +306,7 @@ tbody tr:hover {
         {{ $attendances->withQueryString()->links('vendor.pagination.prev-next-only') }}
     </div>
     @else
-        <p class="no-data">No attendance logs found with the applied filters.</p>
+        <p class="no-data" style="text-align: center;">No attendance logs found..</p>
     @endif
 </div>
 @endsection

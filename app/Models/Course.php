@@ -20,5 +20,9 @@ class Course extends Model
         return $this->hasMany(Faculty::class);
     }
 
+    public function activeStudents(){
+        return $this->hasMany(Student::class)->where('status', 1);
+    }
+
 
 }

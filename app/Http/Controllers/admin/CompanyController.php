@@ -29,7 +29,16 @@ class CompanyController extends Controller
             });
         }
 
+
+        if($request->filled('status')){
+            $query->where('status', $request->status);
+        }else{
+            $query->where('status', 1);
+        }
+
         $companies = $query->paginate(8)->withQueryString();
+
+
 
 
 
@@ -116,6 +125,17 @@ class CompanyController extends Controller
         $students = $company->students()->with(['course', 'faculty'])->paginate(10);
 
         return view('admin.companies.students', compact('admin', 'students', 'company'));
+    }
+
+    public function toggleStatus($id){
+        $company = Company::findOrFail($id);
+
+         $company->status = $company->status ? 0:1;
+            $company->save();
+
+            return redirect()->back()->with('success', 'Company status updated successfully');
+
+
     }
 
 

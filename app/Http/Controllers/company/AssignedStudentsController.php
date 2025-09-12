@@ -18,6 +18,7 @@ class AssignedStudentsController extends Controller
 
     $students = Student::with(['faculty', 'attendances'])
         ->where('company_id', $company->id)
+        ->where('status', 1)
         ->when($request->search, function ($query) use ($request) {
             $query->where('name', 'like', '%' . $request->search . '%');
         })

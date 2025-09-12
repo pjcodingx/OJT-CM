@@ -24,7 +24,7 @@ class CompanyDashboardController extends Controller
             $query->where('company_id', $company->id);
         })->count();
 
-    $studentsCount = Student::where('company_id', $company->id)->count();
+    $studentsCount = Student::where('company_id', $company->id)->where('status', 1)->count();
 
     $todayDate = Carbon::today()->toDateString(); // '2025-08-09'
 
