@@ -49,6 +49,10 @@ class AttendanceExport implements FromCollection, WithHeadings, WithMapping, Wit
         });
     }
 
+     if($this->request->filled('course_id')){
+            $query->where('course_id', $this->request->course_id);
+        }
+
     if($this->request->filled('start_date')){
         $query->where('date', '>=', $this->request->input('start_date'));
     }

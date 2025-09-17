@@ -16,7 +16,9 @@ use App\Http\Controllers\faculty\MyCompaniesController;
 use App\Http\Controllers\admin\AdminDashboardController;
 use App\Http\Controllers\company\StudentRatingController;
 use App\Http\Controllers\faculty\FacultyReportController;
+use App\Http\Controllers\faculty\FacultyProfileController;
 use App\Http\Controllers\student\StudentJournalController;
+use App\Http\Controllers\student\StudentSummaryController;
 use App\Http\Controllers\Company\CompanySettingsController;
 use App\Http\Controllers\company\AssignedStudentsController;
 use App\Http\Controllers\company\CompanyDashboardController;
@@ -174,6 +176,15 @@ Route::middleware(['student'])->prefix('student')->group(function () {
 
     Route::post('/{student}/update-password', [StudentDashboardController::class, 'updatePassword'])->name('student.update.password');
 
+    Route::get('/reports/student/{id}/summary/preview', [StudentSummaryController::class, 'preview'])
+    ->name('reports.student.summary.preview');
+
+
+// direct download
+    Route::get('/reports/student/{id}/summary/download', [StudentSummaryController::class, 'download'])
+    ->name('reports.student.summary.download');
+
+
 
 });
 
@@ -230,6 +241,23 @@ Route::middleware(['faculty'])->prefix('faculty')->group(function (){
 
     Route::get('/summary', [FacultyReportController::class, 'index'])->name('faculty.reports.index');
     Route::get('/students/summary-report', [FacultyReportController::class, 'summaryReport'])->name('faculty.students.summaryReport');
+
+    //? Profile
+    Route::post('/{id}/update-photo', [FacultyProfileController::class, 'updatePhoto'])->name('faculty.update.photo');
+
+     Route::get('/profile', [FacultyProfileController::class, 'show'])->name('faculty.profile');
+
+
+     Route::get('/change-password', [FacultyProfileController::class, 'changePassword'])
+        ->name('faculty.change-password');
+
+    Route::post('/change-password', [FacultyProfileController::class, 'updatePassword'])
+        ->name('faculty.update.password');
+
+
+
+
+
 
 
 

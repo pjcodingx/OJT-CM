@@ -80,7 +80,7 @@
 </style>
 
 <div class="page-header">
-    <h2>My Students Summary Report</h2>
+    <h2>Students Summary Report</h2>
 
     <p style="color: rgba(21, 51, 2, 0.6); margin: 0 ; font-size: 16px;">
         {{ \Carbon\Carbon::now()->format('F d, Y') }}

@@ -51,16 +51,6 @@
                         </a>
                     </li>
 
-                    {{-- <!-- 3. QR Code Attendance -->
-                    <li class="nav-item {{ request()->routeIs('student.qr') ? 'active' : '' }}">
-                        <a href="#" class="nav-link">
-                            <i class="fas fa-qrcode nav-icon"></i>
-                            <span class="nav-text">QR Code Attendance</span>
-                        </a>
-                    </li> --}}
-
-
-
                     <!-- 5. Tasks -->
                     <li class="nav-item {{ request()->routeIs('student.journals.create') ? 'active' : '' }}">
                         <a href="{{ route('student.journals.create') }}" class="nav-link">
@@ -125,12 +115,18 @@
                         </a>
                     </li>
 
-                    <li class="nav-item {{ request()->routeIs('faculty.reports.index') ? 'active' : '' }}">
-                        <a href="" class="nav-link">
-                            <i class="fas fa-file-pdf nav-icon"></i>
-                            <span class="nav-text">Summary Report</span>
+                    <li class="nav-item {{ request()->routeIs('reports.student.summary.preview') ? 'active' : '' }}">
+
+                        @php
+                            $student = auth('student')->user();
+                        @endphp
+
+                        <a href="{{ route('reports.student.summary.preview', ['id' => $student->id]) }}" class="nav-link" target="_blank">
+                            <i class="fas fa-file-download nav-icon"></i>
+                            <span class="nav-text">Preview Summary</span>
                         </a>
                     </li>
+
 
 
 

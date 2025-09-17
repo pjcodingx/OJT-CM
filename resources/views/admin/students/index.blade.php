@@ -414,10 +414,9 @@ tbody tr:hover {
                         @csrf
                         @method('PATCH')
                         @if ($student->status)
-                            <!-- Active student -> show red disable button -->
+
                             <button type="submit" class="btn-red">Disable</button>
                         @else
-                            <!-- Disabled student -> show green activate button -->
                             <button type="submit" class="btn-success">Activate</button>
                         @endif
                     </form>

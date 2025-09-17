@@ -165,10 +165,12 @@
                 <div class="detail-label">OJT Adviser</div>
                 <div class="detail-value">{{ $student->faculty->name ?? 'N/A' }}</div>
             </div>
-            <div class="detail-box">  {{--  will add the remaining hours here --}}
+            <div class="detail-box">
                 <div class="detail-label">Required OJT Hours</div>
                 <div class="detail-value">{{ $student->required_hours }} hours</div>
             </div>
+
+
         </div>
 
         <div class="qr-section">
@@ -186,7 +188,7 @@
                             <button class="download-btn">Download</button>
                         </a>
             @else
-            <span style="color: red;">No QR Code Available, Contact Admin</span>
+            <span style="color: red;">No QR Code Available, Contact Adviser</span>
             @endif
         </div>
     </div>

@@ -40,6 +40,10 @@ class StudentsExport implements FromCollection, WithHeadings, WithColumnWidths, 
             $query->where('course_id', $this->request->course_id);
         }
 
+        if($this->request->filled('status')){
+            $query->where('status', $this->request->status);
+        }
+
         return $query->get()->map(function ($student) {
             return [
                 'ID' => $student->id,

@@ -142,7 +142,7 @@
             @enderror
         </div>
 
-        <div class="button-group">
+        <div class="button-group appeal">
             <button type="submit">Submit Appeal</button>
             <a href="{{ route('student.attendance-appeals.index') }}" class="cancel-link">Cancel</a>
         </div>

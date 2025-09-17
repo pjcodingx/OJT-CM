@@ -349,7 +349,7 @@ tbody tr:hover {
             </tr>
             @empty
             <tr>
-                <td colspan="6">No advisers found.</td>
+                <td colspan="8">No advisers found.</td>
             </tr>
             @endforelse
         </tbody>

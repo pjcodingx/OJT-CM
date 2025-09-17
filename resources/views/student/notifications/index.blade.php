@@ -787,7 +787,7 @@
                     <div class="notification-title">
                         {{ $notification->title }}
                         @if($notification->type === 'journal_reminder')
-                            <span class="badge-due-today">Due 11:59pm</span>
+                            <span class="badge-due-today">Due 5:00pm</span>
                         @endif
                     </div>
                     <div class="notification-message">{{ $notification->message }}</div>

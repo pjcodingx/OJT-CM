@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'Faculty Dashboard')</title>
+    <title>@yield('title', 'OJT Adviser Dashboard')</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <link rel="stylesheet" href="{{ asset('css/admin/adminDashboard.css') }}">
@@ -26,7 +26,7 @@
 
 
             <div class="admin-section">
-                <img src="{{ asset('uploads/admin_photos/profilephoto.png') }}" class="admin-avatar">
+                <img src="{{ asset('uploads/faculty_photos/' . ($faculty->photo ?? 'default.png')) }}" alt="Profile Photo" class="admin-avatar">
                 <span class="admin-text">{{ $faculty->name ?? 'Faculty' }}</span>
             </div>
 
@@ -90,24 +90,6 @@
                         </a>
                     </li>
 
-
-                    {{-- <!-- 7. Appeals Review -->
-                    <li class="nav-item {{ request()->routeIs('faculty.appeals') ? 'active' : '' }}">
-                        <a href="" class="nav-link">
-                            <i class="fas fa-exclamation-circle nav-icon"></i>
-                            <span class="nav-text">Appeals Review</span>
-                        </a>
-                    </li> --}}
-
-                    {{-- <!-- 8. Notifications -->
-                    <li class="nav-item {{ request()->routeIs('faculty.notifications') ? 'active' : '' }}">
-                        <a href="" class="nav-link">
-                            <i class="fas fa-bell nav-icon"></i>
-                            <span class="nav-text">Notifications</span>
-                                    </a>
-                                </li> --}}
-
-
                             <li class="nav-item {{ request()->routeIs('faculty.notifications.index') ? 'active' : '' }}">
                         <a href="{{ route('faculty.notifications.index') }}" class="nav-link">
                             <div class="nav-icon-wrapper">
@@ -141,7 +123,7 @@
 
                     <!-- 9. Profile Settings -->
                     <li class="nav-item {{ request()->routeIs('faculty.profile') ? 'active' : '' }}">
-                        <a href="" class="nav-link">
+                        <a href="{{ route('faculty.profile') }}" class="nav-link">
                             <i class="fas fa-user-cog nav-icon"></i>
                             <span class="nav-text"> Profile</span>
                         </a>
