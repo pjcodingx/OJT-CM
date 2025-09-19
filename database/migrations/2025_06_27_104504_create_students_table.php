@@ -17,6 +17,10 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->string('photo')->nullable();
             $table->string('password');
+
+            $table->foreignId('company_id')->nullable()->constrained()->onDelete('set null');
+            $table->foreignId('faculty_id')->nullable()->constrained('faculties')->onDelete('set null');
+            $table->integer('required_hours')->default(0);
             $table->rememberToken();
             $table->timestamps();
         });
