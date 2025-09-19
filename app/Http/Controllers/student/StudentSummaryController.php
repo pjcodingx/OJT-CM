@@ -19,25 +19,24 @@ class StudentSummaryController extends Controller
             'company', 'faculty', 'course', 'journal', 'ratings', 'attendances', 'attendanceAppeals'
         ])->findOrFail($id);
 
-        // counts
+
         $totalAttendance   = $student->attendances()->count();
-        // missed where either time_in or time_out is null
+
         $missedAttendance  = $student->attendances()->where(function ($q) {
             $q->whereNull('time_in')->orWhereNull('time_out');
         })->count();
 
         $numberOfAppeals   = $student->attendanceAppeals()->count();
-        // your model relationship used earlier is `journal()` so keep that
+
         $submittedJournals = $student->journal()->count();
 
-        // rating / feedback
+
         $averageRating     = round($student->ratings()->avg('rating') ?? 0, 2);
-        // collect non-empty feedbacks
+
         $feedbacksList     = $student->ratings->pluck('feedback')->filter()->values()->all();
         $feedbacksText     = count($feedbacksList) ? implode("\n\n", $feedbacksList) : null;
 
-        // accumulated hours: you said you have getAccumulatedHoursAttribute()
-        // that translates to $student->accumulated_hours
+
         $accumulatedHours = method_exists($student, 'getAccumulatedHoursAttribute')
             ? $student->accumulated_hours
             : round($student->attendances->reduce(function ($carry, $att) {
@@ -49,7 +48,7 @@ class StudentSummaryController extends Controller
                 return $carry;
             }, 0), 1);
 
-        // Profile photo base64 (DomPDF reliable)
+
         $photoFile = public_path('uploads/student_photos/' . ($student->photo ?? 'default.png'));
         $profileImageData = null;
         if (file_exists($photoFile)) {
@@ -58,7 +57,7 @@ class StudentSummaryController extends Controller
             $profileImageData = 'data:image/' . $type . ';base64,' . base64_encode($data);
         }
 
-        // school info (custom)
+
         $schoolName  = 'The College Of Maasin';
         $schoolQuote = config('school.quote', 'Nisi Dominus Frustra');
         $schoolPlace = config('school.place', 'Maasin City');

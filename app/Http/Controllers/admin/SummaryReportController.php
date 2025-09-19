@@ -58,7 +58,7 @@ class SummaryReportController extends Controller
 
 
         $students = Student::where('faculty_id', $request->faculty_id)
-            ->with('company') // eager load company info
+            ->with('company')
             ->get();
 
         $summaryData = [];
@@ -69,11 +69,11 @@ class SummaryReportController extends Controller
                 ->whereBetween('created_at', [$startDate, $endDate])
                 ->count();
 
-            // Average rating if available
+
             $rating = StudentRating::where('student_id', $student->id)
                 ->avg('score');
 
-            // Total OJT hours
+
             $totalHours = Attendance::where('student_id', $student->id)
                 ->whereBetween('date', [$startDate, $endDate])
                 ->sum('hours');

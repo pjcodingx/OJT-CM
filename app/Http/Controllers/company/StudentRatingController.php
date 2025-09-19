@@ -16,7 +16,7 @@ class StudentRatingController extends Controller
     public function index(){
          $company = Auth::guard('company')->user();
 
-        // Get students assigned to this company with their ratings if any
+
         $students = Student::where('company_id', $company->id)->where('status', 1)
             ->with(['ratings' => function($q) use ($company) {
                 $q->where('company_id', $company->id);
@@ -33,7 +33,7 @@ class StudentRatingController extends Controller
 
         $student = Student::with('faculty')->findOrFail($studentId);
 
-        // Get existing rating if any
+
         $rating = StudentRating::where('student_id', $studentId)
             ->where('company_id', $company->id)
             ->first();
@@ -50,8 +50,7 @@ class StudentRatingController extends Controller
             'feedback' => 'nullable|string|max:1000',
         ]);
 
-        // Update or create rating record
-       // Update or create rating record
+
     $rating = StudentRating::updateOrCreate(
         [
             'student_id' => $studentId,
