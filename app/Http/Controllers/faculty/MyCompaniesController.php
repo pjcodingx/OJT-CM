@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\faculty;
 
 use App\Models\Company;
+use App\Models\Notification;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -54,7 +55,21 @@ class MyCompaniesController extends Controller
         $validated['password'] = bcrypt($validated['password']);
         $validated['faculty_id'] = $faculty->id;
 
-        Company::create($validated);
+        $company = Company::create($validated);
+
+        $admin = \App\Models\Admin::first();
+
+    if ($admin) {
+        Notification::create([
+            'user_id' => $admin->id,
+            'user_type' => 'admin',
+            'title' => 'New Company Registered',
+            'message' => 'Faculty '.$faculty->name.' has added a new company: '.$company->name,
+            'type' => 'info',
+            'is_read' => 0,
+        ]);
+    }
+
 
         return redirect()->route('faculty.manage-companies.create')->with('success', 'Company created successfully.');
     }

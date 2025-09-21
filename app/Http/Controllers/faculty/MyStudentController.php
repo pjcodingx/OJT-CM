@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\faculty;
 
 use Carbon\Carbon;
+use App\Models\Admin;
 use App\Models\Course;
 use App\Models\Company;
 use App\Models\Faculty;
 use App\Models\Student;
+use App\Models\Notification;
 use Illuminate\Http\Request;
 use App\Exports\StudentsExport;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -101,6 +103,18 @@ class MyStudentController extends Controller
         $validated['faculty_id'] = $faculty->id;
 
         $student = Student::create($validated);
+        $admin = Admin::first();
+
+        if($admin){
+            Notification::create([
+                'user_id' => $admin->id,
+                'user_type' => 'admin',
+                'title' => 'New Trainee Registered',
+                'message' => 'Adviser ' . $faculty->name . ' added a new trainee: ' . $student->name,
+                'type' => 'info',
+                'is_read' => 0
+            ]);
+        }
 
         return redirect()->route('faculty.manage-students.create')->with('success', 'Student created successfully.');
     }
