@@ -19,6 +19,7 @@ use App\Http\Controllers\faculty\FacultyReportController;
 use App\Http\Controllers\faculty\FacultyProfileController;
 use App\Http\Controllers\student\StudentJournalController;
 use App\Http\Controllers\student\StudentSummaryController;
+use App\Http\Controllers\admin\AdminNotificationController;
 use App\Http\Controllers\Company\CompanySettingsController;
 use App\Http\Controllers\company\AssignedStudentsController;
 use App\Http\Controllers\company\CompanyDashboardController;
@@ -140,7 +141,12 @@ Route::middleware(['admin'])->prefix('admin')->group(function () {
 
 
 
+    //? FOR NOTIFICATIONS
+     Route::get('notifications', [AdminNotificationController::class, 'index'])->name('admin.notifications.index');
+    Route::post('notifications/read-all', [AdminNotificationController::class, 'markAllAsRead'])->name('admin.notifications.markAllAsRead');
+    Route::post('notifications/{id}/read', [AdminNotificationController::class, 'markAsRead'])->name('admin.notifications.read');
 
+    Route::delete('notifications/delete-all', [AdminNotificationController::class, 'deleteAll'])->name('admin.notifications.deleteAll');
 });
 
 

@@ -93,14 +93,28 @@
                         <span class="nav-text">Feedback & Remarks</span>
                     </li> --}}
 
-                    <li class="nav-item">
-                        <i class="fas fa-bell nav-icon"></i>
-                        <span class="nav-text">Notifications</span>
-                    </li>
-                    {{-- <li class="nav-item">
-                        <i class="fas fa-cog nav-icon"></i>
-                        <span class="nav-text">System Settings</span>
-                    </li> --}}
+                        <li class="nav-item {{ request()->routeIs('admin.notifications.index') ? 'active' : '' }}">
+                            <a href="{{ route('admin.notifications.index') }}" class="nav-link" style="color: inherit; text-decoration: none;">
+                                <div class="nav-icon-wrapper">
+                                    <i class="fas fa-bell nav-icon"></i>
+                                    @php
+                                        use App\Models\Notification;
+                                        $adminUnread = Notification::where('user_id', auth('admin')->id())
+                                            ->where('user_type', 'admin')
+                                            ->where('is_read', false)
+                                            ->count();
+                                    @endphp
+
+                                    @if($adminUnread > 0)
+                                        <span class="notification-badge">
+                                            {{ $adminUnread > 99 ? '99+' : $adminUnread }}
+                                        </span>
+                                    @endif
+                                </div>
+                                <span class="nav-text">Notifications</span>
+                            </a>
+                        </li>
+
                 </ul>
             </nav>
 
