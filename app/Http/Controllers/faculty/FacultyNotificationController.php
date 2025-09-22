@@ -32,7 +32,7 @@ class FacultyNotificationController extends Controller
 
     public function markAllAsRead()
 {
-        Notification::where('user_id', Auth::id())
+        Notification::where('user_id', Auth::guard('faculty')->id())
             ->where('user_type', 'faculty')
             ->update(['is_read' => true]);
 

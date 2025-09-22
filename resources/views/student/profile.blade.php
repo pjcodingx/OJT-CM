@@ -151,7 +151,7 @@
             </div>
             <div class="detail-box">
                 <div class="detail-label">Course</div>
-                <div class="detail-value">{{ $student->course->name }}</div>
+               <div class="detail-value">{{ $student->course?->name ?? 'N/A' }}</div>
             </div>
             <div class="detail-box">
                 <div class="detail-label">Company</div>

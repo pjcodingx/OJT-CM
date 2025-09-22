@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Models\User;
+use App\Models\Notification;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ValidationException;
 
 class MultiLoginController extends Controller
 {
@@ -73,7 +75,9 @@ class MultiLoginController extends Controller
             return $this->showDashboard('company');
         }
 
-        return back()->withErrors(['email' => 'Invalid credentials']);
+        // If all guards failed, notify admin and show error
+        return $this->sendFailedLoginResponse($request);
+
     }
 
     public function showDashboard($role){
@@ -105,4 +109,36 @@ class MultiLoginController extends Controller
 
     return redirect('/login');
     }
+
+
+
+    protected function sendFailedLoginResponse(Request $request)
+{
+
+   // Track failed login attempts in session
+    $key = 'failed_login_attempts_' . $request->email;
+    $attempts = session()->get($key, 0) + 1;
+    session()->put($key, $attempts);
+
+    // Notify admin only after 3 failed attempts
+    if ($attempts >= 3) {
+        Notification::create([
+            'user_id' => 1,
+            'user_type' => 'admin',
+            'title' => 'Multiple Failed Login Attempts',
+            'message' => 'There have been 3 failed login attempts for email: ' . $request->email,
+            'type' => 'security_alert',
+            'is_read' => 0,
+        ]);
+
+
+        session()->forget($key);
+    }
+
+
+    throw ValidationException::withMessages([
+        'email' => ['Authetication login failed!'],
+    ]);
+}
+
 }
