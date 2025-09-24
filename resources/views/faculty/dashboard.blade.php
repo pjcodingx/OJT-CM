@@ -122,6 +122,34 @@
     background: radial-gradient(circle, #7f8c8d 0%, transparent 70%);
 }
 
+.progress-bar {
+    background-color: #e0e0e0;
+    border-radius: 12px;
+    overflow: hidden;
+    height: 20px;
+    margin: 15px 0;
+    position: relative;
+    z-index: 2;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(to right, #205501, #16d105);
+    text-align: center;
+    color: white;
+    font-weight: bold;
+    line-height: 20px;
+    font-size: 12px;
+}
+
+.attendance-breakdown {
+    font-size: 13px;
+    margin-top: 5px;
+    color: #5a6978;
+    position: relative;
+    z-index: 2;
+}
+
 .live-clock {
     font-size: 24px;
     font-weight: 600;
@@ -206,6 +234,28 @@
             <div class="card-number">{{ $feedbackTotal}}</div>
             <a href="{{ route('faculty.feedbacks.index') }}" class="card-link">More info <i class="fas fa-chevron-right"></i></a>
         </div>
+
+        <!-- Attendance Completion Card -->
+        <div class="info-card">
+            <i class="fas fa-chart-line card-icon"></i>
+            <div class="card-bg-pattern"></div>
+
+            <h3 class="card-title">Attendance Completion</h3>
+
+            <!-- Progress Bar -->
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: {{ $completionPercent }}%;">
+                    {{ $completionPercent }}%
+                </div>
+            </div>
+
+            <!-- Breakdown -->
+            <p class="attendance-breakdown">
+                <strong>{{ $completedCount }}</strong> completed,
+                <strong>{{ $partialCount }}</strong> partial,
+                <strong>{{ $notStartedCount }}</strong> not started
+            </p>
+        </div>
     </div>
 </div>
 
@@ -230,8 +280,6 @@
 
         document.getElementById('live-clock').innerText = timeString;
     }
-
-    // Run immediately then every second
     updateClock();
     setInterval(updateClock, 1000);
 </script>

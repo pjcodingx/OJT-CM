@@ -3,6 +3,7 @@
 namespace App\Models;
 
 
+use App\Models\Faculty;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -25,10 +26,6 @@ class Company extends Authenticatable
             return $this->hasMany(Student::class, 'company_id', 'id');
         }
 
-        // public function timeOverrides()
-        // {
-        //     return $this->hasMany(CompanyTimeOverride::class);
-        // }
 
         public function overrides() {
             return $this->hasMany(CompanyTimeOverride::class);
@@ -39,11 +36,11 @@ class Company extends Authenticatable
             return $this->hasMany(StudentRating::class);
         }
 
-        // app/Models/Company.php
-public function faculty()
-{
-    return $this->belongsTo(\App\Models\Faculty::class, 'faculty_id');
-}
+
+        public function faculty()
+        {
+            return $this->belongsTo(Faculty::class, 'faculty_id');
+        }
 
 
 

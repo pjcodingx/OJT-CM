@@ -2,13 +2,18 @@
 
 namespace App\Http\Controllers\admin;
 
+use Carbon\Carbon;
 use App\Models\Course;
 use App\Models\Company;
 use App\Models\Faculty;
+
 use Illuminate\Http\Request;
+use App\Exports\CompanyExport;
+use Barryvdh\DomPDF\Facade\Pdf;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Maatwebsite\Excel\Facades\Excel;
 
 class CompanyController extends Controller
 {
@@ -135,6 +140,24 @@ class CompanyController extends Controller
 
             return redirect()->back()->with('success', 'Company status updated successfully');
 
+
+    }
+
+
+    public function exportExcel(Request $request){
+
+        return Excel::download(new CompanyExport($request), 'companies.xlsx');
+    }
+
+    public function exportPdf(Request $request){
+        $companies = (new CompanyExport($request))->collection();
+
+        $pdf = Pdf::loadView('admin.companies_pdf', [
+            'companies' => $companies,
+            'date' => Carbon::now()->format('F d, Y')
+        ]);
+
+         return $pdf->download('companies_summary.pdf');
 
     }
 

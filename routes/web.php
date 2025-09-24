@@ -35,9 +35,6 @@ use App\Http\Controllers\student\StudentNotificationController;
 use App\Http\Controllers\company\CompanyAttendanceAppealController;
 use App\Http\Controllers\student\StudentAttendanceAppealController;
 
-// Route::get('/welcome', function () {
-//     return view('welcome');
-// });
 
 //? WELCOME PAGE FOR OJT SYSTEM
 Route::get('/', [WelcomeController::class, 'index'] )->name('welcome');
@@ -45,23 +42,6 @@ Route::get('/', [WelcomeController::class, 'index'] )->name('welcome');
 //!for Authentication of Roles
 Route::get('/login', [MultiLoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [MultiLoginController::class, 'login'])->name('multi.login');
-
-// Route::middleware('auth:admin')
-//     ->get('/admin/dashboard', fn() => view('admin.dashboard'))
-//     ->name('admin.dashboard'); //
-
-// Route::middleware('auth:faculty')
-//     ->get('/faculty/dashboard', fn() => view('faculty.dashboard'))
-//     ->name('faculty.dashboard');
-
-// Route::middleware('auth:company')
-//     ->get('/company/dashboard', fn() => view('company.dashboard'))
-//     ->name('company.dashboard');
-
-// Route::middleware('auth:student')
-//     ->get('/student/dashboard', fn() => view('student.dashboard'))
-//     ->name('student.dashboard');
-
 
 //! FOR LOGOUT
 Route::post('/logout', [MultiLoginController::class, 'logout'])->name('logout');
@@ -96,6 +76,10 @@ Route::middleware(['admin'])->prefix('admin')->group(function () {
     Route::get('/students/export', [StudentController::class, 'exportExcel'])->name('admin.students.export.excel');
     Route::get('/students/export-pdf', [StudentController::class, 'exportPdf'])->name('admin.students.export.pdf');
 
+    Route::get('/companies/export-excel', [CompanyController::class, 'exportExcel'])->name('admin.companies.export.excel');
+    Route::get('/companies/export-pdf', [CompanyController::class, 'exportPdf'])->name('admin.companies.export.pdf');
+
+
 
     //* Route for students management
     Route::get('/students', [StudentController::class, 'index'])->name('admin.students.index');
@@ -110,7 +94,6 @@ Route::middleware(['admin'])->prefix('admin')->group(function () {
 
 
     Route::get('/company/{company}/students', [CompanyController::class, 'showstudents'])->name('admin.companies.students');
-    // Route::post('/student/attendance-appeals', [StudentAttendanceAppealController::class, 'store'])->name('student.appeals.store');
 
 
     //? Route for OJT Advisers

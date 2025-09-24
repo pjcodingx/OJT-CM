@@ -216,6 +216,13 @@
 
             <button type="submit" class="search-button">Search</button>
 
+            <div style="margin-bottom: 15px;">
+
+            <a href="{{ route('admin.companies.export.excel', request()->query()) }}" class="btn btn-success">Export to Excel</a>
+
+            <a href="{{ route('admin.companies.export.pdf', request()->query()) }}" class="btn btn-red">Export to pdf</a>
+        </div>
+
 
 
 
@@ -271,6 +278,8 @@
                         @else
                             <button type="submit" class="btn-success">Activate</button>
                         @endif
+
+
 
                     </form>
                 </td>

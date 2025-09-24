@@ -34,7 +34,7 @@ class CompanySettingsController extends Controller
 
 
        Notification::create([
-            'user_id'   => 1, // admin ID
+            'user_id'   => 1,
             'user_type' => 'admin',
             'title'     => 'Default Attendance Time Set',
             'message'   => $company->name . ' updated default time: '
