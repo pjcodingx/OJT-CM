@@ -13,6 +13,7 @@ use App\Http\Controllers\faculty\MyStudentController;
 use App\Http\Controllers\JournalManagementController;
 use App\Http\Controllers\admin\AttendanceLogController;
 use App\Http\Controllers\faculty\MyCompaniesController;
+use App\Http\Controllers\student\CertificateController;
 use App\Http\Controllers\admin\AdminDashboardController;
 use App\Http\Controllers\company\StudentRatingController;
 use App\Http\Controllers\faculty\FacultyReportController;
@@ -172,6 +173,16 @@ Route::middleware(['student'])->prefix('student')->group(function () {
 // direct download
     Route::get('/reports/student/{id}/summary/download', [StudentSummaryController::class, 'download'])
     ->name('reports.student.summary.download');
+
+
+    //? CERTIFICATE
+    Route::get('/certificate/preview/{student}', [CertificateController::class, 'previewCertificate'])
+    ->name('certificate.preview');
+
+    Route::get('/certificate/{id}/preview', [CertificateController::class, 'preview'])
+    ->name('certificate_pdf.preview');
+
+
 
 
 
