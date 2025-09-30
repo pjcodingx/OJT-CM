@@ -74,7 +74,7 @@
         </div>
 
         <div class="form-group">
-            <label for="content">Journal Content</label>
+            <label for="content">Journal Content <span id="wordCount">0 words</span></label>
             <textarea name="content" id="content" rows="5" required>{{ old('content') }}</textarea>
             @error('content') <small style="color: red;">{{ $message }}</small> @enderror
         </div>
@@ -85,7 +85,19 @@
             @error('attachments.*') <small style="color: red;">{{ $message }}</small> @enderror
         </div>
 
+
+
         <button type="submit">Submit Journal</button>
     </form>
 </div>
+
+<script>
+const textarea = document.getElementById('content');
+const wordCountLabel = document.getElementById('wordCount');
+
+textarea.addEventListener('input', () => {
+    const words = textarea.value.trim().split(/\s+/).filter(w => w.length > 0);
+    wordCountLabel.textContent = words.length + ' words';
+});
+</script>
 @endsection

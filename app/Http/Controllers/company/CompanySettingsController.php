@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Company;
 
+use Log;
 use App\Models\Company;
 use App\Models\Notification;
 use Illuminate\Http\Request;
@@ -24,12 +25,20 @@ class CompanySettingsController extends Controller
       $authCompany = Auth::guard('company')->user();
       $company = Company::find($authCompany->id);
 
+    $faculty = $company->faculty;
+
+
+
+
 
     if ($request->has('default')) {
         $company->allowed_time_in_start  = $request->default['time_in_start'];
         $company->allowed_time_in_end    = $request->default['time_in_end'];
         $company->allowed_time_out_start = $request->default['time_out_start'];
         $company->allowed_time_out_end   = $request->default['time_out_end'];
+        $company->working_days = json_encode($request->default['working_days'] ?? []);
+        $company->default_start_date = $request->default['start_date'] ?? now()->toDateString();
+
         $company->save();
 
 
@@ -42,35 +51,82 @@ class CompanySettingsController extends Controller
                         . 'Time Out (' . $company->allowed_time_out_start . '–' . $company->allowed_time_out_end . ')',
             'is_read'   => false,
         ]);
+
+       if ($faculty) { // check if a faculty is assigned
+            Notification::create([
+                'user_id'   => $faculty->id,
+                'user_type' => 'faculty',
+                'type'      => 'attendance time',
+                'title'     => 'Default Attendance Time Set',
+                'message'   => $company->name . ' updated default time: '
+                            . 'Time In (' . $company->allowed_time_in_start . '–' . $company->allowed_time_in_end . '), '
+                            . 'Time Out (' . $company->allowed_time_out_start . '–' . $company->allowed_time_out_end . ')',
+                'is_read'   => false,
+            ]);
+        }
+
+
+
     }
+
+
+
+
 
 
     if ($request->has('override')) {
-        $override = CompanyTimeOverride::updateOrCreate(
-            [
-                'company_id' => $company->id,
-                'date'       => $request->override['date'],
-            ],
-            [
-                'time_in_start'  => $request->override['time_in_start'],
-                'time_in_end'    => $request->override['time_in_end'],
-                'time_out_start' => $request->override['time_out_start'],
-                'time_out_end'   => $request->override['time_out_end'],
-            ]
-        );
 
+      $isNoWork = $request->input('override.is_no_work', 0);
+    // Cast to integer to ensure it's 1 or 0
+    $isNoWork = (int) $isNoWork;
 
-            Notification::create([
-            'user_id'   => 1, // admin ID
-            'user_type' => 'admin',
+    $overrideData = [
+        'time_in_start'  => $request->override['time_in_start'] ?? null,
+        'time_in_end'    => $request->override['time_in_end'] ?? null,
+        'time_out_start' => $request->override['time_out_start'] ?? null,
+        'time_out_end'   => $request->override['time_out_end'] ?? null,
+         'is_no_work'     => $isNoWork,
+    ];
+
+    $override = CompanyTimeOverride::updateOrCreate(
+        [
+            'company_id' => $company->id,
+            'date'       => $request->override['date'],
+        ],
+        $overrideData
+    );
+
+    // Notifications (unchanged)
+    Notification::create([
+        'user_id'   => 1, // admin ID
+        'user_type' => 'admin',
+        'title'     => 'New Attendance Time Set',
+        'message'   => $company->name . ' set new attendance time on ' . $override->date
+                     . ($override->is_no_work ? ' (No Work Today)' : '')
+                     . ': Time In (' . ($override->time_in_start ?? '-') . '–' . ($override->time_in_end ?? '-') . '), '
+                     . 'Time Out (' . ($override->time_out_start ?? '-') . '–' . ($override->time_out_end ?? '-') . ')',
+        'is_read'   => false,
+    ]);
+
+    if ($faculty) {
+        Notification::create([
+            'user_id'   => $faculty->id,
+            'user_type' => 'faculty',
+            'type'      => 'attendance time',
             'title'     => 'New Attendance Time Set',
-            'message'   => $company->name . ' set new attendance time on ' . $override->date . ': '
-                        . 'Time In (' . $override->time_in_start . '–' . $override->time_in_end . '), '
-                        . 'Time Out (' . $override->time_out_start . '–' . $override->time_out_end . ')',
+            'message'   => $company->name . ' set new attendance time on ' . $override->date
+                         . ($override->is_no_work ? ' (No Work Today)' : '')
+                         . ': Time In (' . ($override->time_in_start ?? '-') . '–' . ($override->time_in_end ?? '-') . '), '
+                         . 'Time Out (' . ($override->time_out_start ?? '-') . '–' . ($override->time_out_end ?? '-') . ')',
             'is_read'   => false,
         ]);
     }
+}
+
+
+
 
     return redirect()->back()->with('success', 'Time settings updated successfully.');
+
 }
 }

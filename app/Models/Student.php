@@ -36,19 +36,14 @@ class Student extends Authenticatable
         ->where('status', 'approved')
         ->sum('credited_hours');
 
-    // 3️⃣ Combine
+
     return round($hoursFromAttendance + $hoursFromAppeals, 2);
     }
 
 
 
 
-
-
-
-
-
-    public function getRemainingHoursAttribute(){ //!get remaining hours
+    public function getRemainingHoursAttribute(){
         return max($this->required_hours - $this->accumulated_hours, 0);
     }
 
@@ -57,7 +52,57 @@ class Student extends Authenticatable
         return $this->accumulated_hours >= $this->required_hours;
     }
 
+         public function calculateAbsences()
+        {
+            $company = $this->company;
 
+            if (!$company) return 0;
+
+            // Start date for counting absences
+            $startDate = $company->default_start_date ?? $company->created_at->toDateString();
+            $endDate   = Carbon::today();
+
+            $currentDate = Carbon::parse($startDate);
+
+            $workingDays = json_decode($company->working_days ?? '["Monday","Tuesday","Wednesday","Thursday","Friday"]', true);
+
+            $absences = 0;
+
+            while ($currentDate->lte($endDate)) {
+                // Skip non-working days
+                if (in_array($currentDate->format('l'), $workingDays)) {
+
+                    // Skip overridden "No Work" days
+                    $override = $company->overrides()->where('date', $currentDate->toDateString())->first();
+                    if (!($override && $override->is_no_work)) {
+
+                        // Check if student has Time In for this date
+                        $attendance = $this->attendances()->whereDate('time_in', $currentDate->toDateString())->first();
+                        if (!$attendance) {
+                            $absences++;
+                        }
+                    }
+                }
+
+                $currentDate->addDay();
+            }
+
+            return $absences;
+        }
+
+
+
+
+        public function appealsCount()
+    {
+        return $this->appeals()->count();
+    }
+
+
+
+
+
+    //! relationships
 
     public function company(){
         return $this->belongsTo(Company::class);
@@ -93,6 +138,13 @@ class Student extends Authenticatable
     {
         return $this->hasMany(StudentRating::class);
     }
+
+
+    public function appeals()
+    {
+        return $this->hasMany(AttendanceAppeal::class);
+    }
+
 
 
 

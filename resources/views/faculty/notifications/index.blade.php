@@ -651,6 +651,23 @@
   color: #2d5db6;
 }
 
+
+
+.type-attendance_time {
+    background-color: #94b2d4;
+    color: #fff;
+    border: 1px solid #1b5bbf;
+    border-left: 4px solid #1b5bbf;
+}
+
+.type-attendance_time i {
+    background-color: #2defe5;
+    color: #13b30d;
+    border: 1px solid #1b5bbf;
+    border-left: 4px solid #1b5bbf;
+}
+
+
 </style>
 
 <div class="notifications-container">
@@ -660,10 +677,6 @@
             Notifications
         </h1>
         <div class="notifications-actions">
-            {{-- <button class="action-btn mark-all-read-btn" onclick="markAllAsRead()">
-                <i class="fas fa-check-double"></i>
-                Mark All Read
-            </button> --}}
             <form id="deleteAllForm" action="{{ route('faculty.notifications.deleteAll') }}" method="POST" style="display:inline;">
                 @csrf
                 @method('DELETE')
@@ -723,6 +736,9 @@
                     @case('summary_report')
                         <i class="fas fa-file-pdf"></i>
                         @break
+                    @case('attendance_time')
+                        <i class="fas fa-clock"></i>
+                    @break
                     @case('success')
                         <i class="fas fa-check-circle"></i>
                         @break

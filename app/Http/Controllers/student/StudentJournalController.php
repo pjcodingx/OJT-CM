@@ -38,16 +38,21 @@ class StudentJournalController extends Controller
     public function store(Request $request){
 
         $student = Auth::guard('student')->user();
-        $validated = $request->validate([
-            'journal_date' => 'required|date|before_or_equal:today',
-            'content' => 'required|string',
-            'attachments.*' => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png,gif,bmp|max:2048',
-        ],
-    [
-         'journal_date.before_or_equal' => 'You cannot submit a journal entry for a future date.',
-    ]);
+       $validated = $request->validate([
+                'journal_date' => 'required|date|before_or_equal:today',
+                'content' => ['required', 'string', function($attribute, $value, $fail) {
+                    if (str_word_count($value) < 300) {
+                        $fail('The journal content must be at least 300 words.');
+                    }
+                }],
+                'attachments.*' => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png,gif,bmp|max:2048',
+            ],
+            [
+                'journal_date.before_or_equal' => 'You cannot submit a journal entry for a future date.',
+            ]);
 
-        //
+
+
         $journal = Journal::create([
             'student_id' => Auth::guard('student')->id(),
             'journal_date' => $validated['journal_date'],
@@ -70,7 +75,7 @@ class StudentJournalController extends Controller
         // Create notification for  faculty
         if ($student->faculty_id) {
         Notification::create([
-            'user_id' => $student->faculty_id, // faculty's ID
+            'user_id' => $student->faculty_id,
             'user_type' => 'faculty',
             'title' => 'New Journal Submission',
             'message' => $student->name . ' submitted a new journal entry.',

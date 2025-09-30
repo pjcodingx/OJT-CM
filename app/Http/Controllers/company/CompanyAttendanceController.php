@@ -63,6 +63,14 @@ class CompanyAttendanceController extends Controller
             ->whereDate('date', $today)
             ->first();
 
+            if ($override && $override->is_no_work) {
+                    return response()->json([
+                        'success' => false,
+                        'name'    => $student->name,
+                        'message' => 'Today is a non-working day.'
+                    ]);
+                }
+
         if ($override) {
             if ($override->time_in_start && $override->time_in_end) {
                 $timeInStart = Carbon::parse($override->time_in_start);

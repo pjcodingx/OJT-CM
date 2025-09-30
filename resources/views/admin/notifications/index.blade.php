@@ -292,6 +292,65 @@
     100% { box-shadow: 0 0 0 0 rgba(0,123,255,0); }
 }
 
+.pagination-wrapper {
+    text-align: center;
+    margin-top: 30px;
+    font-family: Verdana, sans-serif;
+}
+
+.pagination {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.pagination .page-item {
+    display: inline-block;
+}
+
+
+.page-link {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #14532d;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+
+.page-link:hover {
+    background-color: #1e7c43;
+    transform: translateY(-1px);
+}
+
+
+.page-item.disabled .page-link {
+    background-color: #5c7f6e;
+    color: #ccc;
+    cursor: not-allowed;
+}
+
+
+.page-indicator .page-link.static {
+    background-color: transparent;
+    color: #98afa2;
+    font-weight: bold;
+    cursor: default;
+    padding: 10px 0;
+    border: none;
+    opacity: 0.5;
+}
+
+
 </style>
 
 <div class="notifications-container">
@@ -347,6 +406,7 @@
                         @case('new_company')
                             <i class="fas fa-building"></i>
                             @break
+
                         @case('override_schedule')
                             <i class="fas fa-clock"></i>
                             @break

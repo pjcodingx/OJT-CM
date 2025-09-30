@@ -64,7 +64,9 @@ class FacultyStudentsExport implements FromCollection, WithHeadings, WithColumnW
                 'Address' => $student->company->address ?? '--',
                 'Total Journals' => $student->total_journals,
                 'Rating' => $student->average_rating ?? '--',
-                'Total Hours' => $student->total_hours,
+                'Appeals Count' => (int) $student->appealsCount(),
+                'Absences' => (int) $student->calculateAbsences(),
+                'Total Hours' => $student->total_hours ?? 0,
             ]);
         });
     }
@@ -78,6 +80,8 @@ class FacultyStudentsExport implements FromCollection, WithHeadings, WithColumnW
             'Address',
             'Total Journals Submitted',
             'Rating',
+            'Appeals Submitted',
+            'Absences',
             'Total Hours Accumulated'
         ];
     }
@@ -91,23 +95,25 @@ class FacultyStudentsExport implements FromCollection, WithHeadings, WithColumnW
             'D' => 30, // Address
             'E' =>  30, // Total Journals
             'F' => 15, // Rating
-            'G' => 25, // Total Hours
+            'G' => 20, // Total Hours
+            'H' => 15,
+            'I' => 25,
         ];
     }
 
       public function styles(Worksheet $sheet)
     {
 
-        $sheet->getStyle('A1:G1')->getFont()->setBold(true);
-        $sheet->getStyle('A1:G1')->getAlignment()->setHorizontal('center');
+        $sheet->getStyle('A1:I1')->getFont()->setBold(true);
+        $sheet->getStyle('A1:I1')->getAlignment()->setHorizontal('center');
 
-         $sheet->getStyle('A1:G1')->getFill()
+         $sheet->getStyle('A1:I1')->getFill()
           ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
           ->getStartColor()->setARGB('0b4222');
 
-         $sheet->getStyle('A1:G1')->getFont()->getColor()->setARGB('FFFFFF');
+         $sheet->getStyle('A1:I1')->getFont()->getColor()->setARGB('FFFFFF');
 
-        $sheet->getStyle('A2:G'.$sheet->getHighestRow())
+        $sheet->getStyle('A2:I'.$sheet->getHighestRow())
               ->getAlignment()
               ->setHorizontal('center')
               ->setVertical('center');

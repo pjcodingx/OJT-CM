@@ -14,13 +14,30 @@ class Company extends Authenticatable
     use HasFactory, Notifiable;
 
     protected $fillable = [
-        'name', 'email', 'password', 'photo', 'address', 'location', 'faculty_id'
+        'name', 'email', 'password', 'photo', 'address', 'location', 'faculty_id', 'working_days','default_start_date'
+
     ];
 
-        public function faculties()
+      public function isWorkingDay(\Carbon\Carbon $date)
         {
-            return $this->belongsToMany(Faculty::class, 'faculty_id');
+            $dayName = $date->format('l'); // Monday, Tuesday, etc.
+
+            // Check if the day is overridden as no work
+            $override = $this->overrides()->where('date', $date->toDateString())->first();
+            if ($override && $override->is_no_work) {
+                return false;
+            }
+
+            // Check default working days
+            $workingDays = json_decode($this->working_days ?? '["Monday","Tuesday","Wednesday","Thursday","Friday"]');
+            return in_array($dayName, $workingDays);
         }
+
+        public function faculty()
+        {
+            return $this->belongsTo(Faculty::class, 'faculty_id');
+        }
+
 
         public function students(){
             return $this->hasMany(Student::class, 'company_id', 'id');
@@ -37,10 +54,6 @@ class Company extends Authenticatable
         }
 
 
-        public function faculty()
-        {
-            return $this->belongsTo(Faculty::class, 'faculty_id');
-        }
 
 
 

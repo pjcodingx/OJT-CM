@@ -60,6 +60,8 @@
             <th>Address</th>
             <th>Total Journals</th>
             <th>Rating</th>
+            <th>Appeals submitted</th>
+            <th>Absences</th>
             <th>Total Hours</th>
         </tr>
     </thead>
@@ -72,6 +74,8 @@
             <td>{{ $student->company->address ?? '--' }}</td>
             <td>{{ $student->total_journals }}</td>
             <td>{{ number_format($student->average_rating ?? 0, 0) . '/' . '5' }}</td>
+            <td>{{ $student->appealsCount() }}</td>
+            <td>{{ $student->calculateAbsences() }}</td>
             <td>{{ round($student->total_hours ?? 0, 1) }}</td>
         </tr>
         @endforeach

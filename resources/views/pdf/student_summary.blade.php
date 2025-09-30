@@ -114,8 +114,8 @@
             </td>
             <td style="width:25%">
                 <div class="card">
-                    <div class="label">Missed Attendances</div>
-                    <div class="value">{{ $missedAttendance }}</div>
+                    <div class="label">Absences</div>
+                    <div class="value">{{ $calculateAbsences}}</div>
                 </div>
             </td>
             <td style="width:25%">

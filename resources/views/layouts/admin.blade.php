@@ -88,10 +88,6 @@
                             <span class="nav-text">Task Monitoring</span>
                         </a>
                     </li>
-                    {{-- <li class="nav-item">
-                        <i class="fas fa-comments nav-icon"></i>
-                        <span class="nav-text">Feedback & Remarks</span>
-                    </li> --}}
 
                         <li class="nav-item {{ request()->routeIs('admin.notifications.index') ? 'active' : '' }}">
                             <a href="{{ route('admin.notifications.index') }}" class="nav-link" style="color: inherit; text-decoration: none;">
