@@ -694,6 +694,22 @@
 }
 
 
+.type-absence {
+    background-color: #fee2e2; /* light red */
+    color: #b91c1c; /* dark red text */
+}
+
+.notification-icon.absence {
+  background: linear-gradient(135deg, #dddddd, #e65050);
+  color: #b91c1c;
+}
+
+.notification-icon.absence i {
+  color: #b91c1c;
+  font-size: 18px;
+  background: transparent;
+}
+
 
 
 </style>
@@ -766,8 +782,6 @@
                     @case('reject')
                         <i class="fas fa-times-circle"></i>
                     @break
-
-
                     @case('company_feedback')
                         <i class="fas fa-briefcase"></i>
                         @break
@@ -776,6 +790,9 @@
                         @break
                     @case('journal_reminder')
                         <i class="fas fa-pen text-purple-500"></i>
+                        @break
+                        @case('absence')
+                        <i class="fas fa-user-slash text-red-500"></i>
                         @break
                     @default
                         <i class="fas fa-info-circle"></i>

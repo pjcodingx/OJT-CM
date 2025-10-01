@@ -52,54 +52,46 @@ class Student extends Authenticatable
         return $this->accumulated_hours >= $this->required_hours;
     }
 
-         public function calculateAbsences()
-        {
-            $company = $this->company;
+        public function calculateAbsences()
+{
+    $company = $this->company;
 
-            if (!$company) return 0;
+    if (!$company) return 0;
 
-            // Start date for counting absences
-            $startDate = $company->default_start_date ?? $company->created_at->toDateString();
-            $endDate   = Carbon::today();
+    // Only use default_start_date, skip created_at
+    if (!$company->default_start_date) {
+        return 0; // no defined start = no absences
+    }
 
-            $currentDate = Carbon::parse($startDate);
+    $startDate = Carbon::parse($company->default_start_date);
+    $endDate   = Carbon::today();
 
-            $workingDays = json_decode($company->working_days ?? '["Monday","Tuesday","Wednesday","Thursday","Friday"]', true);
+    $currentDate = $startDate;
+    $absences = 0;
 
-            $absences = 0;
+    while ($currentDate->lte($endDate)) {
+        // Check if this is a working day (already respects overrides)
+        if ($company->isWorkingDay($currentDate)) {
+            // Check if student has attendance record for this date
+            $attendance = $this->attendances()
+                ->whereDate('time_in', $currentDate->toDateString())
+                ->first();
 
-            while ($currentDate->lte($endDate)) {
-                // Skip non-working days
-                if (in_array($currentDate->format('l'), $workingDays)) {
-
-                    // Skip overridden "No Work" days
-                    $override = $company->overrides()->where('date', $currentDate->toDateString())->first();
-                    if (!($override && $override->is_no_work)) {
-
-                        // Check if student has Time In for this date
-                        $attendance = $this->attendances()->whereDate('time_in', $currentDate->toDateString())->first();
-                        if (!$attendance) {
-                            $absences++;
-                        }
-                    }
-                }
-
-                $currentDate->addDay();
+            if (!$attendance) {
+                $absences++;
             }
-
-            return $absences;
         }
 
+        $currentDate->addDay();
+    }
 
-
+    return $absences;
+}
 
         public function appealsCount()
     {
         return $this->appeals()->count();
     }
-
-
-
 
 
     //! relationships

@@ -667,6 +667,40 @@
     border-left: 4px solid #1b5bbf;
 }
 
+/* Absence (supports both "Absent" and "absence") */
+.notification-icon.Absent,
+.notification-icon.absence {
+  background: linear-gradient(135deg, #ef4444, #dc2626); /* red gradient */
+  color: #ffffff;
+}
+.notification-icon.Absent i,
+.notification-icon.absence i {
+  color: #ffffff;
+  font-size: 18px;
+}
+/* Badge styling (optional) */
+.type-absence,
+.type-Absent {
+  background-color: #fee2e2;
+  color: #b91c1c;
+  border: 1px solid #fca5a5;
+}
+.type-attendance_time {
+  background-color: #e6f0ff;
+  color: #1e40af;
+  border: 1px solid #93c5fd;
+}
+
+.notification-icon .fa-clock {
+    color: #2563eb; /* Blue-600 */
+}
+
+.notification-icon .fa-user-slash {
+    color: #dc2626; /* Red-600 */
+}
+
+
+
 
 </style>
 
@@ -736,8 +770,12 @@
                     @case('summary_report')
                         <i class="fas fa-file-pdf"></i>
                         @break
-                    @case('attendance_time')
-                        <i class="fas fa-clock"></i>
+                   @case('attendance_time')
+                        <i class="fas fa-clock text-blue-600"></i>
+                    @break
+
+                    @case('Absent')
+                         <i class="fas fa-user-slash text-red-500"></i>
                     @break
                     @case('success')
                         <i class="fas fa-check-circle"></i>
