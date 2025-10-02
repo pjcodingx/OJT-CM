@@ -175,7 +175,7 @@
                         <div class="card-content">
                             <h3 class="card-title">Number of Courses</h3>
                             <div class="card-number">{{ $courseCount }} </div>
-                            <a href="#" class="card-link">More info <i class="fas fa-chevron-right"></i></a>
+
                         </div>
                     </div>
                 </div>

@@ -121,9 +121,16 @@
 
 
 
-
-
     </style>
+
+    @if($errors->any())
+        <div style="background-color: #ef4444; color: white; padding: 12px; border-radius: 8px; margin-bottom: 20px;">
+            @foreach($errors->all() as $error)
+                <div>{{ $error }}</div>
+            @endforeach
+        </div>
+    @endif
+
 
     <div class="profile-container">
         <div class="profile-header">

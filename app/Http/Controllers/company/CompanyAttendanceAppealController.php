@@ -83,7 +83,7 @@ class CompanyAttendanceAppealController extends Controller
                 'user_type' => 'student',
                 'type' => 'reject',
                 'title' => 'Attendance Appeal Rejected',
-                'message' => "Your attendance appeal dated {$appeal->created_at->toFormattedDateString()} has been approved.",
+                'message' => "Your attendance appeal dated {$appeal->created_at->toFormattedDateString()} has been rejected.",
                 'is_read' => false,
             ]);
 

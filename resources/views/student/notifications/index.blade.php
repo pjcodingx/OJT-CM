@@ -559,49 +559,49 @@
 }
 
 .notification-type {
-  font-weight: 600;
-  padding: 2px 8px;
-  border-radius: 12px;
-  font-size: 0.85rem;
-  display: inline-block;
-  text-transform: capitalize;
-}
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    display: inline-block;
+    text-transform: capitalize;
+    }
 
 
 .type-reject {
-  background-color: #ffffff;
-  color: #0f0700;
-  border: 1px solid #ff0000;
-  border-left: 5px solid #d84400;
-}
+    background-color: #ffffff;
+    color: #0f0700;
+    border: 1px solid #ff0000;
+    border-left: 5px solid #d84400;
+    }
 
 .type-journal_reminder {
-  background-color: #ffffff;
-  color: #0f0700;
-  border: 1px solid #ff9cf7;
-  border-left: 5px solid #ff9cf7;
-}
+    background-color: #ffffff;
+    color: #0f0700;
+    border: 1px solid #ff9cf7;
+    border-left: 5px solid #ff9cf7;
+    }
 
 .type-approve {
-  background-color: #ffffff;
-  color: #0f0700;
-  border: 1px solid #005a1e;
-  border-left: 5px solid #005a1e;
-}
+    background-color: #ffffff;
+    color: #0f0700;
+    border: 1px solid #005a1e;
+    border-left: 5px solid #005a1e;
+    }
 
 .type-company_feedback {
-  background-color: #ffffff;
-  color: #8a5200;
-  border: 1px solid #ffb347;
-  border-left: 4px solid #ff9500;
-}
+    background-color: #ffffff;
+    color: #8a5200;
+    border: 1px solid #ffb347;
+    border-left: 4px solid #ff9500;
+    }
 
 .type-summary_report {
-  background-color: #fef0f0;
-  color: #a82a2a;
-  border: 1px solid #e67e7e;
-  border-left: 4px solid #c0392b;
-}
+    background-color: #fef0f0;
+    color: #a82a2a;
+    border: 1px solid #e67e7e;
+    border-left: 4px solid #c0392b;
+    }
 
 
 .type-info {
@@ -695,8 +695,8 @@
 
 
 .type-absence {
-    background-color: #fee2e2; /* light red */
-    color: #b91c1c; /* dark red text */
+    background-color: #fee2e2;
+    color: #b91c1c;
 }
 
 .notification-icon.absence {
@@ -709,7 +709,11 @@
   font-size: 18px;
   background: transparent;
 }
+.notification-icon.warning {
+    background-color: #ffffff;
+    color: #ffffff;
 
+}
 
 
 </style>
@@ -721,10 +725,7 @@
             Notifications
         </h1>
         <div class="notifications-actions">
-            {{-- <button class="action-btn mark-all-read-btn" onclick="markAllAsRead()">
-                <i class="fas fa-check-double"></i>
-                Mark All Read
-            </button> --}}
+
             <form id="deleteAllForm" action="{{ route('student.notifications.deleteAll') }}" method="POST" style="display:inline;">
                 @csrf
                 @method('DELETE')
@@ -794,6 +795,9 @@
                         @case('absence')
                         <i class="fas fa-user-slash text-red-500"></i>
                         @break
+                    @case('warning')
+                        <i class="fas fa-exclamation-circle text-yellow-500"></i>
+                    @break
                     @default
                         <i class="fas fa-info-circle"></i>
                 @endswitch

@@ -108,10 +108,10 @@ class AttendanceExport implements FromCollection, WithHeadings, WithMapping, Wit
             'C' => 25, // Company
             'D' => 30, // Address
             'E' =>  20, // Total Journals
-            'F' => 15, // Rating
-            'G' => 15, // Total Hours
-            'H' => 20,
-            'I' => 20,
+            'F' => 30, // Rating
+            'G' => 20, // Total Hours
+            'H' => 15,
+            'I' => 15,
             'J' => 20
         ];
     }
@@ -122,11 +122,11 @@ class AttendanceExport implements FromCollection, WithHeadings, WithMapping, Wit
         $sheet->getStyle('A1:J1')->getFont()->setBold(true);
         $sheet->getStyle('A1:J1')->getAlignment()->setHorizontal('center');
 
-            $sheet->getStyle('A1:G1')->getFill()
+            $sheet->getStyle('A1:J1')->getFill()
             ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
             ->getStartColor()->setARGB('0b4222');
 
-            $sheet->getStyle('A1:G1')->getFont()->getColor()->setARGB('FFFFFF');
+            $sheet->getStyle('A1:J1')->getFont()->getColor()->setARGB('FFFFFF');
 
             $sheet->getStyle('A2:J'.$sheet->getHighestRow())
                 ->getAlignment()

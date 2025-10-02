@@ -12,5 +12,6 @@ Schedule::command('reminder:daily-journal')->everyMinute();
 
 //! $schedule->command('reminder:daily-journal')->dailyAt('15:00');
 
+Schedule::command('students:check-absences')->everyMinute();
 
-Schedule::command('students:check-absences')->everyMinute(); //change rani every 10 mins
+Schedule::command('notify:missing-journals')->everyMinute();

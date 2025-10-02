@@ -76,7 +76,7 @@
             <td>{{ number_format($student->average_rating ?? 0, 0) . '/' . '5' }}</td>
             <td>{{ $student->appealsCount() }}</td>
             <td>{{ $student->calculateAbsences() }}</td>
-            <td>{{ round($student->total_hours ?? 0, 1) }}</td>
+            <td>{{ $student->accumulated_hours }}</td>
         </tr>
         @endforeach
     </tbody>

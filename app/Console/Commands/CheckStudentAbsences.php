@@ -44,9 +44,13 @@ class CheckStudentAbsences extends Command
             }
 
             // Check if student has attendance today
-            $attendance = Attendance::where('student_id', $student->id)
-                ->whereDate('time_in', $today) // safer than created_at
-                ->first();
+           $attendance = Attendance::where('student_id', $student->id)
+                        ->where(function($query) use ($today) {
+                            $query->whereDate('time_in', $today)
+                                ->orWhereDate('time_out', $today);
+                        })
+                        ->first();
+
 
             if (!$attendance) {
                 // No time in today -> absent

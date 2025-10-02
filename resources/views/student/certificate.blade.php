@@ -490,17 +490,13 @@
 
 </style>
 
-@if($available)
-    <a href="{{ route('certificate_pdf.preview', $student->id) }}"
-       class="btn btn-primary"
-       target="_blank">
-       Download Certificate
-    </a>
-@endif
-
-
-
-
+    {{-- !@if($available)
+        <a href="{{ route('certificate_pdf.preview', $student->id) }}"
+        class="btn btn-primary"
+        target="_blank">
+        Download Certificate
+        </a>
+    @endif --}}
 
 <div class="certificate-container">
     <div class="certificate">

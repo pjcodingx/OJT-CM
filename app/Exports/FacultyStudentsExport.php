@@ -66,7 +66,7 @@ class FacultyStudentsExport implements FromCollection, WithHeadings, WithColumnW
                 'Rating' => $student->average_rating ?? '--',
                 'Appeals Count' => (int) $student->appealsCount(),
                 'Absences' => (int) $student->calculateAbsences(),
-                'Total Hours' => $student->total_hours ?? 0,
+                'Total Hours' => $student->accumulated_hours ?? 0,
             ]);
         });
     }

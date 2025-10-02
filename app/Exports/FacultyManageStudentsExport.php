@@ -88,16 +88,16 @@ class FacultyManageStudentsExport implements FromCollection, WithHeadings, WithC
       public function styles(Worksheet $sheet)
     {
 
-        $sheet->getStyle('A1:G1')->getFont()->setBold(true);
-        $sheet->getStyle('A1:G1')->getAlignment()->setHorizontal('center');
+        $sheet->getStyle('A1:F1')->getFont()->setBold(true);
+        $sheet->getStyle('A1:F1')->getAlignment()->setHorizontal('center');
 
-         $sheet->getStyle('A1:G1')->getFill()
+         $sheet->getStyle('A1:F1')->getFill()
           ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
           ->getStartColor()->setARGB('0b4222');
 
-         $sheet->getStyle('A1:G1')->getFont()->getColor()->setARGB('FFFFFF');
+         $sheet->getStyle('A1:F1')->getFont()->getColor()->setARGB('FFFFFF');
 
-        $sheet->getStyle('A2:G'.$sheet->getHighestRow())
+        $sheet->getStyle('A2:F'.$sheet->getHighestRow())
               ->getAlignment()
               ->setHorizontal('center')
               ->setVertical('center');
