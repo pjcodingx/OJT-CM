@@ -57,7 +57,7 @@ public function store(Request $request)
 
         // 2. Check if company exists and has start date
         if (!$company || !$company->default_start_date) {
-            return back()->with('error', 'Journal submission is not yet allowed. Please wait until the company sets the start date.');
+            return back()->with('error', 'Journal submission is not yet allowed. Please wait until the company sets the start date.')->withInput();
         }
 
         $timezone = 'Asia/Manila';
@@ -67,7 +67,7 @@ public function store(Request $request)
 
         // 3. Prevent submission before company start date
         if ($journalDate->lt($startDate)) {
-            return back()->with('error', 'Journal submission is not allowed before the company start date.');
+            return back()->with('error', 'Journal submission is not allowed before the company start date.')->withInput();
         }
 
         // 4. Check for today’s submission restriction
@@ -84,13 +84,13 @@ public function store(Request $request)
             } elseif ($company->allowed_time_out_end) {
                 $timeOut = $journalDate->copy()->setTimeFromTimeString($company->allowed_time_out_end);
             } else {
-                return back()->with('error', 'Company has not set Time Out yet.');
+                return back()->with('error', 'Company has not set Time Out yet.')->withInput();
             }
 
             $allowTime = $timeOut->copy()->subMinutes(30);
 
             if ($now->lt($allowTime)) {
-                return back()->with('error', 'You cannot submit today’s journal yet. Allowed from ' . $allowTime->format('g:i A'));
+                return back()->with('error', 'You cannot submit today’s journal yet. Allowed from ' . $allowTime->format('g:i A'))->withInput();
             }
         }
 
@@ -128,12 +128,6 @@ public function store(Request $request)
 
         return redirect()->route('student.journals.create')->with('success', 'Journal submitted successfully.');
     }
-
-
-
-
-
-
 
 public function downloadWord($id)
 {

@@ -139,6 +139,10 @@ class MultiLoginController extends Controller
     throw ValidationException::withMessages([
         'email' => ['Authetication login failed!'],
     ]);
+
+
+
+
 }
 
 }
