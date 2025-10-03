@@ -226,18 +226,21 @@
 
 
                     <td>
-                        <button class="btn-view" onclick="openModal({{ $journal->id }})">View</button>
-                       @if($journal->status == 'Late')
-                            <form action="{{ route('faculty.journals.penalty', $journal->id) }}" method="POST" style="display:inline;">
-                                @csrf
-                                <input type="number" name="penalty_hours" min="0.1" step="0.1" max="1" placeholder="minutes" style="width:63px; margin-left:5px;">
-                                <button type="submit" class="btn-view" style="background-color: #b71c1c; margin-left:5px;">
-                                    Deduct
-                                </button>
-                            </form>
-                        @endif
+                        <div style="display: flex; gap: 5px; align-items: center;">
+                            <button class="btn-view" onclick="openModal({{ $journal->id }})">View</button>
 
+                            @if($journal->status == 'Late')
+                                <form action="{{ route('faculty.journals.penalty', $journal->id) }}" method="POST" style="display:flex; gap: 5px; align-items:center; margin:0;">
+                                    @csrf
+                                    <input type="number" name="penalty_hours" min="0.1" step="0.1" max="1" placeholder="min" style="width:50px; height:28px; padding:2px 4px; border-radius:4px; border:1px solid #ccc;">
+                                    <button type="submit" class="btn-view" style="background-color: #b71c1c; margin:0; padding:4px 8px;">
+                                        Deduct
+                                    </button>
+                                </form>
+                            @endif
+                        </div>
                     </td>
+
                 </tr>
             @endforeach
         </tbody>

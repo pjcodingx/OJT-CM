@@ -674,9 +674,21 @@
 
 }
 
+.notification-icon.absence {
+  background: linear-gradient(135deg, #dddddd, #e65050);
+  color: #b91c1c;
+}
 
+.notification-icon.absence i {
+  color: #b91c1c;
+  font-size: 18px;
+  background: transparent;
+}
 
-
+.type-absence{
+     background-color: #fa9a8d;
+    color: #550d04;
+}
 
 </style>
 
@@ -728,25 +740,15 @@
                     <div class="unread-indicator"></div>
                 @endif
 
-
-                <div class="notification-actions">
-                    @if(!$notification->is_read)
-                        {{-- <button class="notification-action-btn mark-read-btn" onclick="markAsRead({{ $notification->id }})" title="Mark as read">
-                            <i class="fas fa-check"></i>
-                        </button> --}}
-                    @endif
-                    {{-- <button class="notification-action-btn delete-btn" onclick="showDeleteModal({{ $notification->id }})" title="Delete notification">
-                        <i class="fas fa-trash"></i>
-                    </button> --}}
-                </div>
-
-
                 {{-- I will add here new type of notifications --}}
                 <div class="notification-icon {{ $notification->type ?? 'info' }}">
                 @switch($notification->type ?? 'info')
                     @case('appeal')
                       <i class="fa-solid fa-clipboard-user"></i>
                     @break
+                     @case('absence')
+                        <i class="fas fa-user-slash text-red-500"></i>
+                        @break
                     @case('journal_reminder')
                         <i class="fas fa-pen text-purple-500"></i>
                         @break
