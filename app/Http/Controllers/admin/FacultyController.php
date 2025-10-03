@@ -19,44 +19,38 @@ class FacultyController extends Controller
     public function index(Request $request){
 
         $admin = Auth::guard('admin')->user();
-        $faculties = Faculty::with('course')->paginate(8)->withQueryString();
+    $courses = Course::all();
+    $courseCounts = Course::withCount('faculties')->get();
 
-        $companies = Company::with('faculty')->get();
-        $courses = Course::all();
-        $courseCounts = Course::withCount('faculties')->get();
+    // Start query with eager loading of course and companies, and students count
+    $query = Faculty::with(['course', 'companies'])
+                    ->withCount('students');
 
-        $query = Faculty::with('course')->withCount('students')
-                      ;
+    // Search by name or email
+    if ($request->filled('search')) {
+        $search = $request->input('search');
+        $query->where(function ($q) use ($search) {
+            $q->where('name', 'like', "%{$search}%")
+              ->orWhere('email', 'like', "%{$search}%");
+        });
+    }
 
-            if ($request->has('search')) {
-                $search = $request->input('search');
-                $query->where(function($q) use ($search) {
-                    $q->where('name', 'like', "%{$search}%")
-                    ->orWhere('email', 'like', "%{$search}%");
-                });
-            }
+    // Filter by status (default active)
+    if ($request->filled('status')) {
+        $query->where('status', $request->status);
+    } else {
+        $query->where('status', 1);
+    }
 
-            $query = Faculty::with('course')->withCount('students');
+    // Filter by course
+    if ($request->filled('course_id')) {
+        $query->where('course_id', $request->input('course_id'));
+    }
 
-
-                if ($request->filled('status')) {
-
-                    $query->where('status', $request->status);
-                } else {
-
-                    $query->where('status', 1);
-                }
-
-
-
-
-            if ($request->filled('course_id')) {
-                $query->where('course_id', $request->input('course_id'));
-            }
-
+    // Paginate results
     $faculties = $query->paginate(8)->withQueryString();
 
-        return view('admin.faculties.index', compact('admin', 'courses', 'courseCounts', 'faculties', 'companies'));
+    return view('admin.faculties.index', compact('admin', 'courses', 'courseCounts', 'faculties'));
 
     }
 
@@ -82,26 +76,35 @@ class FacultyController extends Controller
         'email' => 'required|email|unique:faculties,email,' . $faculty->id,
         'password' => 'nullable|string|min:6|confirmed',
         'course_id' => 'required|exists:courses,id',
-        'company_ids' => 'nullable|array',
-        'company_ids.*' => 'exists:companies,id',
     ]);
 
-            $faculty->name = $validated['name'];
-            // $faculty->email = $validated['email'];
-            $faculty->course_id = $validated['course_id'];
+         $validated = $request->validate([
+        'name' => 'required|string|max:255',
+        'email' => 'required|email|unique:faculties,email,' . $faculty->id,
+        'password' => 'nullable|string|min:6|confirmed',
+        'course_id' => 'required|exists:courses,id',
+    ]);
 
-            if (!empty($validated['password'])) {
-                $faculty->password = Hash::make($validated['password']);
-            }
+    $faculty->name = $validated['name'];
+    $faculty->course_id = $validated['course_id'];
+
+    if (!empty($validated['password'])) {
+        $faculty->password = Hash::make($validated['password']);
+    }
 
     $faculty->save();
 
-    $faculty->companies()->sync($validated['company_ids'] ?? []);
+    // Remove old company assignments
+    Company::where('faculty_id', $faculty->id)->update(['faculty_id' => null]);
 
-        $faculty->companies()->sync($validated['company_ids'] ?? []);
+    // Assign new companies
+    if (!empty($validated['company_ids'])) {
+        Company::whereIn('id', $validated['company_ids'])
+            ->update(['faculty_id' => $faculty->id]);
+    }
 
-        return redirect()->route('admin.faculties.index')
-            ->with('success', 'Adviser updated successfully.');
+    return redirect()->route('admin.faculties.index')
+        ->with('success', 'Adviser updated successfully.');
         }
 
         public function destroy($id){
@@ -182,7 +185,7 @@ class FacultyController extends Controller
             $admin = Auth::guard('admin')->user();
 
             $companies = $faculty->companies()->paginate(15);
-            $faculty->load('companies');
+
 
             return view('admin.faculties.companies', compact('admin', 'companies', 'faculty'));
         }

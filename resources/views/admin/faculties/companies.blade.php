@@ -71,18 +71,17 @@
     <a href="{{ route('admin.faculties.index') }}" class="back-btn" >&#8592; Back</a>
 </div>
 
-@if($faculty->companies->count())
+@if($companies->count())
 <table>
     <thead>
         <tr>
-
             <th>Company Name</th>
             <th>Email</th>
             <th>Address</th>
         </tr>
     </thead>
     <tbody>
-        @foreach($faculty->companies as $company)
+        @foreach($companies as $company)
         <tr>
 
             <td>{{ $company->name }}</td>
