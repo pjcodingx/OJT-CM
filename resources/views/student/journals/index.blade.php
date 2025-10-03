@@ -233,6 +233,38 @@
             padding: 1.25rem;
         }
     }
+
+   .download-btn {
+    margin-top: 1rem;
+    text-align: right;
+}
+
+.download-word-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    color: white !important;
+    font-size: 0.85rem;
+    font-weight: 500;
+    border-radius: 8px;
+    text-decoration: none;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    transition: all 0.2s ease-in-out;
+}
+
+.download-word-btn i {
+    font-size: 1rem;
+}
+
+.download-word-btn:hover {
+    background: linear-gradient(135deg, #1e40af, #1d4ed8);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+}
+
+
 </style>
 
 <div class="container">
@@ -273,7 +305,17 @@
                             </ul>
                         </div>
                     @endif
+
+                   <div class="download-btn">
+    <a href="{{ route('journals.download', $journal->id) }}" class="download-word-btn">
+        <i class="fa-solid fa-file-word"></i> Download Word
+    </a>
+</div>
+
                 </div>
+
+
+
             @endforeach
 
             <div class="pagination-wrapper">

@@ -186,6 +186,7 @@ Route::middleware(['student'])->prefix('student')->group(function () {
     ->name('certificate_pdf.preview');
 
 
+ Route::get('/journals/{journal}/download-word', [StudentJournalController::class, 'downloadWord'])->name('journals.download');
 
 
 
@@ -265,7 +266,6 @@ Route::middleware(['faculty'])->prefix('faculty')->group(function (){
 
 
 
-
 });
 
 Route::middleware(['company'])->prefix('company')->group(function(){
@@ -306,5 +306,8 @@ Route::middleware(['company'])->prefix('company')->group(function(){
       Route::get('/change-password', [CompanyDashboardController::class, 'changePassword'])->name('company.change.password');
       Route::post('/company/change-password/{id}', [CompanyDashboardController::class, 'updatePassword'])
     ->name('company.update.password');
+
+
+
 
 });
