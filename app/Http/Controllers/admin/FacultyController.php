@@ -94,7 +94,9 @@ class FacultyController extends Controller
 
     $faculty->save();
 
-    // Remove old company assignments
+   // Remove old company assignments and assign new ones only if company_ids is present
+if ($request->has('company_ids')) {
+    // Unassign old companies
     Company::where('faculty_id', $faculty->id)->update(['faculty_id' => null]);
 
     // Assign new companies
@@ -102,6 +104,8 @@ class FacultyController extends Controller
         Company::whereIn('id', $validated['company_ids'])
             ->update(['faculty_id' => $faculty->id]);
     }
+}
+
 
     return redirect()->route('admin.faculties.index')
         ->with('success', 'Adviser updated successfully.');

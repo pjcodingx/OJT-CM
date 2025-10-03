@@ -253,8 +253,6 @@
 
 
 
-
-
         @if(session('success'))
             <div id="alertBox" class="alert-success">
                 {{ session('success') }}
