@@ -165,32 +165,17 @@
  <small id="password-match-message" style="color: red; display: none; margin-top: -15px; margin-bottom: 7px;">Passwords do not match</small>
 
 
-        <div class="form-group">
-            <label for="course_id">Department / Course</label>
-            <select name="course_id" required>
-                <option value="">Select Course</option>
-                @foreach ($courses as $course)
-                    <option value="{{ $course->id }}" {{ old('course_id') == $course->id ? 'selected' : '' }}>
-                        {{ $course->name }}
-                    </option>
-                @endforeach
-            </select>
-        </div>
-
-
-
-        {{-- <div class="form-group">
-            <label>Partnered Companies</label>
-            <select name="company_ids[]" multiple>
-                @foreach ($companies as $company)
-                    <option value="{{ $company->id }}"
-                        @if (is_array(old('company_ids')) && in_array($company->id, old('company_ids'))) selected @endif>
-                        {{ $company->name }}
-                    </option>
-                @endforeach
-            </select>
-            <small>Hold Ctrl (Windows) or Command (Mac) to select multiple.</small>
-        </div> --}}
+       <div class="form-group">
+        <label for="course_id">Course</label>
+        <select name="course_id" id="course_id" class="form-control" required>
+            <option value="">-- Select Course --</option>
+            @foreach($courses as $course)
+                <option value="{{ $course->id }}" {{ old('course_id') == $course->id ? 'selected' : '' }}>
+                    {{ $course->name }}
+                </option>
+            @endforeach
+        </select>
+    </div>
 
         <button type="submit">Create Adviser</button>
     </form>
