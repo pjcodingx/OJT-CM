@@ -26,7 +26,7 @@ class StudentJournalController extends Controller
             $query->whereDate('journal_date', '<=', $request->end_date);
         })
         ->orderBy('journal_date', 'desc')
-        ->paginate(3)->withQueryString();
+        ->paginate(2)->withQueryString();
 
     return view('student.journals.index', compact('journals', 'student'));
 }

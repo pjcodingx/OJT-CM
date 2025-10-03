@@ -724,6 +724,25 @@
     color: #d3091a;
 }
 
+.notification-icon.time-override {
+    background-color: #ffffff;
+    color: #1e08e4;
+}
+
+.type-time-override{
+   background-color: #a9d7f1;
+    color: #36b5ff;
+}
+.notification-icon.penalty {
+    background-color: #ffffff;
+    color: #ff9100;
+}
+
+.type-penalty{
+   background-color: #e7b87a;
+    color: #ce7604;
+}
+
 
 </style>
 
@@ -780,6 +799,9 @@
                     @case('approve')
                         <i class="fas fa-check-circle"></i>
                     @break
+                      @case('penalty')
+                            <i class="fas fa-hourglass-half text-orange-500"></i>
+                        @break
                     @case('no-work')
                         <i class="fas fa-ban text-red-500"></i>
                     @break
@@ -801,6 +823,9 @@
                     @case('warning')
                         <i class="fas fa-exclamation-circle text-yellow-500"></i>
                     @break
+                    @case('time-override')
+                        <i class="fas fa-clock text-blue-500"></i>
+                    @break
                     @default
                         <i class="fas fa-info-circle"></i>
                 @endswitch
@@ -811,7 +836,7 @@
                     <div class="notification-title">
                         {{ $notification->title }}
                         @if($notification->type === 'journal-reminder')
-                            <span class="badge-due-today">Due 5:00pm</span>
+                            <span class="badge-due-today">Due 11:59pm </span>
                         @endif
                     </div>
 

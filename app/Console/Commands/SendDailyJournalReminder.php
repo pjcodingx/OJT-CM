@@ -47,7 +47,7 @@ class SendDailyJournalReminder extends Command
                     'user_id' => $student->id,
                     'user_type' => 'student',
                     'title'   => 'Daily Journal Reminder',
-                    'message' => 'Please submit your journal for before on or before 5pm.',
+                    'message' => 'Please submit your journal for before on or before 11:59pm.',
                     'type'    => 'journal-reminder',
                     'is_read' => false,
                 ]);
