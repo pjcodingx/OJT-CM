@@ -18,27 +18,31 @@ class Student extends Authenticatable
 
     //to get the time in and out and deduct in required hours
 
-    public function getAccumulatedHoursAttribute(){ //!total hours based sa time in time out
-        $totalSeconds = $this->attendances->reduce(function ($carry, $attendance) {
-            if ($attendance->date && $attendance->time_in && $attendance->time_out) {
-                $in = Carbon::parse($attendance->date . ' ' . $attendance->time_in);
-                $out = Carbon::parse($attendance->date . ' ' . $attendance->time_out);
+    public function getAccumulatedHoursAttribute()
+{
+    $totalSeconds = $this->attendances->reduce(function ($carry, $attendance) {
+        if ($attendance->time_in && $attendance->time_out) {
+            $in = Carbon::parse($attendance->date . ' ' . $attendance->time_in);
+            $out = Carbon::parse($attendance->date . ' ' . $attendance->time_out);
 
-                $carry += abs($out->timestamp - $in->timestamp);
-            }
-            return $carry;
-        }, 0);
+            $carry += abs($out->timestamp - $in->timestamp);
+        }
 
-        $hoursFromAttendance = $totalSeconds / 3600;
+        // Subtract penalty hours stored in DB
+        $carry -= ($attendance->penalty_hours ?? 0) * 3600;
 
-        // 2️⃣ Credited hours from approved appeals
-        $hoursFromAppeals = $this->attendanceAppeals()
-            ->where('status', 'approved')
-            ->sum('credited_hours');
+        return $carry;
+    }, 0);
 
+    $hoursFromAttendance = $totalSeconds / 3600;
 
-        return round($hoursFromAttendance + $hoursFromAppeals, 2);
-    }
+    $hoursFromAppeals = $this->attendanceAppeals()
+        ->where('status', 'approved')
+        ->sum('credited_hours');
+
+    return round(max($hoursFromAttendance + $hoursFromAppeals, 0), 2);
+}
+
 
 
 
@@ -152,6 +156,17 @@ public function ensureAttendanceForDate($date)
                 $currentDate->addDay();
             }
     }
+
+
+   public function attendanceForDate($date)
+{
+    return $this->attendances()->firstOrCreate(
+        ['date' => $date],
+        ['company_id' => $this->company_id, 'time_in' => null, 'time_out' => null]
+    );
+}
+
+
 
 
 

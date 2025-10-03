@@ -33,6 +33,28 @@ class Company extends Authenticatable
             return in_array($dayName, $workingDays);
         }
 
+        public function attendanceWindowForDate($date)
+        {
+            $override = $this->overrides()->where('date', $date)->first();
+
+            if ($override && !$override->is_no_work) {
+                return [
+                    'time_in_start'  => $override->time_in_start,
+                    'time_in_end'    => $override->time_in_end,
+                    'time_out_start' => $override->time_out_start,
+                    'time_out_end'   => $override->time_out_end,
+                ];
+            }
+
+            return [
+                'time_in_start'  => $this->allowed_time_in_start ?? '08:00:00',
+                'time_in_end'    => $this->allowed_time_in_end ?? '12:00:00',
+                'time_out_start' => $this->allowed_time_out_start ?? '13:00:00',
+                'time_out_end'   => $this->allowed_time_out_end ?? '17:00:00',
+            ];
+        }
+
+
         public function faculty()
         {
             return $this->belongsTo(Faculty::class, 'faculty_id');

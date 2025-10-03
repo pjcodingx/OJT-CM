@@ -259,6 +259,8 @@ Route::middleware(['faculty'])->prefix('faculty')->group(function (){
 
 
 
+    Route::post('/journals/{journal}/penalty', [JournalManagementController::class, 'deductPenalty'])
+    ->name('faculty.journals.penalty');
 
 
 

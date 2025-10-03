@@ -166,7 +166,7 @@
 
                     <div class="info-card red-card">
                         <div class="card-content">
-                            <h3 class="card-title">Number of Agencies</h3>
+                            <h3 class="card-title">Number of Companies</h3>
                             <div class="card-number">{{ $companyCount }}</div>
                             <a href="{{ route('admin.companies.index') }}" class="card-link">More info <i class="fas fa-chevron-right"></i></a>
                         </div>
