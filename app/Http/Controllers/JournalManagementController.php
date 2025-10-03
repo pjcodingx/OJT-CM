@@ -45,9 +45,8 @@ class JournalManagementController extends Controller
             $schedule = $company->attendanceWindowForDate($journal->journal_date);
 
             // Build deadline datetime (journal date + allowed end time)
-            $deadline = Carbon::parse($journal->journal_date . ' ' . $schedule['time_in_end'])
-                            ->timezone(config('app.timezone'));
-
+            $deadline = Carbon::parse($journal->journal_date . ' ' . $schedule['time_out_end'])
+                                    ->timezone(config('app.timezone'));
             // Submitted timestamp
             $submittedAt = Carbon::parse($journal->created_at)
                                 ->timezone(config('app.timezone'));
