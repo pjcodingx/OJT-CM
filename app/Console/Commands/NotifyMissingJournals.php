@@ -14,40 +14,48 @@ class NotifyMissingJournals extends Command
    protected $signature = 'notify:missing-journals';
     protected $description = 'Notify students if they have missing journals based on OJT schedule';
 
-    public function handle()
+     public function handle()
     {
+        $today = Carbon::today();
         $students = Student::with('company')->get();
 
         foreach ($students as $student) {
             $company = $student->company;
-            if (!$company) continue;
+            if (!$company || !$company->default_start_date) continue;
 
             $startDate = Carbon::parse($company->default_start_date);
-            $today = Carbon::today();
+            $workingDays = json_decode($company->working_days, true) ?? [];
 
+            // Get no-work dates from overrides
             $noWorkDates = CompanyTimeOverride::where('company_id', $company->id)
                                 ->where('is_no_work', 1)
                                 ->pluck('date')
                                 ->toArray();
 
-           $workingDays = json_decode($company->working_days, true) ?? [];
-                $allowedDates = [];
-                $current = $startDate->copy();
-                while ($current->lte($today)) {
-                    $dayName = $current->format('l'); // Monday, Tuesday...
-                    if (in_array($dayName, $workingDays) && !in_array($current->toDateString(), $noWorkDates)) {
-                        $allowedDates[] = $current->toDateString();
-                    }
-                    $current->addDay();
+            $allowedDates = [];
+            $current = $startDate->copy();
+
+            while ($current->lte($today)) {
+                $dayName = $current->format('l'); // e.g., Monday
+                $dateStr = $current->toDateString();
+
+                if (in_array($dayName, $workingDays) && !in_array($dateStr, $noWorkDates)) {
+                    $allowedDates[] = $dateStr;
                 }
 
+                $current->addDay();
+            }
+
+            // Submitted journal dates
             $submittedDates = Journal::where('student_id', $student->id)
                                 ->pluck('journal_date')
                                 ->toArray();
 
+            // Missed dates
             $missedDates = array_diff($allowedDates, $submittedDates);
 
             if (!empty($missedDates)) {
+                // Student notification
                 Notification::create([
                     'user_id' => $student->id,
                     'user_type' => 'student',
@@ -56,9 +64,9 @@ class NotifyMissingJournals extends Command
                     'type' => 'warning',
                     'is_read' => false,
                 ]);
-            }
 
-             if ($student->faculty_id) {
+                // Faculty notification
+                if ($student->faculty_id) {
                     Notification::create([
                         'user_id' => $student->faculty_id,
                         'user_type' => 'faculty',
@@ -68,6 +76,7 @@ class NotifyMissingJournals extends Command
                         'is_read' => false,
                     ]);
                 }
+            }
         }
 
         $this->info('Missing journal notifications sent successfully.');

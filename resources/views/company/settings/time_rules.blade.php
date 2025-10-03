@@ -118,7 +118,7 @@
                             <input type="checkbox" name="override[is_no_work]" id="noWorkCheckbox" value="1">
                             <span class="checkmark-square"></span>
                             <span class="checkbox-label">
-                                <i class="fas fa-ban"></i> No Work Today
+                                <i class="fas fa-ban"></i> No Work
                             </span>
                         </label>
                     </div>
@@ -151,40 +151,52 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @forelse($overrides as $override)
-                    <tr>
-                        <td class="date-cell">
-                            <strong>{{ \Carbon\Carbon::parse($override->date)->format('M d, Y') }}</strong>
-                            <span class="day-label">{{ \Carbon\Carbon::parse($override->date)->format('l') }}</span>
-                        </td>
-                        <td>{{ $override->time_in_start ?? '-' }}</td>
-                        <td>{{ $override->time_in_end ?? '-' }}</td>
-                        <td>{{ $override->time_out_start ?? '-' }}</td>
-                        <td>{{ $override->time_out_end ?? '-' }}</td>
-                        <td>
-                            @if($override->is_no_work)
-                                <span class="badge badge-no-work">
-                                    <i class="fas fa-ban"></i> No Work
-                                </span>
-                            @else
-                                <span class="badge badge-regular">
-                                    <i class="fas fa-briefcase"></i> Working Day
-                                </span>
-                            @endif
-                        </td>
-                    </tr>
-                    @empty
-                    <tr>
-                        <td colspan="6" class="no-data">
-                            <i class="fas fa-inbox"></i>
-                            <p>No overrides set yet</p>
-                        </td>
-                    </tr>
-                    @endforelse
+                   @forelse($overrides as $override)
+                        <tr class="override-row"
+                            data-date="{{ $override->date }}"
+                            data-time-in-start="{{ $override->time_in_start ?? '' }}"
+                            data-time-in-end="{{ $override->time_in_end ?? '' }}"
+                            data-time-out-start="{{ $override->time_out_start ?? '' }}"
+                            data-time-out-end="{{ $override->time_out_end ?? '' }}"
+                            data-is-no-work="{{ $override->is_no_work ? 1 : 0 }}"
+                        >
+                            <td class="date-cell">
+                                <strong>{{ \Carbon\Carbon::parse($override->date)->format('M d, Y') }}</strong>
+                                <span class="day-label">{{ \Carbon\Carbon::parse($override->date)->format('l') }}</span>
+                            </td>
+                            <td>{{ $override->time_in_start ?? '-' }}</td>
+                            <td>{{ $override->time_in_end ?? '-' }}</td>
+                            <td>{{ $override->time_out_start ?? '-' }}</td>
+                            <td>{{ $override->time_out_end ?? '-' }}</td>
+                            <td>
+                                @if($override->is_no_work)
+                                    <span class="badge badge-no-work">
+                                        <i class="fas fa-ban"></i> No Work
+                                    </span>
+                                @else
+                                    <span class="badge badge-regular">
+                                        <i class="fas fa-briefcase"></i> Working Day
+                                    </span>
+                                @endif
+                            </td>
+                        </tr>
+                        @empty
+                        <tr>
+                            <td colspan="6" class="no-data">
+                                <i class="fas fa-inbox"></i>
+                                <p>No overrides set yet</p>
+                            </td>
+                        </tr>
+                        @endforelse
+
                 </tbody>
             </table>
         </div>
     </div>
+</div>
+
+<div class="pagination-wrapper">
+    {{ $overrides->withQueryString()->links('vendor.pagination.prev-next-only') }}
 </div>
 
 <style>
@@ -194,6 +206,59 @@
     box-sizing: border-box;
 }
 
+.pagination-wrapper {
+    text-align: center;
+    margin-top: 30px;
+    font-family: Verdana, sans-serif;
+}
+
+.pagination {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.pagination .page-item {
+    display: inline-block;
+}
+
+.page-link {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #14532d;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.page-link:hover {
+    background-color: #1e7c43;
+    transform: translateY(-1px);
+}
+
+.page-item.disabled .page-link {
+    background-color: #5c7f6e;
+    color: #ccc;
+    cursor: not-allowed;
+}
+
+.page-indicator .page-link.static {
+    background-color: transparent;
+    color: #98afa2;
+    font-weight: bold;
+    cursor: default;
+    padding: 10px 0;
+    border: none;
+    opacity: 0.5;
+}
 
 
 .settings-container {
@@ -722,6 +787,41 @@ if (noWorkCheckbox) {
     noWorkCheckbox.addEventListener('change', toggleTimeInputs);
     toggleTimeInputs();
 }
+
+const overrideDateInput = document.querySelector('input[name="override[date]"]');
+
+overrideDateInput.addEventListener('change', function() {
+    const selectedDate = this.value;
+
+    // Find the table row with matching date
+    const row = document.querySelector(`.override-row[data-date="${selectedDate}"]`);
+
+    const timeInStart = document.getElementById('override_time_in_start');
+    const timeInEnd = document.getElementById('override_time_in_end');
+    const timeOutStart = document.getElementById('override_time_out_start');
+    const timeOutEnd = document.getElementById('override_time_out_end');
+
+    if (row) {
+        // Populate inputs
+        timeInStart.value = row.dataset.timeInStart || '';
+        timeInEnd.value = row.dataset.timeInEnd || '';
+        timeOutStart.value = row.dataset.timeOutStart || '';
+        timeOutEnd.value = row.dataset.timeOutEnd || '';
+
+        // Populate No Work checkbox
+        noWorkCheckbox.checked = row.dataset.isNoWork == '1';
+    } else {
+        // Clear inputs if no override exists
+        timeInStart.value = '';
+        timeInEnd.value = '';
+        timeOutStart.value = '';
+        timeOutEnd.value = '';
+        noWorkCheckbox.checked = false;
+    }
+
+    // Call toggle function to handle disabling inputs
+    toggleTimeInputs();
+});
 </script>
 
 @endsection

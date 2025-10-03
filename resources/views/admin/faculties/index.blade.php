@@ -278,7 +278,7 @@ tbody tr:hover {
                 </select>
 
 
-                <button type="submit" class="search-button">Search</button>
+                {{-- ?<button type="submit" class="search-button">Search</button> --}}
             </div>
         </form>
 

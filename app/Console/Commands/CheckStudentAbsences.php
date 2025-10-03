@@ -12,63 +12,79 @@ class CheckStudentAbsences extends Command
 {
     protected $signature = 'students:check-absences';
     protected $description = 'Check students who did not time in today and mark them absent after company cutoff';
-   public function handle()
+      public function handle()
     {
         $today = Carbon::today();
+        $now = Carbon::now();
 
-        $students = Student::with('company')->get();
+        // Load students with their company
+        $students = Student::with('company.overrides')->get();
 
         foreach ($students as $student) {
-            if (!$student->company) continue;
-
             $company = $student->company;
+            if (!$company) continue;
 
-            // Require start date
+            // Skip if today is before company's start date
             if (!$company->default_start_date) continue;
-
             $startDate = Carbon::parse($company->default_start_date);
+            if ($today->lt($startDate)) continue;
 
-            // Skip absence check if today is before official start
-            if ($today->lt($startDate)) {
+            // Check if there is an override for today
+            $override = $company->overrides->firstWhere('date', $today->toDateString());
+
+            // Skip if it's a no-work day
+            if ($override && $override->is_no_work) continue;
+
+            // Skip if today is not a working day (default schedule)
+            if (!$company->isWorkingDay($today)) continue;
+
+            // Determine cutoff time: override takes priority
+            if ($override && $override->time_out_end) {
+                $cutoff = Carbon::parse($today->toDateString() . ' ' . $override->time_out_end);
+            } else if ($company->allowed_time_out_end) {
+                $cutoff = Carbon::parse($today->toDateString() . ' ' . $company->allowed_time_out_end);
+            } else {
+                // No cutoff set, skip this company
                 continue;
             }
-
-            // If no cutoff is set, skip
-            if (!$company->allowed_time_out_end) continue;
-
-            $cutoff = Carbon::parse($company->allowed_time_out_end);
 
             // Only check if current time is past cutoff
-            if (now()->lessThan($cutoff)) {
-                continue;
-            }
+            if ($now->lt($cutoff)) continue;
 
-            // Check if student has attendance today
-           $attendance = Attendance::where('student_id', $student->id)
-                        ->where(function($query) use ($today) {
-                            $query->whereDate('time_in', $today)
-                                ->orWhereDate('time_out', $today);
-                        })
-                        ->first();
+            // Ensure attendance record exists
+            $attendance = Attendance::firstOrCreate(
+                [
+                    'student_id' => $student->id,
+                    'date'       => $today->toDateString(),
+                ],
+                [
+                    'company_id' => $company->id,
+                    'time_in'    => null,
+                    'time_out'   => null,
+                ]
+            );
 
-
-            if (!$attendance) {
-                // No time in today -> absent
+            // Only notify if student did not time in
+            if (is_null($attendance->time_in)) {
+                // Student notification
                 Notification::create([
                     'user_id'   => $student->id,
                     'user_type' => 'student',
                     'title'     => 'Absence Alert',
                     'message'   => 'You did not time in today (' . $today->toFormattedDateString() . '). You have been marked absent.',
                     'type'      => 'absence',
+                    'is_read'   => false,
                 ]);
 
-             if ($student->faculty_id) {
+                // Faculty notification
+                if ($student->faculty_id) {
                     Notification::create([
                         'user_id'   => $student->faculty_id,
                         'user_type' => 'faculty',
                         'title'     => 'Student Absence Alert',
                         'message'   => $student->name . ' did not time in today (' . $today->toFormattedDateString() . ').',
                         'type'      => 'Absent',
+                        'is_read'   => false,
                     ]);
                 }
             }

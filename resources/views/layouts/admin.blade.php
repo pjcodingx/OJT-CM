@@ -28,9 +28,11 @@
 
             <!-- Admin profile or Name -->
             <div class="admin-section">
-                <img src="{{ asset('uploads/admin_photos/1751962972_369e6f6bb444b8c225b430c41c33ba41.jpg') }}" alt="Admin avatar" class="admin-avatar">
+                <img src="{{ asset('uploads/admin_photos/' . ($admin->photo ?? 'default.png')) }}" alt="Admin avatar" class="admin-avatar">
                 <span class="admin-text">{{ $admin->name ?? 'Admin' }}</span>
             </div>
+
+
 
             <!-- MENU -->
             <nav class="sidebar-nav">
@@ -110,6 +112,13 @@
                                 <span class="nav-text">Notifications</span>
                             </a>
                         </li>
+
+                <li class="nav-item {{ request()->routeIs('admin.profile') ? 'active' : '' }}">
+                        <a href="{{ route('admin.profile') }}" class="nav-link">
+                            <i class="fas fa-user-cog nav-icon"></i>
+                            <span class="nav-text">Profile</span>
+                        </a>
+                </li>
 
                 </ul>
             </nav>

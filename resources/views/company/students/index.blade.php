@@ -189,12 +189,6 @@
                     placeholder="Search by name"
                 >
 
-                {{-- I think this is not needed --}}
-                {{-- <select name="sort" onchange="this.form.submit()">
-                    <option value="">Sort by Hours</option>
-                    <option value="asc" {{ request('sort') == 'asc' ? 'selected' : '' }}>Least to Greatest</option>
-                    <option value="desc" {{ request('sort') == 'desc' ? 'selected' : '' }}>Greatest to Least</option>
-                </select> --}}
 
             </div>
         </form>

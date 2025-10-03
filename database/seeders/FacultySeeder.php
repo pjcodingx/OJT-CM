@@ -18,8 +18,6 @@ class FacultySeeder extends Seeder
         $faculty->name = 'Faculty';
         $faculty->email = 'faculty@gmail.com';
         $faculty->password = Hash::make('password'); // Use a secure password
-
-
         $faculty->save();
 
         if(!Faculty::where('email', 'seth@gmail.com')->exists()){

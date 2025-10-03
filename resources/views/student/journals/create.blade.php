@@ -55,7 +55,35 @@
         margin-bottom: 20px;
         text-align: center;
     }
+
+     .alert-error {
+        background-color: #fee2e2;
+        color: #991b1b;
+        padding: 10px;
+        border-radius: 6px;
+        margin-top: 10px;
+        font-size: 14px;
+    }
 </style>
+
+
+
+@if(session('error'))
+    <div style="background: #b71c1c; color: white; padding: 10px; margin-bottom: 10px; border-radius: 4px;">
+        {{ session('error') }}
+    </div>
+@endif
+
+@if($errors->any())
+    <div style="background: #ff6f00; color: white; padding: 10px; margin-bottom: 10px; border-radius: 4px;">
+        <ul style="margin:0; padding-left:20px;">
+            @foreach($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
+
 
 <div class="form-container">
     <h2 style="color: #004d40;">Submit Daily Journal</h2>

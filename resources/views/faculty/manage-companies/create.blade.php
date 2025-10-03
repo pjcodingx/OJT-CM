@@ -117,6 +117,10 @@
     font-family: Verdana, sans-serif;
     transition: opacity 0.5s ease-out;
 }
+
+ input[type="password"]::-ms-reveal {
+                display: none;
+            }
 </style>
 @endsection
 

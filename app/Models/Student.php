@@ -53,45 +53,107 @@ class Student extends Authenticatable
     }
 
         public function calculateAbsences()
-{
-    $company = $this->company;
+            {
+                $company = $this->company;
 
-    if (!$company) return 0;
+                if (!$company) return 0;
 
-    // Only use default_start_date, skip created_at
-    if (!$company->default_start_date) {
-        return 0; // no defined start = no absences
-    }
+                // Only use default_start_date, skip created_at
+                if (!$company->default_start_date) {
+                    return 0; // no defined start = no absences
+                }
 
-    $startDate = Carbon::parse($company->default_start_date);
-    $endDate   = Carbon::today();
+                $startDate = Carbon::parse($company->default_start_date);
+                $endDate   = Carbon::today();
 
-    $currentDate = $startDate;
-    $absences = 0;
+                $currentDate = $startDate;
+                $absences = 0;
 
-    while ($currentDate->lte($endDate)) {
-        // Check if this is a working day (already respects overrides)
-        if ($company->isWorkingDay($currentDate)) {
-            // Check if student has attendance record for this date
-            $attendance = $this->attendances()
-                ->whereDate('time_in', $currentDate->toDateString())
-                ->first();
+                while ($currentDate->lte($endDate)) {
+                    // Check if this is a working day (already respects overrides)
+                    if ($company->isWorkingDay($currentDate)) {
+                        // Check if student has attendance record for this date
+                        $attendance = $this->attendances()
+                            ->whereDate('time_in', $currentDate->toDateString())
+                            ->first();
 
-            if (!$attendance) {
-                $absences++;
+                        if (!$attendance) {
+                            $absences++;
+                        }
+                    }
+
+                    $currentDate->addDay();
+                }
+
+                return $absences;
             }
-        }
-
-        $currentDate->addDay();
-    }
-
-    return $absences;
-}
 
         public function appealsCount()
     {
         return $this->appeals()->count();
     }
+
+   // In Student.php
+
+
+public function ensureAttendanceForDate($date)
+    {
+        $companyId = $this->company_id;
+
+        // Make sure $date is a Carbon instance
+        $date = Carbon::parse($date)->toDateString();
+
+        // Check if attendance already exists
+        $attendance = Attendance::where('student_id', $this->id)
+                        ->whereDate('date', $date)
+                        ->first();
+
+        // If exists, just return it (so we can update time_in/out later)
+        if ($attendance) {
+            return $attendance;
+        }
+
+        // If not, create a new record with null times
+        return Attendance::create([
+            'student_id' => $this->id,
+            'company_id' => $companyId,
+            'date' => $date,
+            'time_in' => null,
+            'time_out' => null,
+        ]);
+    }
+
+
+
+    public function ensureAttendancesExist()
+        {
+            $company = $this->company;
+
+            if (!$company || !$company->default_start_date) {
+                return;
+            }
+
+            $startDate = Carbon::parse($company->default_start_date);
+            $endDate = Carbon::today();
+
+            $currentDate = $startDate->copy();
+
+            while ($currentDate->lte($endDate)) {
+
+                // Skip if not a working day
+                if (!$company->isWorkingDay($currentDate)) {
+                    $currentDate->addDay();
+                    continue;
+                }
+
+                // Create attendance if it doesn't exist
+                $this->ensureAttendanceForDate($currentDate);
+
+                $currentDate->addDay();
+            }
+    }
+
+
 
 
     //! relationships

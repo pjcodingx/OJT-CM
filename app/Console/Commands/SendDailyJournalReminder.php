@@ -38,7 +38,7 @@ class SendDailyJournalReminder extends Command
 
         foreach ($students as $student) {
             $alreadySent = Notification::where('user_id', $student->id)
-                ->where('type', 'journal_reminder')
+                ->where('type', 'journal-reminder')
                 ->whereDate('created_at', $today)
                 ->exists();
 
@@ -48,7 +48,7 @@ class SendDailyJournalReminder extends Command
                     'user_type' => 'student',
                     'title'   => 'Daily Journal Reminder',
                     'message' => 'Please submit your journal for before on or before 5pm.',
-                    'type'    => 'journal_reminder',
+                    'type'    => 'journal-reminder',
                     'is_read' => false,
                 ]);
             }

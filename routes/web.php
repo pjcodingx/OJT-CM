@@ -68,6 +68,9 @@ Route::middleware(['admin'])->prefix('admin')->group(function () {
 
     Route::get('/journals', [AdminDashboardController::class, 'index'])->name('admin.index');
 
+    //?Changing info
+    Route::get('/profile', [AdminProfileController::class, 'profile'])->name('admin.profile');
+    Route::put('/profile/{id}', [AdminProfileController::class, 'updateProfile'])->name('admin.profile.update');
 
     //!exporting routes
     Route::get('/attendance/export-excel', [AttendanceLogController::class, 'exportExcel'])->name('admin.attendance.export.excel');
@@ -296,5 +299,10 @@ Route::middleware(['company'])->prefix('company')->group(function(){
 
       Route::post('/notifications/read-all', [CompanyNotificationController::class, 'markAllAsRead'])->name('faculty.notifications.readAll');
 
+
+      //!Change password
+      Route::get('/change-password', [CompanyDashboardController::class, 'changePassword'])->name('company.change.password');
+      Route::post('/company/change-password/{id}', [CompanyDashboardController::class, 'updatePassword'])
+    ->name('company.update.password');
 
 });

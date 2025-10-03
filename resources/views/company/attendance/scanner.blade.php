@@ -98,6 +98,19 @@
     color: #856404;
     border: 1px solid #ffeaa7;
 }
+
+.live-clock {
+    font-size: 24px;
+    font-weight: 600;
+    color: #2c3e50;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 20px 35px;
+    border-radius: 20px;
+    margin: -15px 0;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
+    width: 250px;
+}
 </style>
 
 <div class="container mt-4">
@@ -122,11 +135,42 @@
             <h4 style="color: rgba(3, 71, 3, 0.7); margin-bottom: 15px;">Recent Scans </h4>
 
         </div>
+
+
     </div>
+<div class="live-clock" id="live-clock"></div>
+
 </div>
 
 <script src="https://unpkg.com/html5-qrcode"></script>
 <script>
+    function updateClock() {
+        let now = new Date();
+
+        let hours = now.getHours();
+        let minutes = now.getMinutes();
+        let seconds = now.getSeconds();
+        let ampm = hours >= 12 ? 'PM' : 'AM';
+
+        // Convert 24h to 12h format
+        hours = hours % 12;
+        hours = hours ? hours : 12;
+
+        // Add leading zeros
+        minutes = minutes < 10 ? '0' + minutes : minutes;
+        seconds = seconds < 10 ? '0' + seconds : seconds;
+
+        let timeString = hours + ':' + minutes + ':' + seconds + ' ' + ampm;
+
+        document.getElementById('live-clock').innerText = timeString;
+    }
+    updateClock();
+    setInterval(updateClock, 1000);
+
+
+
+
+
 let html5QrcodeScanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: 250 });
 
 

@@ -15,7 +15,7 @@ class CompanySettingsController extends Controller
     public function timeRules()
     {
         $company = Auth::guard('company')->user();
-        $overrides = CompanyTimeOverride::where('company_id', $company->id)->orderBy('date', 'desc')->get();
+        $overrides = CompanyTimeOverride::where('company_id', $company->id)->orderBy('date', 'desc')->paginate();
 
         return view('company.settings.time_rules', compact('company', 'overrides'));
     }
@@ -25,8 +25,8 @@ class CompanySettingsController extends Controller
       $authCompany = Auth::guard('company')->user();
       $company = Company::find($authCompany->id);
 
-    $faculty = $company->faculty;
-
+        $faculty = $company->faculty;
+        $students = $company->students;
 
 
 
@@ -68,11 +68,6 @@ class CompanySettingsController extends Controller
 
 
     }
-
-
-
-
-
 
     if ($request->has('override')) {
 
@@ -120,7 +115,41 @@ class CompanySettingsController extends Controller
             'is_read'   => false,
         ]);
     }
+
+     if ($students && $students->count()) {
+    foreach ($students as $student) {
+        // Update or create the attendance record
+        \App\Models\Attendance::updateOrCreate(
+            [
+                'student_id' => $student->id,
+                'date'       => $override->date,
+            ],
+            [
+                'company_id' => $company->id,
+                'time_in'    => null,
+                'time_out'   => null,
+            ]
+        );
+
+        // Send notification for override regardless of no-work
+        $msg = $override->is_no_work
+            ? 'No Work today.'
+            : 'Attendance time was updated. Time In: ' . ($override->time_in_start ?? '-') . '–' . ($override->time_in_end ?? '-') .
+              ', Time Out: ' . ($override->time_out_start ?? '-') . '–' . ($override->time_out_end ?? '-');
+
+        Notification::create([
+            'user_id'   => $student->id,
+            'user_type' => 'student',
+            'type'      => $override->is_no_work ? 'no-work' : 'time-override',
+            'title'     => $override->is_no_work ? 'No Work Day Set' : 'Attendance Time Updated',
+            'message'   => $company->name . ' set attendance for ' . $override->date . '. ' . $msg,
+            'is_read'   => false,
+        ]);
+    }
 }
+
+
+    }
 
 
 

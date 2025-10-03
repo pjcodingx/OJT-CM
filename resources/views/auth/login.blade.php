@@ -239,6 +239,10 @@
                 white-space: nowrap;
                 border: 0;
             }
+
+            input[type="password"]::-ms-reveal {
+                display: none;
+            }
         </style>
     </head>
     <body>

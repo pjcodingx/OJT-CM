@@ -48,6 +48,7 @@ class FacultyStudentsExport implements FromCollection, WithHeadings, WithColumnW
         return $students->map(function($student){
             $student->total_journals = $student->journal()->count();
             $student->average_rating = round($student->ratings()->avg('rating') ?? 0, 2);
+
             $student->total_hours = round($student->attendances()->get()->reduce(function($carry, $attendance){
                 if($attendance->time_in && $attendance->time_out){
                     $in = Carbon::parse($attendance->date . ' ' . $attendance->time_in);
@@ -57,17 +58,18 @@ class FacultyStudentsExport implements FromCollection, WithHeadings, WithColumnW
                 return $carry;
             }, 0), 1);
 
-            return collect([
-                'Name' => $student->name,
-                'Email' => $student->email,
-                'Company' => $student->company->name ?? '--',
-                'Address' => $student->company->address ?? '--',
-                'Total Journals' => $student->total_journals,
-                'Rating' => $student->average_rating ?? '--',
-                'Appeals Count' => (int) $student->appealsCount(),
-                'Absences' => (int) $student->calculateAbsences(),
-                'Total Hours' => $student->accumulated_hours ?? 0,
-            ]);
+
+                return collect([
+                    'Name'           => $student->name ?? '--',
+                    'Email'          => $student->email ?? '--',
+                    'Company'        => $student->company->name ?? '--',
+                    'Address'        => $student->company->address ?? '--',
+                    'Total Journals' => $student->total_journals ?? '0',
+                    'Rating'         => (float) ($student->average_rating ?? 0),
+                    'Appeals Count'  => (int) ($student->appealsCount() ?? 0),
+                    'Absences'       => (int) ($student->calculateAbsences() ?? 0),
+                    'Total Hours'    => (float) ($student->accumulated_hours ?? 0),
+                ]);
         });
     }
 

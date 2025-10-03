@@ -113,7 +113,9 @@
         color: #666;
     }
 
-
+ input[type="password"]::-ms-reveal {
+                display: none;
+            }
 
 
 </style>

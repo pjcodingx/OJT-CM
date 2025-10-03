@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\faculty;
 
+use App\Models\Company;
 use App\Models\Journal;
 use App\Models\Student;
 use Illuminate\Http\Request;
@@ -34,9 +35,11 @@ class FacultyDashboardController extends Controller
         $partialCount = $students->filter(fn($s) => $s->accumulated_hours > 0 && !$s->hasCompletedOjt())->count();
         $notStartedCount = $students->filter(fn($s) => $s->accumulated_hours == 0)->count();
 
+        $totalCompanies = Company::where('faculty_id', $faculty->id)->count();
+
         return view('faculty.dashboard', compact(
             'faculty', 'journalCount', 'totalStudents', 'feedbackTotal',
-            'completionPercent', 'completedCount', 'partialCount', 'notStartedCount'
+            'completionPercent', 'completedCount', 'partialCount', 'notStartedCount', 'totalCompanies'
         ));
 
     }

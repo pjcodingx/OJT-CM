@@ -38,22 +38,22 @@ class AdminDashboardController extends Controller
 
 
         $journals = Journal::with(['student.faculty'])
-    ->whereHas('student', function ($q) {
-        $q->where('status', 1); // ✅ only active students
-    })
-    ->when($facultyId, function ($query) use ($facultyId) {
-        $query->whereHas('student', function ($q) use ($facultyId) {
-            $q->where('faculty_id', $facultyId);
-        });
-    })
-    ->when($startDate && $endDate, function ($query) use ($startDate, $endDate) {
-        $query->whereBetween('created_at', [
-            Carbon::parse($startDate)->startOfDay(),
-            Carbon::parse($endDate)->endOfDay(),
-        ]);
-    })
-    ->latest()
-    ->paginate(10);
+            ->whereHas('student', function ($q) {
+                $q->where('status', 1); // ✅ only active students
+            })
+            ->when($facultyId, function ($query) use ($facultyId) {
+                $query->whereHas('student', function ($q) use ($facultyId) {
+                    $q->where('faculty_id', $facultyId);
+                });
+            })
+            ->when($startDate && $endDate, function ($query) use ($startDate, $endDate) {
+                $query->whereBetween('created_at', [
+                    Carbon::parse($startDate)->startOfDay(),
+                    Carbon::parse($endDate)->endOfDay(),
+                ]);
+            })
+            ->latest()
+            ->paginate(10);
 
 
         return view('admin.index', compact('facultyId', 'journals', 'startDate', 'endDate', 'admin'));

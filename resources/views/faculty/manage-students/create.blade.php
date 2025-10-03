@@ -31,6 +31,10 @@
         color: #333;
     }
 
+     input[type="password"]::-ms-reveal {
+                display: none;
+            }
+
     .student-create-form input,
     .student-create-form select {
         width: 100%;

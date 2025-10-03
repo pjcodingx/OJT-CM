@@ -1,92 +1,169 @@
-@extends('layouts.admin') {{-- Adjust this to your admin layout --}}
+@extends('layouts.admin')
 
 @section('content')
 <style>
+* {
+    box-sizing: border-box;
+}
+
 .container {
     max-width: 1400px;
     margin: 20px auto;
-    padding: 20px;
-    background-color: #fff;
-    font-family: Arial, sans-serif;
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
-    overflow-x: auto;
+    padding: 30px;
+    background-color: #ffffff;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
+
 h2 {
     color: #14532d;
-    margin-bottom: 20px;
+    margin-bottom: 30px;
+    font-size: 28px;
+    font-weight: 600;
+    border-bottom: 3px solid #14532d;
+    padding-bottom: 12px;
 }
+
 .filter-form {
     display: flex;
     flex-wrap: wrap;
-    gap: 20px;
-    margin-bottom: 20px;
+    gap: 15px;
+    margin-bottom: 25px;
     align-items: flex-end;
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid #d1d5db;
+    background-color: #f9fafb;
 }
+
 .filter-form input[type="date"],
 .filter-form select,
 .filter-form input[type="search"] {
-    padding: 5px;
-    border: 1px solid rgba(0,0,0,0.2);
-    border-radius: 0px;
-    min-width: 160px;
-    height: 40px;
-    border-radius: 2px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-
-
-
+    padding: 10px 14px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    min-width: 180px;
+    height: 42px;
+    background-color: #ffffff;
+    color: #1f2937;
+    font-size: 14px;
+    transition: all 0.2s ease;
 }
+
+.filter-form input[type="date"]:focus,
+.filter-form select:focus,
+.filter-form input[type="search"]:focus {
+    outline: none;
+    border-color: #14532d;
+    box-shadow: 0 0 0 3px rgba(20, 83, 45, 0.1);
+}
+
+.filter-form input[type="search"]::placeholder {
+    color: #9ca3af;
+}
+
+.filter-form label {
+    font-size: 13px;
+    color: #374151;
+    font-weight: 600;
+    margin-bottom: 5px;
+    display: block;
+}
+
 .filter-form button {
-    padding: 6px 16px;
+    padding: 10px 24px;
     background-color: #14532d;
-    color: #fff;
+    color: #ffffff;
     border: none;
     border-radius: 6px;
     cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.2s ease;
 }
+
 .filter-form button:hover {
-    background-color: #1e7c43;
+    background-color: #166534;
+    transform: translateY(-1px);
 }
+
+.export-buttons {
+    margin-bottom: 20px;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
 table {
     width: 100%;
-    border-collapse: collapse;
+    border-collapse: separate;
+    border-spacing: 0;
     margin-top: 10px;
     font-size: 14px;
-
+    background-color: #ffffff;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid #e5e7eb;
 }
+
 th, td {
-    padding: 10px;
-    border-bottom: 1px solid #ccc;
+    padding: 14px 16px;
     text-align: left;
     white-space: normal;
 }
 
-
-
 td {
-    color: black;
+    color: #1f2937;
+    border-bottom: 1px solid #e5e7eb;
 }
+
 th {
     background-color: #14532d;
-    color: white;
+    color: #ffffff;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: 12px;
 }
-.pagination-wrapper {
-    margin-top: 20px;
-    text-align: center;
+
+tbody tr {
+    transition: background-color 0.15s ease;
 }
+
+tbody tr:hover {
+    background-color: #d1fae5;
+}
+
+tbody tr:nth-child(even) {
+    background-color: #f9fafb;
+}
+
+tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: 8px;
+}
+
 .no-data {
-    color: red;
+    color: #dc2626;
     font-style: italic;
-    padding: 10px;
+    padding: 40px;
+    text-align: center;
+    font-size: 16px;
+    background-color: #fef2f2;
+    border-radius: 8px;
+    border: 1px solid #fecaca;
 }
-
-
 
 .pagination-wrapper {
     text-align: center;
     margin-top: 30px;
-    font-family: Verdana, sans-serif;
 }
 
 .pagination {
@@ -95,131 +172,144 @@ th {
     margin: 0;
     display: inline-flex;
     align-items: center;
-    gap: 15px;
+    gap: 10px;
 }
 
 .pagination .page-item {
     display: inline-block;
 }
 
-
 .page-link {
     display: inline-block;
     padding: 10px 20px;
     background-color: #14532d;
-    color: #fff;
+    color: #ffffff;
     border: none;
     border-radius: 6px;
     font-size: 14px;
-    font-weight: bold;
+    font-weight: 600;
     cursor: pointer;
     text-decoration: none;
-    transition: background-color 0.3s ease, transform 0.2s ease;
+    transition: all 0.2s ease;
 }
 
-
 .page-link:hover {
-    background-color: #1e7c43;
+    background-color: #166534;
     transform: translateY(-1px);
 }
 
-
 .page-item.disabled .page-link {
-    background-color: #5c7f6e;
-    color: #ccc;
+    background-color: #d1d5db;
+    color: #9ca3af;
     cursor: not-allowed;
 }
 
+.page-item.disabled .page-link:hover {
+    transform: none;
+}
 
 .page-indicator .page-link.static {
     background-color: transparent;
-    color: #98afa2;
-    font-weight: bold;
+    color: #6b7280;
+    font-weight: 600;
     cursor: default;
     padding: 10px 0;
     border: none;
-    opacity: 0.5;
-}
-
-@media (max-width: 768px) {
-  .container {
-    max-width: 100% !important;
-    padding: 10px;
-    margin: 10px auto;
-    overflow-x: visible;
-  }
-
-  .table-responsive {
-    width: 100%;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  table {
-    min-width: 900px;
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 12px;
-  }
-
-  th, td {
-    padding: 6px 8px;
-    white-space: nowrap;
-  }
-
-  .filter-form {
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .filter-form input, .filter-form select, .filter-form button {
-    width: 100%;
-  }
 }
 
 .btn-green {
-    background-color: #02643d;
-    color: #fff;
+    background-color: #14532d;
+    color: #ffffff;
     border: none;
-    padding: 8px 14px;
-    border-radius: 4px;
+    padding: 10px 20px;
+    border-radius: 6px;
     cursor: pointer;
     font-size: 14px;
-    font-weight: bold;
+    font-weight: 600;
     text-decoration: none;
     display: inline-block;
-    transition: background-color 0.2s ease;
+    transition: all 0.2s ease;
 }
 
 .btn-green:hover {
-    background-color: #03ce87;
+    background-color: #166534;
+    transform: translateY(-1px);
 }
 
 .btn-red {
-    background-color: #b02a37;
-    color: #fff;
+    background-color: #dc2626;
+    color: #ffffff;
     border: none;
-    padding: 8px 14px;
-    border-radius: 4px;
+    padding: 10px 20px;
+    border-radius: 6px;
     cursor: pointer;
     font-size: 14px;
-    font-weight: bold;
+    font-weight: 600;
     text-decoration: none;
     display: inline-block;
-    transition: background-color 0.2s ease;
+    transition: all 0.2s ease;
 }
 
 .btn-red:hover {
-    background-color: #d63343;
+    background-color: #b91c1c;
+    transform: translateY(-1px);
 }
 
-
-
-
-tbody tr:hover {
-        background-color: #d1e7dd;
+@media (max-width: 768px) {
+    .container {
+        max-width: 100%;
+        padding: 15px;
+        margin: 10px auto;
     }
 
+    h2 {
+        font-size: 22px;
+    }
+
+    .table-responsive {
+        width: 100%;
+        overflow-x: auto;
+    }
+
+    table {
+        min-width: 900px;
+        font-size: 12px;
+    }
+
+    th, td {
+        padding: 10px 12px;
+        white-space: nowrap;
+    }
+
+    .filter-form {
+        flex-direction: column;
+        gap: 12px;
+        padding: 15px;
+    }
+
+    .filter-form input,
+    .filter-form select,
+    .filter-form button {
+        width: 100%;
+    }
+
+    .export-buttons {
+        flex-direction: column;
+    }
+
+    .btn-green,
+    .btn-red {
+        width: 100%;
+        text-align: center;
+    }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+    .container {
+        max-width: 95%;
+        padding: 20px;
+    }
+}
 </style>
 
 <div class="container">
@@ -227,8 +317,6 @@ tbody tr:hover {
 
     <form method="GET" class="filter-form" action="{{ route('admin.attendance') }}">
         <input type="search" name="search" placeholder="Search student name" value="{{ old('search', $search) }}">
-
-
 
         <select name="course_id">
             <option value="">-- Filter by Course --</option>
@@ -245,68 +333,67 @@ tbody tr:hover {
         </select>
 
         <div>
-            <label for="start_date" style="font-size: 18px;">Start Date</label><br>
+            <label for="start_date">Start Date</label>
             <input type="date" name="start_date" value="{{ old('start_date', $start_date) }}">
         </div>
         <div>
-            <label for="end_date" style="font-size: 18px;">End Date</label><br>
+            <label for="end_date">End Date</label>
             <input type="date" name="end_date" value="{{ old('end_date', $end_date) }}">
         </div>
 
-        <button type="submit">Filter</button>
+        <button type="submit">Apply Filters</button>
     </form>
 
-     <div style="margin-bottom: 15px;">
-
-            <a href="{{ route('admin.attendance.export.excel', request()->query()) }}"
-            class="btn btn-green">Export to Excel</a>
-
-            <a href="{{ route('admin.attendance.export.pdf', request()->query()) }}"
-            class="btn btn-red">Export to PDF</a>
+    <div class="export-buttons">
+        <a href="{{ route('admin.attendance.export.excel', request()->query()) }}" class="btn-green">
+            Export to Excel
+        </a>
+        <a href="{{ route('admin.attendance.export.pdf', request()->query()) }}" class="btn-red">
+            Export to PDF
+        </a>
     </div>
-
 
     @if ($attendances->count())
     <div class="table-responsive">
-    <table>
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Course</th>
-                <th>Faculty Adviser</th>
-                <th>Company</th>
-                <th>Address</th>
-                <th>Date</th>
-                <th>Time In</th>
-                <th>Time Out</th>
-                <th>Accumulated Hours</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach ($attendances as $attendance)
-            <tr>
-                <td>{{ $attendance->student->name }}</td>
-                <td>{{ $attendance->student->email }}</td>
-                <td>{{ $attendance->student->course->name ?? '-' }}</td>
-                <td>{{ $attendance->student->faculty->name ?? '-' }}</td>
-                <td>{{ $attendance->student->company->name ?? '-' }}</td>
-                <td>{{ $attendance->student->company->address ?? '-' }}</td>
-                <td>{{ \Carbon\Carbon::parse($attendance->date)->format('F d, Y') }}</td>
-                <td>{{ $attendance->time_in ? \Carbon\Carbon::parse($attendance->time_in)->format('h:i A') : '-' }}</td>
-                <td>{{ $attendance->time_out ? \Carbon\Carbon::parse($attendance->time_out)->format('h:i A') : '-' }}</td>
-                <td>{{ $attendance->student->accumulated_hours }} hrs</td>
-            </tr>
-            @endforeach
-        </tbody>
-    </table>
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Course</th>
+                    <th>Faculty Adviser</th>
+                    <th>Company</th>
+                    <th>Address</th>
+                    <th>Date</th>
+                    <th>Time In</th>
+                    <th>Time Out</th>
+                    <th>Accumulated Hours</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($attendances as $attendance)
+                <tr>
+                    <td>{{ $attendance->student->name }}</td>
+                    <td>{{ $attendance->student->email }}</td>
+                    <td>{{ $attendance->student->course->name ?? '-' }}</td>
+                    <td>{{ $attendance->student->faculty->name ?? '-' }}</td>
+                    <td>{{ $attendance->student->company->name ?? '-' }}</td>
+                    <td>{{ $attendance->student->company->address ?? '-' }}</td>
+                    <td>{{ \Carbon\Carbon::parse($attendance->date)->format('F d, Y') }}</td>
+                    <td>{{ $attendance->time_in ? \Carbon\Carbon::parse($attendance->time_in)->format('h:i A') : '-' }}</td>
+                    <td>{{ $attendance->time_out ? \Carbon\Carbon::parse($attendance->time_out)->format('h:i A') : '-' }}</td>
+                    <td>{{ $attendance->student->accumulated_hours }} hrs</td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
     </div>
 
     <div class="pagination-wrapper">
         {{ $attendances->withQueryString()->links('vendor.pagination.prev-next-only') }}
     </div>
     @else
-        <p class="no-data" style="text-align: center;">No attendance logs found..</p>
+        <p class="no-data">No attendance logs found.</p>
     @endif
 </div>
 @endsection

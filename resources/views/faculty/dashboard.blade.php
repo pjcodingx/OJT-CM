@@ -205,10 +205,23 @@
 </style>
 
 <div class="dashboard-content">
-    <h1 class="dashboard-title">DASHBOARD</h1>
 
-    {{-- Optional Add time --}}
+    @php
+        $hour = now()->format('H');
+        if ($hour < 12) {
+            $greeting = 'Good Morning';
+        } elseif ($hour < 18) {
+            $greeting = 'Good Afternoon';
+        } else {
+            $greeting = 'Good Evening';
+        }
+    @endphp
+
+    <h1 class="dashboard-title">{{ $greeting }}, {{ $faculty->name }} </h1>
+
+ {{-- Optional Add time --}}
     {{-- <div class="live-clock" id="live-clock"></div> --}}
+
 
     <div class="info-cards">
         <div class="info-card">
@@ -225,6 +238,14 @@
             <h3 class="card-title">Journal Submissions</h3>
             <div class="card-number">{{ $journalCount }}</div>
             <a href="{{ route('faculty.journals.index') }}" class="card-link">More info <i class="fas fa-chevron-right"></i></a>
+        </div>
+
+         <div class="info-card">
+            <i class="fas fa-building card-icon"></i>
+            <div class="card-bg-pattern"></div>
+            <h3 class="card-title">Total Companies</h3>
+            <div class="card-number">{{ $totalCompanies }}</div>
+            <a href="{{ route('faculty.manage-companies.index') }}" class="card-link">More info <i class="fas fa-chevron-right"></i></a>
         </div>
 
         <div class="info-card">
@@ -257,6 +278,8 @@
             </p>
         </div>
     </div>
+
+
 </div>
 
 <script>

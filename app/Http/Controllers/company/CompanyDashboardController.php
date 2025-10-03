@@ -85,4 +85,21 @@ class CompanyDashboardController extends Controller
         return back()->withErrors(['photo' => 'Please select a valid image file.']);
     }
 
+    public function changePassword(){
+          $company = auth()->guard('company')->user();
+    return view('company.change-password', compact('company'));
+    }
+
+    public function updatePassword(Request $request, $id){
+          $request->validate([
+                'password' => 'required|string|min:6|confirmed',
+            ]);
+
+    $company = Company::findOrFail($id);
+    $company->password = bcrypt($request->password);
+    $company->save();
+
+    return redirect()->route('company.profile')->with('success', 'Password updated successfully!');
+    }
+
 }

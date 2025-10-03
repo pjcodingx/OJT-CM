@@ -575,11 +575,11 @@
     border-left: 5px solid #d84400;
     }
 
-.type-journal_reminder {
-    background-color: #ffffff;
-    color: #0f0700;
+.type-journal-reminder {
+    background-color: #ff9cf7;
+    color: #f106de;
     border: 1px solid #ff9cf7;
-    border-left: 5px solid #ff9cf7;
+
     }
 
 .type-approve {
@@ -678,9 +678,9 @@
         color: rgb(253, 253, 253);
 
     }
-    .notification-icon.journal_reminder{
+    .notification-icon.journal-reminder{
         background-color: #ff9cf7;
-        color: rgb(0, 0, 0);
+        color: rgb(255, 255, 255);
     }
 
     .badge-due-today {
@@ -713,6 +713,15 @@
     background-color: #ffffff;
     color: #ffffff;
 
+}
+.notification-icon.no-work {
+    background-color: #ffffff;
+    color: #f30c0c;
+}
+
+.type-no-work{
+   background-color: hsl(17, 79%, 77%);
+    color: #d3091a;
 }
 
 
@@ -762,17 +771,7 @@
                     <div class="unread-indicator"></div>
                 @endif
 
-                <!-- Notification Actions -->
-                <div class="notification-actions">
-                    @if(!$notification->is_read)
-                        {{-- <button class="notification-action-btn mark-read-btn" onclick="markAsRead({{ $notification->id }})" title="Mark as read">
-                            <i class="fas fa-check"></i>
-                        </button> --}}
-                    @endif
-                    {{-- <button class="notification-action-btn delete-btn" onclick="showDeleteModal({{ $notification->id }})" title="Delete notification">
-                        <i class="fas fa-trash"></i>
-                    </button> --}}
-                </div>
+
 
 
 
@@ -780,6 +779,9 @@
                 @switch($notification->type ?? 'info')
                     @case('approve')
                         <i class="fas fa-check-circle"></i>
+                    @break
+                    @case('no-work')
+                        <i class="fas fa-ban text-red-500"></i>
                     @break
                     @case('reject')
                         <i class="fas fa-times-circle"></i>
@@ -790,7 +792,7 @@
                     @case('summary_report')
                         <i class="fas fa-file-pdf"></i>
                         @break
-                    @case('journal_reminder')
+                    @case('journal-reminder')
                         <i class="fas fa-pen text-purple-500"></i>
                         @break
                         @case('absence')
@@ -805,13 +807,14 @@
             </div>
 
 
-                                <div class="notification-content">
+                <div class="notification-content">
                     <div class="notification-title">
                         {{ $notification->title }}
-                        @if($notification->type === 'journal_reminder')
+                        @if($notification->type === 'journal-reminder')
                             <span class="badge-due-today">Due 5:00pm</span>
                         @endif
                     </div>
+
                     <div class="notification-message">{{ $notification->message }}</div>
 
                     <div class="notification-meta">

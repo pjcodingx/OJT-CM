@@ -336,7 +336,7 @@ tbody tr:hover {
             <option value="0" {{ request('status') == '0' ? 'selected' : '' }}>Disabled</option>
         </select>
 
-        <button type="submit" class="search-button">Search</button>
+        {{-- ?<button type="submit" class="search-button">Search</button> --}}
 
         <div style="margin-bottom: 15px;">
 

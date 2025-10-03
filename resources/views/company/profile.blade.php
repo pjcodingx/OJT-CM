@@ -109,6 +109,12 @@
         @csrf
         <input type="file" name="photo" id="photo" accept="image/*" class="upload-hidden" onchange="document.getElementById('photoForm').submit();">
         <label for="photo" class="upload-btn">Upload Photo</label>
+
+        <div style="text-align: center; margin-bottom: 20px;">
+            <a href="{{ route('company.change.password') }}" class="upload-btn" style="text-decoration: none;">
+                Change Password
+            </a>
+</div>
     </form>
 
     <div class="profile-details">
