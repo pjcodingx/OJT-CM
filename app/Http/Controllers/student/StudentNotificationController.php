@@ -11,23 +11,34 @@ class StudentNotificationController extends Controller
 {
     //
 
-     public function index()
+   public function index()
     {
         $student = Auth::guard('student')->user();
 
-    $notifications = Notification::where('user_id', $student->id)
-        ->where('user_type', 'student')
-        ->orderBy('created_at', 'desc')
-        ->paginate(5);
+
+        $baseQuery = Notification::where('user_id', $student->id)
+            ->where('user_type', 'student');
 
 
-    Notification::where('user_id', $student->id)
-        ->where('user_type', 'student')
-        ->where('is_read', false)
-        ->update(['is_read' => true]);
+        $unreadCount = (clone $baseQuery)->where('is_read', false)->count();
+        $totalCount  = (clone $baseQuery)->count();
+        $todayCount  = (clone $baseQuery)->whereDate('created_at', today())->count();
 
-    return view('student.notifications.index', compact('notifications', 'student'));
+
+        $notifications = $baseQuery->orderBy('created_at', 'desc')->paginate(5);
+
+
+        (clone $baseQuery)->where('is_read', false)->update(['is_read' => true]);
+
+        return view('student.notifications.index', compact(
+            'notifications',
+            'student',
+            'unreadCount',
+            'totalCount',
+            'todayCount'
+        ));
     }
+
 
     public function markAllAsRead()
 {

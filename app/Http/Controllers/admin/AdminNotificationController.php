@@ -10,23 +10,34 @@ use Illuminate\Support\Facades\Auth;
 
 class AdminNotificationController extends Controller
 {
-    public function index(){
-    $admin = Auth::guard('admin')->user();
+    public function index()
+    {
+        $admin = Auth::guard('admin')->user();
 
-    $notifications = Notification::where('user_id', $admin->id)
-    ->where('user_type', 'admin')
-    ->orderBy('created_at', 'desc')
-    ->paginate(10);
+        // Base query (only this admin’s notifications)
+        $baseQuery = Notification::where('user_id', $admin->id)
+            ->where('user_type', 'admin');
 
-    Notification::Where('user_id', $admin->id)
-    ->where('user_type', 'admin')
-    ->where('is_read', false)
-    ->update(['is_read' => 1]);
+        // Stats
+        $unreadCount = (clone $baseQuery)->where('is_read', false)->count();
+        $totalCount  = (clone $baseQuery)->count();
+        $todayCount  = (clone $baseQuery)->whereDate('created_at', today())->count();
 
-    return view('admin.notifications.index', compact('notifications', 'admin'));
+        // Paginated list
+        $notifications = $baseQuery->orderBy('created_at', 'desc')->paginate(10);
 
+        // Mark unread as read after fetching
+        (clone $baseQuery)->where('is_read', false)->update(['is_read' => 1]);
 
+        return view('admin.notifications.index', compact(
+            'notifications',
+            'admin',
+            'unreadCount',
+            'totalCount',
+            'todayCount'
+        ));
     }
+
 
     public function markAsRead($id)
     {

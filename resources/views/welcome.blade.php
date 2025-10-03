@@ -606,14 +606,14 @@
 
         <div class="slide" style="background-image: url({{ asset('images/welcome/bsit.jpg') }})">
             <div class="slide-content">
-                <h2 class="slide-title">Beautiful Campus Environment</h2>
+                <h2 class="slide-title">Reliable Students</h2>
 
             </div>
         </div>
 
         <div class="slide" style="background-image: url({{ asset('images/welcome/HallCm.jpg') }})">
             <div class="slide-content">
-                <h2 class="slide-title">Advanced Learning Facilities</h2>
+
 
             </div>
         </div>

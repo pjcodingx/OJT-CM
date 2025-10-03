@@ -740,18 +740,19 @@
 
     <div class="notifications-stats">
         <div class="stat-item">
-            <div class="stat-number">{{ $notifications->where('is_read', 0)->count() }}</div>
+            <div class="stat-number">{{ $unreadCount }}</div>
             <div class="stat-label">Unread</div>
         </div>
         <div class="stat-item">
-            <div class="stat-number">{{ $notifications->count() }}</div>
+            <div class="stat-number">{{ $totalCount }}</div>
             <div class="stat-label">Total</div>
         </div>
         <div class="stat-item">
-            <div class="stat-number">{{ $notifications->where('created_at', '>=', now()->subDay())->count() }}</div>
+            <div class="stat-number">{{ $todayCount }}</div>
             <div class="stat-label">Today</div>
         </div>
     </div>
+
 
 
     <div class="notifications-list">
