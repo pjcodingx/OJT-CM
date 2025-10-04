@@ -76,7 +76,7 @@
 
 @if($errors->any())
     <div style="background: #ff6f00; color: white; padding: 10px; margin-bottom: 10px; border-radius: 4px;">
-        <ul style="margin:0; padding-left:20px;">
+        <ul style="margin:0; padding-left:20px; list-style: none;">
             @foreach($errors->all() as $error)
                 <li>{{ $error }}</li>
             @endforeach
@@ -98,19 +98,19 @@
         <div class="form-group">
             <label for="journal_date">Journal Date</label>
             <input type="date" name="journal_date" id="journal_date" value="{{ old('journal_date') }}" required>
-            @error('journal_date') <small style="color: red;">{{ $message }}</small> @enderror
+
         </div>
 
         <div class="form-group">
             <label for="content">Journal Content <span id="wordCount">0 words</span></label>
             <textarea name="content" id="content" rows="5" required>{{ old('content') }}</textarea>
-            @error('content') <small style="color: red;">{{ $message }}</small> @enderror
+
         </div>
 
         <div class="form-group">
             <label for="attachments">Attachments (PDF, JPG, PNG – multiple allowed)</label>
             <input type="file" name="attachments[]" id="attachments" multiple>
-            @error('attachments.*') <small style="color: red;">{{ $message }}</small> @enderror
+
         </div>
 
 

@@ -361,7 +361,7 @@ tbody tr:last-child td {
                     <th>Name</th>
                     <th>Email</th>
                     <th>Course</th>
-                    <th>Faculty Adviser</th>
+                    <th>OJT Adviser</th>
                     <th>Company</th>
                     <th>Address</th>
                     <th>Date</th>

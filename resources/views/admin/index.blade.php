@@ -272,7 +272,7 @@
                 <tr>
                     <th>Date Submitted</th>
                     <th>Student Name</th>
-                    <th>Faculty</th>
+                    <th>OJT Adviser</th>
                     <th>Company Assigned</th>
                     <th>Journal Content</th>
                 </tr>
