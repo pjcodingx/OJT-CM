@@ -130,4 +130,41 @@ class AttendanceAppealController extends Controller
             ->with('success', 'Attendance appeal submitted successfully.');
     }
 
+    public function approve($appealId)
+{
+    // Find the appeal with its attendance and student
+    $appeal = AttendanceAppeal::with(['attendance', 'student'])->findOrFail($appealId);
+
+    // Mark the appeal as approved
+    $appeal->status = 'approved';
+
+    // If not already set, assign credited hours for this day (default 8 hours)
+    if (!$appeal->credited_hours) {
+        $appeal->credited_hours = 8; // adjust as per company policy
+    }
+
+    $appeal->save();
+
+    // Update the attendance record
+    $attendance = $appeal->attendance;
+
+    // Notify the student
+    Notification::create([
+        'user_id' => $appeal->student_id,
+        'user_type' => 'student',
+        'type' => 'approve',
+        'title' => 'Attendance Appeal Approved',
+        'message' => "Your attendance appeal for {$attendance->date} was approved.",
+        'is_read' => false,
+    ]);
+
+    // Optional: recalc total hours or absences (depends on your system)
+    $student = $appeal->student;
+    $student->load('attendances', 'attendanceAppeals'); // refresh relationships
+    // Now $student->accumulated_hours and $student->calculateAbsences() will reflect approval
+
+    return redirect()->back()->with('success', 'Attendance appeal approved and attendance updated.');
+}
+
+
 }

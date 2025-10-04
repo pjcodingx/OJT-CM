@@ -56,41 +56,46 @@ class Student extends Authenticatable
         return $this->accumulated_hours >= $this->required_hours;
     }
 
-        public function calculateAbsences()
-            {
-                $company = $this->company;
+    public function calculateAbsences()
+{
+    $company = $this->company;
+    if (!$company) return 0;
 
-                if (!$company) return 0;
+    if (!$company->default_start_date) return 0;
 
-                // Only use default_start_date, skip created_at
-                if (!$company->default_start_date) {
-                    return 0; // no defined start = no absences
-                }
+    $startDate = Carbon::parse($company->default_start_date);
+    $endDate = Carbon::today();
 
-                $startDate = Carbon::parse($company->default_start_date);
-                $endDate   = Carbon::today();
+    $currentDate = $startDate->copy();
+    $absences = 0;
 
-                $currentDate = $startDate;
-                $absences = 0;
+    while ($currentDate->lte($endDate)) {
+        if ($company->isWorkingDay($currentDate)) {
 
-                while ($currentDate->lte($endDate)) {
-                    // Check if this is a working day (already respects overrides)
-                    if ($company->isWorkingDay($currentDate)) {
-                        // Check if student has attendance record for this date
-                        $attendance = $this->attendances()
-                            ->whereDate('time_in', $currentDate->toDateString())
-                            ->first();
+            // Check if attendance exists
+            $attendance = $this->attendances()
+                ->whereDate('date', $currentDate->toDateString())
+                ->first();
 
-                        if (!$attendance) {
-                            $absences++;
-                        }
-                    }
+            // Check if there’s an approved appeal for this date
+            $hasApprovedAppeal = $this->attendanceAppeals()
+                ->whereHas('attendance', function($q) use ($currentDate) {
+                    $q->whereDate('date', $currentDate->toDateString());
+                })
+                ->where('status', 'approved')
+                ->exists();
 
-                    $currentDate->addDay();
-                }
-
-                return $absences;
+            if ((!$attendance || (!$attendance->time_in && !$attendance->time_out)) && !$hasApprovedAppeal) {
+                $absences++;
             }
+        }
+
+        $currentDate->addDay();
+    }
+
+    return $absences;
+}
+
 
         public function appealsCount()
     {

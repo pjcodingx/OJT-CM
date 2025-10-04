@@ -115,17 +115,27 @@
         </tr>
     </thead>
     <tbody>
-        @forelse($attendances as $attendance)
+      @forelse($attendances as $attendance)
             <tr>
                 <td>{{ \Carbon\Carbon::parse($attendance->date)->format('F d, Y') }}</td>
-                <td>{{ $attendance->time_in ?? '—' }}</td>
-                <td>{{ $attendance->time_out ?? '—' }}</td>
+
+                @php
+                    $hasApprovedAppeal = $attendance->appeals->isNotEmpty();
+                @endphp
+
+                <td>
+                    {{ $attendance->time_in ?? ($hasApprovedAppeal ? 'Present (Appeal)' : '—') }}
+                </td>
+                <td>
+                    {{ $attendance->time_out ?? ($hasApprovedAppeal ? 'Present (Appeal)' : '—') }}
+                </td>
             </tr>
-        @empty
+            @empty
             <tr>
                 <td colspan="3">No attendance records found.</td>
             </tr>
-        @endforelse
+            @endforelse
+
     </tbody>
 </table>
 
