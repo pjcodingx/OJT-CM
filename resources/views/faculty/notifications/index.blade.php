@@ -683,7 +683,7 @@
 .type-Absent {
   background-color: #fee2e2;
   color: #b91c1c;
-  border: 1px solid #fca5a5;
+
 }
 .type-attendance_time {
   background-color: #e6f0ff;
@@ -699,7 +699,15 @@
     color: #dc2626; /* Red-600 */
 }
 
+.notification-icon.no-work {
+    background-color: #f30c0c;
+    color: #ffffff;
+}
 
+.type-no-work{
+   background-color: hsl(17, 78%, 82%);
+    color: #eb4e5b;
+}
 
 
 </style>
@@ -774,7 +782,9 @@
                    @case('attendance_time')
                         <i class="fas fa-clock text-blue-600"></i>
                     @break
-
+                     @case('no-work')
+                        <i class="fas fa-ban text-red-500"></i>
+                    @break
                     @case('Absent')
                          <i class="fas fa-user-slash text-red-500"></i>
                     @break

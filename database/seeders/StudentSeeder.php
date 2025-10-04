@@ -30,12 +30,5 @@ class StudentSeeder extends Seeder
             ]);
         }
 
-        if(!Student::where('email', 'student2@gmail.com')->exists()){
-            Student::create([
-                'name' => 'Precious',
-                'email' => 'precious@gmail.com',
-                'password' => Hash::make('password'), // Use a secure password
-            ]);
-        }
     }
 }

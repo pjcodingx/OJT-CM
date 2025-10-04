@@ -576,9 +576,8 @@
     }
 
 .type-journal-reminder {
-    background-color: #ff9cf7;
-    color: #f106de;
-    border: 1px solid #ff9cf7;
+    background-color: #f5a9ee;
+    color: #f757e9;
 
     }
 
@@ -679,8 +678,8 @@
 
     }
     .notification-icon.journal-reminder{
-        background-color: #ff9cf7;
-        color: rgb(255, 255, 255);
+        background-color: #fffdfd;
+        color: rgb(155, 9, 123);
     }
 
     .badge-due-today {
@@ -721,7 +720,7 @@
 
 .type-no-work{
    background-color: hsl(17, 79%, 77%);
-    color: #d3091a;
+    color: #fa4a59;
 }
 
 .notification-icon.time-override {

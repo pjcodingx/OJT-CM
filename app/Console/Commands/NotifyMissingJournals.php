@@ -60,7 +60,8 @@ class NotifyMissingJournals extends Command
                     'user_id' => $student->id,
                     'user_type' => 'student',
                     'title' => 'Missing Journal Submission',
-                    'message' => 'You have not submitted journals for the following date(s): ' . implode(', ', $missedDates),
+                    'message' => 'You have not submitted journals for the following date(s): ' . implode(', ', array_map(fn($d) => Carbon::parse($d)->format('F j, Y'), $missedDates))
+,
                     'type' => 'warning',
                     'is_read' => false,
                 ]);
@@ -71,7 +72,8 @@ class NotifyMissingJournals extends Command
                         'user_id' => $student->faculty_id,
                         'user_type' => 'faculty',
                         'title' => 'Student Missing Journal Alert',
-                        'message' => $student->name . ' has not submitted journals for: ' . implode(', ', $missedDates),
+                        'message' => $student->name . ' has not submitted journals for: ' . implode(', ', array_map(fn($d) => Carbon::parse($d)->format('F j, Y'), $missedDates))
+,
                         'type' => 'warning',
                         'is_read' => false,
                     ]);

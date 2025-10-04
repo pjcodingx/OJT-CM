@@ -90,6 +90,9 @@ class CompanySettingsController extends Controller
         $overrideData
     );
 
+    $formattedDate = \Carbon\Carbon::parse($override->date)->format('F j, Y');
+
+
 
     Notification::create([
         'user_id'   => 1,
@@ -103,18 +106,17 @@ class CompanySettingsController extends Controller
     ]);
 
     if ($faculty) {
-        Notification::create([
-            'user_id'   => $faculty->id,
-            'user_type' => 'faculty',
-            'type'      => 'attendance_time',
-            'title'     => 'New Attendance Time Set',
-            'message'   => $company->name . ' set new attendance time on ' . $override->date
-                         . ($override->is_no_work ? ' (No Work Today)' : '')
-                         . ': Time In (' . ($override->time_in_start ?? '-') . '–' . ($override->time_in_end ?? '-') . '), '
-                         . 'Time Out (' . ($override->time_out_start ?? '-') . '–' . ($override->time_out_end ?? '-') . ')',
-            'is_read'   => false,
-        ]);
-    }
+    Notification::create([
+                'user_id'   => $faculty->id,
+                'user_type' => 'faculty',
+                'type'      => $override->is_no_work ? 'no-work' : 'attendance_time',
+                'title'     => $override->is_no_work ? 'No Work Day Set' : 'New Attendance Time Set',
+                'message'   => $company->name . ' set attendance for ' .  $formattedDate
+                            . ($override->is_no_work ? ' (No Work Today)' : ': Time In (' . ($override->time_in_start ?? '-') . '–' . ($override->time_in_end ?? '-') . '), Time Out (' . ($override->time_out_start ?? '-') . '–' . ($override->time_out_end ?? '-') . ')'),
+                'is_read'   => false,
+            ]);
+        }
+
 
      if ($students && $students->count()) {
     foreach ($students as $student) {
