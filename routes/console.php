@@ -11,3 +11,7 @@ Artisan::command('inspire', function () {
 Schedule::command('reminder:daily-journal')->everyMinute();
 
 //! $schedule->command('reminder:daily-journal')->dailyAt('15:00');
+
+Schedule::command('students:check-absences')->everyFiveSeconds();
+
+Schedule::command('notify:missing-journals')->everyMinute();

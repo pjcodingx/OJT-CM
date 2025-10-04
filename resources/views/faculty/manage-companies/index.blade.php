@@ -176,7 +176,7 @@
     <table class="student-table">
         <thead>
             <tr>
-                <th>ID</th>
+
                 <th>Name</th>
                 <th>Email</th>
                 <th>Address</th>
@@ -188,7 +188,7 @@
         <tbody>
             @forelse($companies as $company)
             <tr>
-                <td>{{ $loop->iteration }}</td>
+
                 <td>{{ $company->name }}</td>
                 <td>{{ $company->email }}</td>
                 <td>{{ $company->address ?? 'N/A' }}</td>

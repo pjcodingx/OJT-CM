@@ -569,10 +569,9 @@
 
 
 .type-appeal {
-  background-color: #ffffff;
-  color: #0f0700;
-  border: 1px solid #ff0000;
-  border-left: 5px solid #d84400;
+  background-color: #b5ffc5;
+  color: #024110;
+
 }
 
 .type-journal_reminder {
@@ -668,15 +667,29 @@
     font-size: 20px;
 }
 
-.notification-icon.appeal {
-     background-color: #ffffff;
-    color: rgb(0, 0, 0);
 
+
+.notification-icon.absence {
+  background: linear-gradient(135deg, #dddddd, #e65050);
+  color: #b91c1c;
 }
 
+.notification-icon.absence i {
+  color: #b91c1c;
+  font-size: 18px;
+  background: transparent;
+}
 
+.type-absence{
+     background-color: #fa9a8d;
+    color: #550d04;
+}
 
+.notification-icon.appeal i{
+     background-color: #ffffff;
+    color: rgb(3, 97, 34);
 
+}
 
 </style>
 
@@ -687,10 +700,7 @@
             Notifications
         </h1>
         <div class="notifications-actions">
-            {{-- <button class="action-btn mark-all-read-btn" onclick="markAllAsRead()">
-                <i class="fas fa-check-double"></i>
-                Mark All Read
-            </button> --}}
+
             <form id="deleteAllForm" action="{{ route('company.notifications.deleteAll') }}" method="POST" style="display:inline;">
                 @csrf
                 @method('DELETE')
@@ -706,18 +716,19 @@
 
     <div class="notifications-stats">
         <div class="stat-item">
-            <div class="stat-number">{{ $notifications->where('is_read', 0)->count() }}</div>
+            <div class="stat-number text-red-600">{{ $unreadCount }}</div>
             <div class="stat-label">Unread</div>
         </div>
         <div class="stat-item">
-            <div class="stat-number">{{ $notifications->count() }}</div>
+            <div class="stat-number">{{ $totalCount }}</div>
             <div class="stat-label">Total</div>
         </div>
         <div class="stat-item">
-            <div class="stat-number">{{ $notifications->where('created_at', '>=', now()->subDay())->count() }}</div>
+            <div class="stat-number text-green-600">{{ $todayCount }}</div>
             <div class="stat-label">Today</div>
         </div>
     </div>
+
 
 
     <div class="notifications-list">
@@ -727,25 +738,15 @@
                     <div class="unread-indicator"></div>
                 @endif
 
-
-                <div class="notification-actions">
-                    @if(!$notification->is_read)
-                        {{-- <button class="notification-action-btn mark-read-btn" onclick="markAsRead({{ $notification->id }})" title="Mark as read">
-                            <i class="fas fa-check"></i>
-                        </button> --}}
-                    @endif
-                    {{-- <button class="notification-action-btn delete-btn" onclick="showDeleteModal({{ $notification->id }})" title="Delete notification">
-                        <i class="fas fa-trash"></i>
-                    </button> --}}
-                </div>
-
-
                 {{-- I will add here new type of notifications --}}
                 <div class="notification-icon {{ $notification->type ?? 'info' }}">
                 @switch($notification->type ?? 'info')
                     @case('appeal')
                       <i class="fa-solid fa-clipboard-user"></i>
                     @break
+                     @case('absence')
+                        <i class="fas fa-user-slash text-red-500"></i>
+                        @break
                     @case('journal_reminder')
                         <i class="fas fa-pen text-purple-500"></i>
                         @break

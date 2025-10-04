@@ -1,20 +1,4 @@
 
-
-{{-- !THIS IS FOR THE EDIT OF PROFILE OF THE ADMIN
-    ! I WILL REMOVE THIS FIRST BECAUSE I WILL RE ARRANGE IT--}}
-{{--
-
-<div style="display: flex; align-items: center; gap: 10px;">
-    <img src="{{ asset($admin->photo ?? 'default-avatar.png') }}"
-        alt="Admin Photo"
-        style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover;">
-
-    <div>
-        <p><strong>{{ $admin->name }}</strong></p>S
-        <a href="{{ route('admin.profile.edit') }}" style="color: blue;">Edit Profile</a>
-    </div>
-</div> --}}
-
 {{-- ?This is introduction to the admin dashboard. --}}
 
 <!DOCTYPE html>
@@ -41,7 +25,7 @@
 
             <!-- Admin profile or Name -->
             <div class="admin-section">
-                <img src="{{ asset('uploads/admin_photos/1751962972_369e6f6bb444b8c225b430c41c33ba41.jpg') }}" alt="Administrator avatar showing profile icon" class="admin-avatar">
+                <img src="{{ asset('uploads/admin_photos/' . ($admin->photo ?? 'default.png')) }}" alt="Administrator avatar showing profile icon" class="admin-avatar">
                 <span class="admin-text">{{ $admin->name }}</span>
             </div>
 
@@ -84,32 +68,41 @@
                         </a>
                     </li>
 
-                    {{-- <li class="nav-item">
-                        <i class="fas fa-exclamation-triangle nav-icon"></i>
-                        <span class="nav-text">Attendance Appeals</span>
-                    </li> --}}
-
-
-
-                    <li class="nav-item">
-                        <i class="fas fa-tasks nav-icon"></i>
-                        <span class="nav-text">Task Monitoring</span>
+                   <li class="nav-item {{ request()->routeIs('admin.index') ? 'active' : '' }}">
+                        <a href="{{ route('admin.index') }}" class="nav-link" style="color: inherit; text-decoration: none;">
+                            <i class="fas fa-tasks nav-icon"></i>
+                            <span class="nav-text">Task Monitoring</span>
+                        </a>
                     </li>
 
-                    {{-- <li class="nav-item">
-                        <i class="fas fa-comments nav-icon"></i>
-                        <span class="nav-text">Feedback & Remarks</span>
-                    </li> --}}
+                      <li class="nav-item {{ request()->routeIs('admin.notifications.index') ? 'active' : '' }}">
+                            <a href="{{ route('admin.notifications.index') }}" class="nav-link" style="color: inherit; text-decoration: none;">
+                                <div class="nav-icon-wrapper">
+                                    <i class="fas fa-bell nav-icon"></i>
+                                    @php
+                                        use App\Models\Notification;
+                                        $adminUnread = Notification::where('user_id', auth('admin')->id())
+                                            ->where('user_type', 'admin')
+                                            ->where('is_read', false)
+                                            ->count();
+                                    @endphp
 
-                    <li class="nav-item">
-                        <i class="fas fa-bell nav-icon"></i>
-                        <span class="nav-text">Notifications</span>
-                    </li>
+                                    @if($adminUnread > 0)
+                                        <span class="notification-badge">
+                                            {{ $adminUnread > 99 ? '99+' : $adminUnread }}
+                                        </span>
+                                    @endif
+                                </div>
+                                <span class="nav-text">Notifications</span>
+                            </a>
+                        </li>
 
-                    {{-- <li class="nav-item">
-                        <i class="fas fa-cog nav-icon"></i>
-                        <span class="nav-text">System Settings</span>
-                    </li> --}}
+                         <li class="nav-item {{ request()->routeIs('admin.profile') ? 'active' : '' }}">
+                        <a href="{{ route('admin.profile') }}" class="nav-link">
+                            <i class="fas fa-user-cog nav-icon"></i>
+                            <span class="nav-text">Profile</span>
+                        </a>
+                </li>
 
 
                 </ul>
@@ -141,7 +134,17 @@
 
             <!-- Dashboard Content -->
             <div class="dashboard-content">
-                <h1 class="dashboard-title">Dashboard</h1>
+                @php
+                    $hour = now()->format('H');
+                    if ($hour < 12) {
+                        $greeting = 'Good Morning';
+                    } elseif ($hour < 18) {
+                        $greeting = 'Good Afternoon';
+                    } else {
+                        $greeting = 'Good Evening';
+                    }
+                @endphp
+                <h1 class="dashboard-title">{{ $greeting }}, {{ $admin->name }}</h1>
 
                 <!-- Info Cards -->
                 <div class="info-cards">
@@ -163,7 +166,7 @@
 
                     <div class="info-card red-card">
                         <div class="card-content">
-                            <h3 class="card-title">Number of Agencies</h3>
+                            <h3 class="card-title">Number of Companies</h3>
                             <div class="card-number">{{ $companyCount }}</div>
                             <a href="{{ route('admin.companies.index') }}" class="card-link">More info <i class="fas fa-chevron-right"></i></a>
                         </div>
@@ -173,7 +176,7 @@
                         <div class="card-content">
                             <h3 class="card-title">Number of Courses</h3>
                             <div class="card-number">{{ $courseCount }} </div>
-                            <a href="#" class="card-link">More info <i class="fas fa-chevron-right"></i></a>
+
                         </div>
                     </div>
                 </div>

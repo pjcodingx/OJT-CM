@@ -122,6 +122,34 @@
     background: radial-gradient(circle, #7f8c8d 0%, transparent 70%);
 }
 
+.progress-bar {
+    background-color: #e0e0e0;
+    border-radius: 12px;
+    overflow: hidden;
+    height: 20px;
+    margin: 15px 0;
+    position: relative;
+    z-index: 2;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(to right, #205501, #16d105);
+    text-align: center;
+    color: white;
+    font-weight: bold;
+    line-height: 20px;
+    font-size: 12px;
+}
+
+.attendance-breakdown {
+    font-size: 13px;
+    margin-top: 5px;
+    color: #5a6978;
+    position: relative;
+    z-index: 2;
+}
+
 .live-clock {
     font-size: 24px;
     font-weight: 600;
@@ -177,10 +205,23 @@
 </style>
 
 <div class="dashboard-content">
-    <h1 class="dashboard-title">DASHBOARD</h1>
 
-    {{-- Optional Add time --}}
+    @php
+        $hour = now()->format('H');
+        if ($hour < 12) {
+            $greeting = 'Good Morning';
+        } elseif ($hour < 18) {
+            $greeting = 'Good Afternoon';
+        } else {
+            $greeting = 'Good Evening';
+        }
+    @endphp
+
+    <h1 class="dashboard-title">{{ $greeting }}, {{ $faculty->name }} </h1>
+
+ {{-- Optional Add time --}}
     {{-- <div class="live-clock" id="live-clock"></div> --}}
+
 
     <div class="info-cards">
         <div class="info-card">
@@ -199,6 +240,14 @@
             <a href="{{ route('faculty.journals.index') }}" class="card-link">More info <i class="fas fa-chevron-right"></i></a>
         </div>
 
+         <div class="info-card">
+            <i class="fas fa-building card-icon"></i>
+            <div class="card-bg-pattern"></div>
+            <h3 class="card-title">Total Companies</h3>
+            <div class="card-number">{{ $totalCompanies }}</div>
+            <a href="{{ route('faculty.manage-companies.index') }}" class="card-link">More info <i class="fas fa-chevron-right"></i></a>
+        </div>
+
         <div class="info-card">
             <i class="fas fa-comment-dots card-icon"></i>
             <div class="card-bg-pattern"></div>
@@ -206,7 +255,31 @@
             <div class="card-number">{{ $feedbackTotal}}</div>
             <a href="{{ route('faculty.feedbacks.index') }}" class="card-link">More info <i class="fas fa-chevron-right"></i></a>
         </div>
+
+        <!-- Attendance Completion Card -->
+        <div class="info-card">
+            <i class="fas fa-chart-line card-icon"></i>
+            <div class="card-bg-pattern"></div>
+
+            <h3 class="card-title">Attendance Completion</h3>
+
+            <!-- Progress Bar -->
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: {{ $completionPercent }}%;">
+                    {{ $completionPercent }}%
+                </div>
+            </div>
+
+            <!-- Breakdown -->
+            <p class="attendance-breakdown">
+                <strong>{{ $completedCount }}</strong> completed,
+                <strong>{{ $partialCount }}</strong> partial,
+                <strong>{{ $notStartedCount }}</strong> not started
+            </p>
+        </div>
     </div>
+
+
 </div>
 
 <script>
@@ -230,8 +303,6 @@
 
         document.getElementById('live-clock').innerText = timeString;
     }
-
-    // Run immediately then every second
     updateClock();
     setInterval(updateClock, 1000);
 </script>

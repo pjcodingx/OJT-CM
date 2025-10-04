@@ -323,16 +323,6 @@ tbody tr:hover {
             style="padding: 14px; width: 250px;"
         >
 
-
-        {{-- <select name="course_id" onchange="this.form.submit()" style="padding: 14px;">
-            <option value=""> Filter by Course </option>
-            @foreach($courseCounts as $course)
-                <option value="{{ $course->id }}" {{ request('course_id') == $course->id ? 'selected' : '' }}>
-                    {{ $course->name }} ({{ $course->students_count }})
-                </option>
-            @endforeach
-        </select> --}}
-
         <select name="company_id" onchange="this.form.submit()" style="padding:14px;">
             <option value="">Filter by Company</option>
             @foreach($companies as $company)
@@ -362,7 +352,7 @@ tbody tr:hover {
     <table class="student-table">
         <thead>
             <tr>
-                <th>Student ID</th>
+
                 <th>Name</th>
                 <th>Email</th>
                 <th>Course</th>
@@ -377,7 +367,7 @@ tbody tr:hover {
 
             @foreach($students as $student)
             <tr>
-                <td>{{ $student->id }}</td>
+
                 <td>{{ $student->name }}</td>
                 <td>{{ $student->email }}</td>
                 <td>{{ $student->course->name ?? 'Not Assigned' }}</td>

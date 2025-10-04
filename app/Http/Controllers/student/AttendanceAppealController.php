@@ -14,29 +14,63 @@ class AttendanceAppealController extends Controller
 {
     //
 
-    public function index(){
-        $student = Auth::guard('student')->user();
-  $student = Auth::guard('student')->user();
-    $studentId = $student->id;
+   public function index() {
+    $studentId = Auth::guard('student')->id();
 
+    // Get the student
+    $student = Student::findOrFail($studentId);
+    $company = $student->company;
 
+    if (!$company) {
+        $attendances = collect();
+        $appeals = collect();
+        return view('student.attendance-appeals.index', compact('appeals', 'attendances', 'student'));
+    }
+
+    // Ensure attendances exist for working days
+    $student->ensureAttendancesExist();
+
+    // Already submitted appeals
     $appeals = AttendanceAppeal::with('attendance')
-        ->where('student_id', $studentId)
-        ->latest()
-        ->get();
-
+                ->where('student_id', $studentId)
+                ->latest()
+                ->get();
 
     $appealedAttendanceIds = $appeals->pluck('attendance_id')->toArray();
 
-
-    $attendances = Attendance::where('student_id', $studentId)
+    // Get attendances that can be appealed
+    $attendances = $student->attendances()
         ->whereNotIn('id', $appealedAttendanceIds)
-        ->orderBy('date', 'desc') // or created_at/time_in depending on your schema
-        ->limit(10)
-        ->get();
+        ->get()
+        ->filter(function ($attendance) use ($company) {
+
+            $date = \Carbon\Carbon::parse($attendance->date);
+
+            // Skip non-working days
+            if (!$company->isWorkingDay($date)) return false;
+
+            // Get override if exists for this date
+            $override = $company->overrides()->whereDate('date', $date)->first();
+
+            // Determine the effective time_out
+            if ($override && $override->time_out_end) {
+                $timeOut = \Carbon\Carbon::parse($date->toDateString() . ' ' . $override->time_out_end);
+            } else {
+                $timeOut = \Carbon\Carbon::parse($date->toDateString() . ' ' . $company->allowed_time_out_end);
+            }
+
+            // Only allow appeal if the time_out has passed
+            if (\Carbon\Carbon::now()->lt($timeOut)) return false;
+
+            // Appeal conditions: no time_in or no time_out
+            return is_null($attendance->time_in) || is_null($attendance->time_out);
+        });
 
     return view('student.attendance-appeals.index', compact('appeals', 'attendances', 'student'));
-    }
+}
+
+
+
 
     public function create($attendanceId){
            $studentId = Auth::guard('student')->id();

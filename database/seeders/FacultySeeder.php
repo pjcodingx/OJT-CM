@@ -17,18 +17,8 @@ class FacultySeeder extends Seeder
         $faculty = new Faculty();
         $faculty->name = 'Faculty';
         $faculty->email = 'faculty@gmail.com';
-        $faculty->password = Hash::make('password'); // Use a secure password
-
-
+        $faculty->password = Hash::make('password');
         $faculty->save();
-
-        if(!Faculty::where('email', 'seth@gmail.com')->exists()){
-            $faculty = Faculty::create([
-                'name' => 'Seth',
-                'email' => 'seth@gmail.com',
-                'password' => Hash::make('password'), // Use a secure password
-            ]);
-        }
 
         if(!Faculty::where('email', 'monica@gmail.com')->exists()){
             $faculty = Faculty::create([

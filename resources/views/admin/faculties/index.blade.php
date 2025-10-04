@@ -278,7 +278,7 @@ tbody tr:hover {
                 </select>
 
 
-                <button type="submit" class="search-button">Search</button>
+                {{-- ?<button type="submit" class="search-button">Search</button> --}}
             </div>
         </form>
 
@@ -287,7 +287,7 @@ tbody tr:hover {
     <table class="student-table">
         <thead>
             <tr>
-                <th>ID</th>
+
                 <th>Name</th>
                 <th>Email</th>
                 <th>Status</th>
@@ -300,7 +300,7 @@ tbody tr:hover {
         <tbody>
             @forelse($faculties as $faculty)
             <tr>
-                <td>{{ $loop->iteration }}</td>
+
                 <td>{{ $faculty->name }}</td>
                 <td>{{ $faculty->email }}</td>
                 <td>

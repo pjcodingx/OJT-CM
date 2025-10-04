@@ -127,9 +127,12 @@
                         </a>
                     </li>
 
-
-
-
+                   <li class="nav-item {{ request()->routeIs('certificate.preview') ? 'active' : '' }}">
+                        <a href="{{ route('certificate.preview', $student->id) }}" class="nav-link">
+                            <i class="fas fa-certificate nav-icon"></i>
+                            <span class="nav-text">System Certificate</span>
+                        </a>
+                    </li>
 
                 </ul>
             </nav>

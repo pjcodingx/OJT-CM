@@ -36,6 +36,9 @@ class StudentSummaryController extends Controller
         $feedbacksList     = $student->ratings->pluck('feedback')->filter()->values()->all();
         $feedbacksText     = count($feedbacksList) ? implode("\n\n", $feedbacksList) : null;
 
+        $calculateAbsences = method_exists($student, 'calculateAbsences')
+                            ? $student->calculateAbsences()
+                            : 0;
 
         $accumulatedHours = method_exists($student, 'getAccumulatedHoursAttribute')
             ? $student->accumulated_hours
@@ -67,7 +70,7 @@ class StudentSummaryController extends Controller
         return [
             'student'          => $student,
             'totalAttendance'  => $totalAttendance,
-            'missedAttendance' => $missedAttendance,
+            'calculateAbsences' => $calculateAbsences,
             'numberOfAppeals'  => $numberOfAppeals,
             'submittedJournals'=> $submittedJournals,
             'averageRating'    => $averageRating,

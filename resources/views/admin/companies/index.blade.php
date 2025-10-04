@@ -202,8 +202,6 @@
 
 <h1>Companies</h1>
 
-
-
     <form method="GET" action="{{ route('admin.companies.index') }}" class="search-form">
         <div class="search-form-group">
             <input type="text" name="search" value="{{ request('search') }}" placeholder="Search by name, email, address, or location" class="search-input">
@@ -214,12 +212,14 @@
                     <option value="0" {{ request('status') == '0' ? 'selected' : '' }}>Disabled</option>
             </select>
 
-            <button type="submit" class="search-button">Search</button>
+            {{-- ?<button type="submit" class="search-button">Search</button> --}}
 
+            <div style="margin-bottom: 15px;">
 
+            <a href="{{ route('admin.companies.export.excel', request()->query()) }}" class="btn btn-success">Export to Excel</a>
 
-
-
+            <a href="{{ route('admin.companies.export.pdf', request()->query()) }}" class="btn btn-red">Export to pdf</a>
+        </div>
         </div>
     </form>
 
@@ -271,6 +271,8 @@
                         @else
                             <button type="submit" class="btn-success">Activate</button>
                         @endif
+
+
 
                     </form>
                 </td>

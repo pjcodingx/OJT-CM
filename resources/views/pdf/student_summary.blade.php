@@ -80,8 +80,13 @@
    <table class="profile-table">
     <tr>
         <td class="profile-left">
-            <img src="{{ $profileImageData ?? asset('uploads/student_photos/default.png') }}" alt="Profile">
+            @if($profileImageData)
+                <img src="{{ $profileImageData }}" alt="Profile" width="80" height="80">
+            @else
+                <span style="color:red; text-align: center;">NO IMAGE PLEASE UPLOAD!</span>
+            @endif
         </td>
+
         <td class="profile-right">
             <table>
                 <tr>
@@ -114,8 +119,8 @@
             </td>
             <td style="width:25%">
                 <div class="card">
-                    <div class="label">Missed Attendances</div>
-                    <div class="value">{{ $missedAttendance }}</div>
+                    <div class="label">Absences</div>
+                    <div class="value">{{ $calculateAbsences}}</div>
                 </div>
             </td>
             <td style="width:25%">

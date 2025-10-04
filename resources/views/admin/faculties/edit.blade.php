@@ -252,19 +252,6 @@
         </div>
 
 
-        <div class="form-group">
-            <label>Partnered Companies</label>
-            <select name="company_ids[]" multiple class="form-control company-multiselect">
-
-                @foreach ($companies as $company)
-                    <option value="{{ $company->id }}"
-                        @if ($faculty->companies->contains($company->id)) selected @endif>
-                        {{ $company->name }}
-                    </option>
-                @endforeach
-            </select>
-        </div>
-
 
         @if(session('success'))
             <div id="alertBox" class="alert-success">

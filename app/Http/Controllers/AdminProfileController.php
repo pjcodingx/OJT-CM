@@ -10,39 +10,39 @@ class AdminProfileController extends Controller
 {
     //!THIS IS THE ADMIN PROFILE CONTROLLER WHERE MANAGING OF ADMIN PROFILE IS DONE
 
-    public function update(Request $request){
-
-
-
-    $admin = Admin::find(Auth::guard('admin')->id());
-
-        $request->validate([
-            'name' => 'required|string',
-            'email' => 'required|email|unique:admins,email,' . $admin->id,
-            'photo' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-        ]);
-
-        $admin->name = $request->name;
-        $admin->email = $request->email;
-
-        if ($request->hasFile('photo')) {
-            $file = $request->file('photo');
-            $filename = time() . '_' . $file->getClientOriginalName();
-            $file->move(public_path('uploads/admin_photos'), $filename);
-            $admin->photo = 'uploads/admin_photos/' . $filename;
-        }
-
-        $admin->save();
-
-        return redirect()->route('admin.dashboard')->with('success', 'Profile updated successfully!');
-
-
-    }
-
-    public function edit()
+   public function profile()
     {
-        return view('admin.profile.edit');
+        $admin = auth()->guard('admin')->user();
+        return view('admin.profile', compact('admin'));
     }
+
+    public function updateProfile(Request $request, $id)
+{
+    $admin = Admin::findOrFail($id);
+
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'password' => 'nullable|string|min:6|confirmed',
+        'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+    ]);
+
+    $admin->name = $request->name;
+
+    if ($request->password) {
+        $admin->password = bcrypt($request->password);
+    }
+
+    if ($request->hasFile('photo')) {
+        $file = $request->file('photo');
+        $filename = time() . '.' . $file->getClientOriginalExtension();
+        $file->move(public_path('uploads/admin_photos'), $filename);
+        $admin->photo = $filename;
+    }
+
+    $admin->save();
+
+    return redirect()->back()->with('success', 'Profile updated successfully!');
+}
 
 
 

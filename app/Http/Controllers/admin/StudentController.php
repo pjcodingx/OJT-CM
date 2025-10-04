@@ -21,31 +21,36 @@ use SimpleSoftwareIO\QrCode\Facades\QrCode;
 class StudentController extends Controller
 {
 
-    public function index(Request $request){
-
+    public function index(Request $request)
+    {
         $admin = Auth::guard('admin')->user();
         $courseCounts = Course::withCount('students')->get();
         $companies = Company::all();
         $courses = Course::all();
 
-
-
-        $students = Student::with('company', 'faculty', 'course')->when($request->course_id,
-        function($query) use ($request){
+        $students = Student::with('company', 'faculty', 'course')
+        ->when($request->course_id, function ($query) use ($request) {
             $query->where('course_id', $request->course_id);
-
-        })->when($request->search, function($query) use ($request){
-            $query->where(function($subQuery) use ($request){
-                $subQuery->where('name', 'like', '%' . $request->search . '%'
-                )->orWhere('email', 'like', '%' . $request->search . '%');
+        })
+        ->when($request->search, function ($query) use ($request) {
+            $query->where(function ($subQuery) use ($request) {
+                $subQuery->where('name', 'like', '%' . $request->search . '%')
+                    ->orWhere('email', 'like', '%' . $request->search . '%');
             });
-        })->when($request->status !== null && $request->status !== '', function ($query) use ($request){
-            $query->where('status', $request->status);
-        })->paginate(5)->withQueryString();
+        });
+
+        if ($request->filled('status')) {
+                $students->where('status', $request->status);
+            } else {
+                $students->where('status', 1);
+            }
+
+        $students = $students->paginate(5)->withQueryString();
 
 
-        return view('admin.students.index', compact('admin','students', 'courseCounts', 'courses', 'companies'));
+        return view('admin.students.index', compact('admin', 'students', 'courseCounts', 'courses', 'companies'));
     }
+
 
     public function create(){ //create accounts
         $admin = Auth::guard('admin')->user();

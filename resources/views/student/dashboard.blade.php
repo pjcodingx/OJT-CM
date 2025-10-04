@@ -190,7 +190,17 @@
 
 @section('content')
 <div class="dashboard-content">
-    <h1 class="dashboard-title">Dashboard</h1>
+    @php
+        $hour = now()->format('H');
+        if ($hour < 12) {
+            $greeting = 'Good Morning';
+        } elseif ($hour < 18) {
+            $greeting = 'Good Afternoon';
+        } else {
+            $greeting = 'Good Evening';
+        }
+    @endphp
+    <h1 class="dashboard-title">{{ $greeting }}, {{ $student->name }}</h1>
 
     <div class="info-cards">
         <div class="info-card">

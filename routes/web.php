@@ -13,12 +13,14 @@ use App\Http\Controllers\faculty\MyStudentController;
 use App\Http\Controllers\JournalManagementController;
 use App\Http\Controllers\admin\AttendanceLogController;
 use App\Http\Controllers\faculty\MyCompaniesController;
+use App\Http\Controllers\student\CertificateController;
 use App\Http\Controllers\admin\AdminDashboardController;
 use App\Http\Controllers\company\StudentRatingController;
 use App\Http\Controllers\faculty\FacultyReportController;
 use App\Http\Controllers\faculty\FacultyProfileController;
 use App\Http\Controllers\student\StudentJournalController;
 use App\Http\Controllers\student\StudentSummaryController;
+use App\Http\Controllers\admin\AdminNotificationController;
 use App\Http\Controllers\Company\CompanySettingsController;
 use App\Http\Controllers\company\AssignedStudentsController;
 use App\Http\Controllers\company\CompanyDashboardController;
@@ -34,9 +36,6 @@ use App\Http\Controllers\student\StudentNotificationController;
 use App\Http\Controllers\company\CompanyAttendanceAppealController;
 use App\Http\Controllers\student\StudentAttendanceAppealController;
 
-// Route::get('/welcome', function () {
-//     return view('welcome');
-// });
 
 //? WELCOME PAGE FOR OJT SYSTEM
 Route::get('/', [WelcomeController::class, 'index'] )->name('welcome');
@@ -44,23 +43,6 @@ Route::get('/', [WelcomeController::class, 'index'] )->name('welcome');
 //!for Authentication of Roles
 Route::get('/login', [MultiLoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [MultiLoginController::class, 'login'])->name('multi.login');
-
-// Route::middleware('auth:admin')
-//     ->get('/admin/dashboard', fn() => view('admin.dashboard'))
-//     ->name('admin.dashboard'); //
-
-// Route::middleware('auth:faculty')
-//     ->get('/faculty/dashboard', fn() => view('faculty.dashboard'))
-//     ->name('faculty.dashboard');
-
-// Route::middleware('auth:company')
-//     ->get('/company/dashboard', fn() => view('company.dashboard'))
-//     ->name('company.dashboard');
-
-// Route::middleware('auth:student')
-//     ->get('/student/dashboard', fn() => view('student.dashboard'))
-//     ->name('student.dashboard');
-
 
 //! FOR LOGOUT
 Route::post('/logout', [MultiLoginController::class, 'logout'])->name('logout');
@@ -86,6 +68,9 @@ Route::middleware(['admin'])->prefix('admin')->group(function () {
 
     Route::get('/journals', [AdminDashboardController::class, 'index'])->name('admin.index');
 
+    //?Changing info
+    Route::get('/profile', [AdminProfileController::class, 'profile'])->name('admin.profile');
+    Route::put('/profile/{id}', [AdminProfileController::class, 'updateProfile'])->name('admin.profile.update');
 
     //!exporting routes
     Route::get('/attendance/export-excel', [AttendanceLogController::class, 'exportExcel'])->name('admin.attendance.export.excel');
@@ -94,6 +79,10 @@ Route::middleware(['admin'])->prefix('admin')->group(function () {
 
     Route::get('/students/export', [StudentController::class, 'exportExcel'])->name('admin.students.export.excel');
     Route::get('/students/export-pdf', [StudentController::class, 'exportPdf'])->name('admin.students.export.pdf');
+
+    Route::get('/companies/export-excel', [CompanyController::class, 'exportExcel'])->name('admin.companies.export.excel');
+    Route::get('/companies/export-pdf', [CompanyController::class, 'exportPdf'])->name('admin.companies.export.pdf');
+
 
 
     //* Route for students management
@@ -109,7 +98,6 @@ Route::middleware(['admin'])->prefix('admin')->group(function () {
 
 
     Route::get('/company/{company}/students', [CompanyController::class, 'showstudents'])->name('admin.companies.students');
-    // Route::post('/student/attendance-appeals', [StudentAttendanceAppealController::class, 'store'])->name('student.appeals.store');
 
 
     //? Route for OJT Advisers
@@ -140,7 +128,12 @@ Route::middleware(['admin'])->prefix('admin')->group(function () {
 
 
 
+    //? FOR NOTIFICATIONS
+     Route::get('notifications', [AdminNotificationController::class, 'index'])->name('admin.notifications.index');
+    Route::post('notifications/read-all', [AdminNotificationController::class, 'markAllAsRead'])->name('admin.notifications.markAllAsRead');
+    Route::post('notifications/{id}/read', [AdminNotificationController::class, 'markAsRead'])->name('admin.notifications.read');
 
+    Route::delete('notifications/delete-all', [AdminNotificationController::class, 'deleteAll'])->name('admin.notifications.deleteAll');
 });
 
 
@@ -183,6 +176,17 @@ Route::middleware(['student'])->prefix('student')->group(function () {
 // direct download
     Route::get('/reports/student/{id}/summary/download', [StudentSummaryController::class, 'download'])
     ->name('reports.student.summary.download');
+
+
+    //? CERTIFICATE
+    Route::get('/certificate/preview/{student}', [CertificateController::class, 'previewCertificate'])
+    ->name('certificate.preview');
+
+    Route::get('/certificate/{id}/preview', [CertificateController::class, 'preview'])
+    ->name('certificate_pdf.preview');
+
+
+ Route::get('/journals/{journal}/download-word', [StudentJournalController::class, 'downloadWord'])->name('journals.download');
 
 
 
@@ -256,7 +260,8 @@ Route::middleware(['faculty'])->prefix('faculty')->group(function (){
 
 
 
-
+    Route::post('/journals/{journal}/penalty', [JournalManagementController::class, 'deductPenalty'])
+    ->name('faculty.journals.penalty');
 
 
 
@@ -295,6 +300,14 @@ Route::middleware(['company'])->prefix('company')->group(function(){
      Route::delete('/notifications/delete-all', [CompanyNotificationController::class, 'deleteAll'])->name('company.notifications.deleteAll');
 
       Route::post('/notifications/read-all', [CompanyNotificationController::class, 'markAllAsRead'])->name('faculty.notifications.readAll');
+
+
+      //!Change password
+      Route::get('/change-password', [CompanyDashboardController::class, 'changePassword'])->name('company.change.password');
+      Route::post('/company/change-password/{id}', [CompanyDashboardController::class, 'updatePassword'])
+    ->name('company.update.password');
+
+
 
 
 });

@@ -15,7 +15,7 @@ class Faculty extends Authenticatable
     use HasFactory, Notifiable;
 
     protected $fillable = [
-        'name', 'email', 'password','status',
+        'name', 'email', 'password','status', 'course_id'
     ];
 
     public function students(){

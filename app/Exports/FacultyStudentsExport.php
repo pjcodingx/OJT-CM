@@ -48,6 +48,7 @@ class FacultyStudentsExport implements FromCollection, WithHeadings, WithColumnW
         return $students->map(function($student){
             $student->total_journals = $student->journal()->count();
             $student->average_rating = round($student->ratings()->avg('rating') ?? 0, 2);
+
             $student->total_hours = round($student->attendances()->get()->reduce(function($carry, $attendance){
                 if($attendance->time_in && $attendance->time_out){
                     $in = Carbon::parse($attendance->date . ' ' . $attendance->time_in);
@@ -57,15 +58,18 @@ class FacultyStudentsExport implements FromCollection, WithHeadings, WithColumnW
                 return $carry;
             }, 0), 1);
 
-            return collect([
-                'Name' => $student->name,
-                'Email' => $student->email,
-                'Company' => $student->company->name ?? '--',
-                'Address' => $student->company->address ?? '--',
-                'Total Journals' => $student->total_journals,
-                'Rating' => $student->average_rating ?? '--',
-                'Total Hours' => $student->total_hours,
-            ]);
+
+                return collect([
+                    'Name'           => $student->name ?? '--',
+                    'Email'          => $student->email ?? '--',
+                    'Company'        => $student->company->name ?? '--',
+                    'Address'        => $student->company->address ?? '--',
+                    'Total Journals' => $student->total_journals ?? '0',
+                    'Rating'         => (float) ($student->average_rating ?? 0),
+                    'Appeals Count'  => (int) ($student->appealsCount() ?? 0),
+                    'Absences'       => (int) ($student->calculateAbsences() ?? 0),
+                    'Total Hours'    => (float) ($student->accumulated_hours ?? 0),
+                ]);
         });
     }
 
@@ -78,6 +82,8 @@ class FacultyStudentsExport implements FromCollection, WithHeadings, WithColumnW
             'Address',
             'Total Journals Submitted',
             'Rating',
+            'Appeals Submitted',
+            'Absences',
             'Total Hours Accumulated'
         ];
     }
@@ -91,23 +97,25 @@ class FacultyStudentsExport implements FromCollection, WithHeadings, WithColumnW
             'D' => 30, // Address
             'E' =>  30, // Total Journals
             'F' => 15, // Rating
-            'G' => 25, // Total Hours
+            'G' => 20, // Total Hours
+            'H' => 15,
+            'I' => 25,
         ];
     }
 
       public function styles(Worksheet $sheet)
     {
 
-        $sheet->getStyle('A1:G1')->getFont()->setBold(true);
-        $sheet->getStyle('A1:G1')->getAlignment()->setHorizontal('center');
+        $sheet->getStyle('A1:I1')->getFont()->setBold(true);
+        $sheet->getStyle('A1:I1')->getAlignment()->setHorizontal('center');
 
-         $sheet->getStyle('A1:G1')->getFill()
+         $sheet->getStyle('A1:I1')->getFill()
           ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
           ->getStartColor()->setARGB('0b4222');
 
-         $sheet->getStyle('A1:G1')->getFont()->getColor()->setARGB('FFFFFF');
+         $sheet->getStyle('A1:I1')->getFont()->getColor()->setARGB('FFFFFF');
 
-        $sheet->getStyle('A2:G'.$sheet->getHighestRow())
+        $sheet->getStyle('A2:I'.$sheet->getHighestRow())
               ->getAlignment()
               ->setHorizontal('center')
               ->setVertical('center');

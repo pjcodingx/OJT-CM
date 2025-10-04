@@ -300,14 +300,14 @@ tbody tr:hover {
 
 </style>
 
-
+<h1 style="color: black;">Students</h1>
 
 
 
 <div class="filters">
 
 
-    {{-- ?ADDED THIS FOR FILTERING COURSE --}}
+    {{-- ADDED THIS FOR FILTERING COURSE --}}
 
         <form method="GET" action="{{ route('admin.students.index') }}" style="margin-bottom: 20px;">
     <div style="display: flex; gap: 10px; align-items: center;">
@@ -336,7 +336,8 @@ tbody tr:hover {
             <option value="0" {{ request('status') == '0' ? 'selected' : '' }}>Disabled</option>
         </select>
 
-        <button type="submit" class="search-button">Search</button>
+        {{-- ?<button type="submit" class="search-button">Search</button> --}}
+
         <div style="margin-bottom: 15px;">
 
             <a href="{{ route('admin.students.export.excel', request()->query()) }}" class="btn btn-success">Export to Excel</a>
@@ -357,7 +358,7 @@ tbody tr:hover {
     <table class="student-table">
         <thead>
             <tr>
-                <th>Student ID</th>
+
                 <th>Name</th>
                 <th>Email</th>
                 <th>Course</th>
@@ -373,7 +374,7 @@ tbody tr:hover {
 
             @foreach($students as $student)
             <tr>
-                <td>{{ $student->id }}</td>
+
                 <td>{{ $student->name }}</td>
                 <td>{{ $student->email }}</td>
                 <td>{{ $student->course->name ?? 'Not Assigned' }}</td>

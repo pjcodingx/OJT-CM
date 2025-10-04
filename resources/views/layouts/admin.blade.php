@@ -28,9 +28,11 @@
 
             <!-- Admin profile or Name -->
             <div class="admin-section">
-                <img src="{{ asset('uploads/admin_photos/1751962972_369e6f6bb444b8c225b430c41c33ba41.jpg') }}" alt="Admin avatar" class="admin-avatar">
+                <img src="{{ asset('uploads/admin_photos/' . ($admin->photo ?? 'default.png')) }}" alt="Admin avatar" class="admin-avatar">
                 <span class="admin-text">{{ $admin->name ?? 'Admin' }}</span>
             </div>
+
+
 
             <!-- MENU -->
             <nav class="sidebar-nav">
@@ -88,19 +90,36 @@
                             <span class="nav-text">Task Monitoring</span>
                         </a>
                     </li>
-                    {{-- <li class="nav-item">
-                        <i class="fas fa-comments nav-icon"></i>
-                        <span class="nav-text">Feedback & Remarks</span>
-                    </li> --}}
 
-                    <li class="nav-item">
-                        <i class="fas fa-bell nav-icon"></i>
-                        <span class="nav-text">Notifications</span>
-                    </li>
-                    {{-- <li class="nav-item">
-                        <i class="fas fa-cog nav-icon"></i>
-                        <span class="nav-text">System Settings</span>
-                    </li> --}}
+                        <li class="nav-item {{ request()->routeIs('admin.notifications.index') ? 'active' : '' }}">
+                            <a href="{{ route('admin.notifications.index') }}" class="nav-link" style="color: inherit; text-decoration: none;">
+                                <div class="nav-icon-wrapper">
+                                    <i class="fas fa-bell nav-icon"></i>
+                                    @php
+                                        use App\Models\Notification;
+                                        $adminUnread = Notification::where('user_id', auth('admin')->id())
+                                            ->where('user_type', 'admin')
+                                            ->where('is_read', false)
+                                            ->count();
+                                    @endphp
+
+                                    @if($adminUnread > 0)
+                                        <span class="notification-badge">
+                                            {{ $adminUnread > 99 ? '99+' : $adminUnread }}
+                                        </span>
+                                    @endif
+                                </div>
+                                <span class="nav-text">Notifications</span>
+                            </a>
+                        </li>
+
+                <li class="nav-item {{ request()->routeIs('admin.profile') ? 'active' : '' }}">
+                        <a href="{{ route('admin.profile') }}" class="nav-link">
+                            <i class="fas fa-user-cog nav-icon"></i>
+                            <span class="nav-text">Profile</span>
+                        </a>
+                </li>
+
                 </ul>
             </nav>
 

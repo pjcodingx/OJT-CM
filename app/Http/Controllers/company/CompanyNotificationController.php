@@ -13,22 +13,32 @@ class CompanyNotificationController extends Controller
 
       public function index()
     {
-         $company = Auth::guard('company')->user();
+        $company = Auth::guard('company')->user();
 
+        // Base query for this company
+        $baseQuery = Notification::where('user_id', $company->id)
+            ->where('user_type', 'company');
 
-    $notifications = Notification::where('user_id', $company->id)
-        ->where('user_type', 'company')
-        ->orderBy('created_at', 'desc')
-        ->paginate(5);
+        // Stats
+        $unreadCount = (clone $baseQuery)->where('is_read', false)->count();
+        $totalCount  = (clone $baseQuery)->count();
+        $todayCount  = (clone $baseQuery)->whereDate('created_at', today())->count();
 
+        // Paginated list for displaying notifications
+        $notifications = $baseQuery->orderBy('created_at', 'desc')->paginate(5);
 
-    Notification::where('user_id', $company->id)
-        ->where('user_type', 'company')
-        ->where('is_read', false)
-        ->update(['is_read' => true]);
+        // Mark all unread as read
+        (clone $baseQuery)->where('is_read', false)->update(['is_read' => true]);
 
-    return view('company.notifications.index', compact('notifications', 'company'));
+        return view('company.notifications.index', compact(
+            'notifications',
+            'company',
+            'unreadCount',
+            'totalCount',
+            'todayCount'
+        ));
     }
+
 
     public function markAllAsRead()
 {

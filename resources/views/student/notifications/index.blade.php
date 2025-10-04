@@ -559,49 +559,48 @@
 }
 
 .notification-type {
-  font-weight: 600;
-  padding: 2px 8px;
-  border-radius: 12px;
-  font-size: 0.85rem;
-  display: inline-block;
-  text-transform: capitalize;
-}
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    display: inline-block;
+    text-transform: capitalize;
+    }
 
 
 .type-reject {
-  background-color: #ffffff;
-  color: #0f0700;
-  border: 1px solid #ff0000;
-  border-left: 5px solid #d84400;
-}
+    background-color: #ffffff;
+    color: #0f0700;
+    border: 1px solid #ff0000;
+    border-left: 5px solid #d84400;
+    }
 
-.type-journal_reminder {
-  background-color: #ffffff;
-  color: #0f0700;
-  border: 1px solid #ff9cf7;
-  border-left: 5px solid #ff9cf7;
-}
+.type-journal-reminder {
+    background-color: #f5a9ee;
+    color: #f757e9;
+
+    }
 
 .type-approve {
-  background-color: #ffffff;
-  color: #0f0700;
-  border: 1px solid #005a1e;
-  border-left: 5px solid #005a1e;
-}
+    background-color: #ffffff;
+    color: #0f0700;
+    border: 1px solid #005a1e;
+    border-left: 5px solid #005a1e;
+    }
 
 .type-company_feedback {
-  background-color: #ffffff;
-  color: #8a5200;
-  border: 1px solid #ffb347;
-  border-left: 4px solid #ff9500;
-}
+    background-color: #ffffff;
+    color: #8a5200;
+    border: 1px solid #ffb347;
+    border-left: 4px solid #ff9500;
+    }
 
 .type-summary_report {
-  background-color: #fef0f0;
-  color: #a82a2a;
-  border: 1px solid #e67e7e;
-  border-left: 4px solid #c0392b;
-}
+    background-color: #fef0f0;
+    color: #a82a2a;
+    border: 1px solid #e67e7e;
+    border-left: 4px solid #c0392b;
+    }
 
 
 .type-info {
@@ -678,9 +677,9 @@
         color: rgb(253, 253, 253);
 
     }
-    .notification-icon.journal_reminder{
-        background-color: #ff9cf7;
-        color: rgb(0, 0, 0);
+    .notification-icon.journal-reminder{
+        background-color: #fffdfd;
+        color: rgb(155, 9, 123);
     }
 
     .badge-due-today {
@@ -694,6 +693,54 @@
 }
 
 
+.type-absence {
+    background-color: #fee2e2;
+    color: #b91c1c;
+}
+
+.notification-icon.absence {
+  background: linear-gradient(135deg, #dddddd, #e65050);
+  color: #b91c1c;
+}
+
+.notification-icon.absence i {
+  color: #b91c1c;
+  font-size: 18px;
+  background: transparent;
+}
+.notification-icon.warning {
+    background-color: #ffffff;
+    color: #ffffff;
+
+}
+.notification-icon.no-work {
+    background-color: #ffffff;
+    color: #f30c0c;
+}
+
+.type-no-work{
+   background-color: hsl(17, 79%, 77%);
+    color: #fa4a59;
+}
+
+.notification-icon.time-override {
+    background-color: #ffffff;
+    color: #1e08e4;
+}
+
+.type-time-override{
+   background-color: #a9d7f1;
+    color: #36b5ff;
+}
+.notification-icon.penalty {
+    background-color: #ffffff;
+    color: #ff9100;
+}
+
+.type-penalty{
+   background-color: #e7b87a;
+    color: #ce7604;
+}
 
 
 </style>
@@ -705,10 +752,7 @@
             Notifications
         </h1>
         <div class="notifications-actions">
-            {{-- <button class="action-btn mark-all-read-btn" onclick="markAllAsRead()">
-                <i class="fas fa-check-double"></i>
-                Mark All Read
-            </button> --}}
+
             <form id="deleteAllForm" action="{{ route('student.notifications.deleteAll') }}" method="POST" style="display:inline;">
                 @csrf
                 @method('DELETE')
@@ -723,18 +767,19 @@
 
     <div class="notifications-stats">
         <div class="stat-item">
-            <div class="stat-number">{{ $notifications->where('is_read', 0)->count() }}</div>
+            <div class="stat-number">{{ $unreadCount }}</div>
             <div class="stat-label">Unread</div>
         </div>
         <div class="stat-item">
-            <div class="stat-number">{{ $notifications->count() }}</div>
+            <div class="stat-number">{{ $totalCount }}</div>
             <div class="stat-label">Total</div>
         </div>
         <div class="stat-item">
-            <div class="stat-number">{{ $notifications->where('created_at', '>=', now()->subDay())->count() }}</div>
+            <div class="stat-number">{{ $todayCount }}</div>
             <div class="stat-label">Today</div>
         </div>
     </div>
+
 
 
     <div class="notifications-list">
@@ -744,17 +789,7 @@
                     <div class="unread-indicator"></div>
                 @endif
 
-                <!-- Notification Actions -->
-                <div class="notification-actions">
-                    @if(!$notification->is_read)
-                        {{-- <button class="notification-action-btn mark-read-btn" onclick="markAsRead({{ $notification->id }})" title="Mark as read">
-                            <i class="fas fa-check"></i>
-                        </button> --}}
-                    @endif
-                    {{-- <button class="notification-action-btn delete-btn" onclick="showDeleteModal({{ $notification->id }})" title="Delete notification">
-                        <i class="fas fa-trash"></i>
-                    </button> --}}
-                </div>
+
 
 
 
@@ -763,33 +798,47 @@
                     @case('approve')
                         <i class="fas fa-check-circle"></i>
                     @break
+                      @case('penalty')
+                            <i class="fas fa-hourglass-half text-orange-500"></i>
+                        @break
+                    @case('no-work')
+                        <i class="fas fa-ban text-red-500"></i>
+                    @break
                     @case('reject')
                         <i class="fas fa-times-circle"></i>
                     @break
-
-
                     @case('company_feedback')
                         <i class="fas fa-briefcase"></i>
                         @break
                     @case('summary_report')
                         <i class="fas fa-file-pdf"></i>
                         @break
-                    @case('journal_reminder')
+                    @case('journal-reminder')
                         <i class="fas fa-pen text-purple-500"></i>
                         @break
+                        @case('absence')
+                        <i class="fas fa-user-slash text-red-500"></i>
+                        @break
+                    @case('warning')
+                        <i class="fas fa-exclamation-circle text-yellow-500"></i>
+                    @break
+                    @case('time-override')
+                        <i class="fas fa-clock text-blue-500"></i>
+                    @break
                     @default
                         <i class="fas fa-info-circle"></i>
                 @endswitch
             </div>
 
 
-                                <div class="notification-content">
+                <div class="notification-content">
                     <div class="notification-title">
                         {{ $notification->title }}
-                        @if($notification->type === 'journal_reminder')
-                            <span class="badge-due-today">Due 5:00pm</span>
+                        @if($notification->type === 'journal-reminder')
+                            <span class="badge-due-today">Due 11:59pm </span>
                         @endif
                     </div>
+
                     <div class="notification-message">{{ $notification->message }}</div>
 
                     <div class="notification-meta">

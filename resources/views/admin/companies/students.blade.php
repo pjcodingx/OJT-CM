@@ -135,7 +135,7 @@
                 <th>Name</th>
                 <th>Email</th>
                 <th>Course</th>
-                <th>Faculty Adviser</th>
+                <th>OJT Adviser</th>
                 <th>Accumulated Hours</th>
             </tr>
         </thead>

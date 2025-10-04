@@ -91,26 +91,26 @@
                     </li>
 
                             <li class="nav-item {{ request()->routeIs('faculty.notifications.index') ? 'active' : '' }}">
-                        <a href="{{ route('faculty.notifications.index') }}" class="nav-link">
-                            <div class="nav-icon-wrapper">
-                                <i class="fas fa-bell nav-icon"></i>
-                                @php
-                                    use App\Models\Notification;
-                                    $unreadCount = Notification::where('user_id', auth('faculty')->id())
-                                        ->where('user_type', 'faculty')
-                                        ->where('is_read', false)
-                                        ->count();
-                                @endphp
+                                <a href="{{ route('faculty.notifications.index') }}" class="nav-link">
+                                    <div class="nav-icon-wrapper">
+                                        <i class="fas fa-bell nav-icon"></i>
+                                        @php
+                                            use App\Models\Notification;
+                                            $unreadCount = Notification::where('user_id', auth('faculty')->id())
+                                                ->where('user_type', 'faculty')
+                                                ->where('is_read', false)
+                                                ->count();
+                                        @endphp
 
-                                @if($unreadCount > 0)
-                                    <span class="notification-badge">
-                                        {{ $unreadCount > 99 ? '99+' : $unreadCount }}
-                                    </span>
-                                @endif
-                            </div>
-                            <span class="nav-text">Notifications</span>
-                        </a>
-                    </li>
+                                        @if($unreadCount > 0)
+                                            <span class="notification-badge">
+                                                {{ $unreadCount > 99 ? '99+' : $unreadCount }}
+                                            </span>
+                                        @endif
+                                    </div>
+                                    <span class="nav-text">Notifications</span>
+                                </a>
+                            </li>
 
 
                     <!-- 10. Reports / PDF Summary -->

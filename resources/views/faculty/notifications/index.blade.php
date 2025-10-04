@@ -651,6 +651,65 @@
   color: #2d5db6;
 }
 
+
+
+.type-attendance_time {
+    background-color: #94b2d4;
+    color: #fff;
+    border: 1px solid #1b5bbf;
+    border-left: 4px solid #1b5bbf;
+}
+
+.type-attendance_time i {
+    background-color: #2defe5;
+    color: #13b30d;
+    border: 1px solid #1b5bbf;
+    border-left: 4px solid #1b5bbf;
+}
+
+
+.notification-icon.Absent,
+.notification-icon.absence {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: #ffffff;
+}
+.notification-icon.Absent i,
+.notification-icon.absence i {
+  color: #ffffff;
+  font-size: 18px;
+}
+
+.type-absence,
+.type-Absent {
+  background-color: #fee2e2;
+  color: #b91c1c;
+
+}
+.type-attendance_time {
+  background-color: #e6f0ff;
+  color: #1e40af;
+  border: 1px solid #93c5fd;
+}
+
+.notification-icon .fa-clock {
+    color: #2563eb;
+}
+
+.notification-icon .fa-user-slash {
+    color: #dc2626;
+}
+
+.notification-icon.no-work {
+    background-color: #f30c0c;
+    color: #ffffff;
+}
+
+.type-no-work{
+   background-color: hsl(17, 78%, 82%);
+    color: #eb4e5b;
+}
+
+
 </style>
 
 <div class="notifications-container">
@@ -660,10 +719,6 @@
             Notifications
         </h1>
         <div class="notifications-actions">
-            {{-- <button class="action-btn mark-all-read-btn" onclick="markAllAsRead()">
-                <i class="fas fa-check-double"></i>
-                Mark All Read
-            </button> --}}
             <form id="deleteAllForm" action="{{ route('faculty.notifications.deleteAll') }}" method="POST" style="display:inline;">
                 @csrf
                 @method('DELETE')
@@ -679,18 +734,19 @@
 
     <div class="notifications-stats">
         <div class="stat-item">
-            <div class="stat-number">{{ $notifications->where('is_read', 0)->count() }}</div>
+            <div class="stat-number text-red-600">{{ $unreadCount }}</div>
             <div class="stat-label">Unread</div>
         </div>
         <div class="stat-item">
-            <div class="stat-number">{{ $notifications->count() }}</div>
+            <div class="stat-number">{{ $totalCount }}</div>
             <div class="stat-label">Total</div>
         </div>
         <div class="stat-item">
-            <div class="stat-number">{{ $notifications->where('created_at', '>=', now()->subDay())->count() }}</div>
+            <div class="stat-number text-green-600">{{ $todayCount }}</div>
             <div class="stat-label">Today</div>
         </div>
     </div>
+
 
 
     <div class="notifications-list">
@@ -723,6 +779,15 @@
                     @case('summary_report')
                         <i class="fas fa-file-pdf"></i>
                         @break
+                   @case('attendance_time')
+                        <i class="fas fa-clock text-blue-600"></i>
+                    @break
+                     @case('no-work')
+                        <i class="fas fa-ban text-red-500"></i>
+                    @break
+                    @case('Absent')
+                         <i class="fas fa-user-slash text-red-500"></i>
+                    @break
                     @case('success')
                         <i class="fas fa-check-circle"></i>
                         @break

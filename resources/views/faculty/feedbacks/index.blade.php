@@ -455,13 +455,6 @@
         <p>Review feedback and ratings from companies for your assigned students</p>
     </div>
 
-    <!-- Results Header -->
-    {{-- <div class="results-header">
-        <div class="results-counter">
-            Showing {{ $students->count() }} student records
-        </div>
-    </div> --}}
-
     <table class="modern-table">
         <thead>
             <tr >
@@ -484,6 +477,7 @@
                                 data-feedback="{{ htmlspecialchars($rating->feedback ?? '', ENT_QUOTES, 'UTF-8') }}"
                                 data-student="{{ htmlspecialchars($student->name, ENT_QUOTES, 'UTF-8') }}"
                                 data-company="{{ htmlspecialchars($rating->company->name ?? 'N/A', ENT_QUOTES, 'UTF-8') }}"
+                                data-date="{{ $rating->created_at->format('F d, Y') }}"
                             >
                                 View Feedback
                             </button>
@@ -543,7 +537,9 @@
                 const student = this.getAttribute('data-student');
                 const company = this.getAttribute('data-company');
 
-                modalStudentInfo.innerHTML = `<strong>Student:</strong> ${student} | <strong>Company:</strong> ${company}`;
+                const date = this.getAttribute('data-date');
+                modalStudentInfo.innerHTML = `<strong>Student:</strong> ${student} | <strong>Company:</strong> ${company} | <strong>Date:</strong> ${date}`;
+
                 modalText.textContent = feedback;
                 modal.classList.add('active');
                 modal.setAttribute('aria-hidden', 'false');

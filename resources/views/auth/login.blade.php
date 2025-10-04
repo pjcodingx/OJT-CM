@@ -239,6 +239,10 @@
                 white-space: nowrap;
                 border: 0;
             }
+
+            input[type="password"]::-ms-reveal {
+                display: none;
+            }
         </style>
     </head>
     <body>
@@ -256,7 +260,7 @@
 
             @if ($errors->any())
             <div id="error-message" class="bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded mb-4">
-                <ul class="text-sm list-disc list-inside">
+                <ul class="text-sm list-disc list-inside" style="list-style: none">
                     @foreach ($errors->all() as $error)
                         <li>{{ $error }}</li>
                     @endforeach

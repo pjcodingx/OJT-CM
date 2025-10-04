@@ -180,6 +180,17 @@
         </button>
     </form>
 
+@if(session('success'))
+    <div style="color:green; font-weight:bold; margin-bottom:10px;">
+        {{ session('success') }}
+    </div>
+@endif
+
+@if(session('error'))
+    <div style="color:red; font-weight:bold; margin-bottom:10px;">
+        {{ session('error') }}
+    </div>
+@endif
 
 
 
@@ -192,6 +203,7 @@
                 <th>Location</th>
                 <th>Date</th>
                 <th>Time</th>
+                <th>Status</th>
                 <th>Action</th>
             </tr>
         </thead>
@@ -205,8 +217,30 @@
                     <td>{{ \Carbon\Carbon::parse($journal->journal_date)->format('F j, Y') }}</td>
                     <td>{{ $journal->created_at->format('g:i A') }}</td>
                     <td>
-                        <button class="btn-view" onclick="openModal({{ $journal->id }})">View</button>
+                        @if($journal->status == 'Late')
+                            <span style="color:red; font-weight:bold;">Late</span>
+                        @else
+                            <span style="color:green; font-weight:bold;">On Time</span>
+                        @endif
                     </td>
+
+
+                    <td>
+                        <div style="display: flex; gap: 5px; align-items: center;">
+                            <button class="btn-view" onclick="openModal({{ $journal->id }})">View</button>
+
+                            @if($journal->status == 'Late')
+                                <form action="{{ route('faculty.journals.penalty', $journal->id) }}" method="POST" style="display:flex; gap: 5px; align-items:center; margin:0;">
+                                    @csrf
+                                    <input type="number" name="penalty_hours" min="0.1" step="0.1" max="1" placeholder="min" style="width:50px; height:28px; padding:2px 4px; border-radius:4px; border:1px solid #ccc;">
+                                    <button type="submit" class="btn-view" style="background-color: #b71c1c; margin:0; padding:4px 8px;">
+                                        Deduct
+                                    </button>
+                                </form>
+                            @endif
+                        </div>
+                    </td>
+
                 </tr>
             @endforeach
         </tbody>
