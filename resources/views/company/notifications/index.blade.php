@@ -569,10 +569,9 @@
 
 
 .type-appeal {
-  background-color: #ffffff;
-  color: #0f0700;
-  border: 1px solid #ff0000;
-  border-left: 5px solid #d84400;
+  background-color: #b5ffc5;
+  color: #024110;
+
 }
 
 .type-journal_reminder {
@@ -668,11 +667,7 @@
     font-size: 20px;
 }
 
-.notification-icon.appeal {
-     background-color: #ffffff;
-    color: rgb(0, 0, 0);
 
-}
 
 .notification-icon.absence {
   background: linear-gradient(135deg, #dddddd, #e65050);
@@ -690,6 +685,12 @@
     color: #550d04;
 }
 
+.notification-icon.appeal i{
+     background-color: #ffffff;
+    color: rgb(3, 97, 34);
+
+}
+
 </style>
 
 <div class="notifications-container">
@@ -699,10 +700,7 @@
             Notifications
         </h1>
         <div class="notifications-actions">
-            {{-- <button class="action-btn mark-all-read-btn" onclick="markAllAsRead()">
-                <i class="fas fa-check-double"></i>
-                Mark All Read
-            </button> --}}
+
             <form id="deleteAllForm" action="{{ route('company.notifications.deleteAll') }}" method="POST" style="display:inline;">
                 @csrf
                 @method('DELETE')

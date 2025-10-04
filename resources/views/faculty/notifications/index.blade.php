@@ -667,10 +667,10 @@
     border-left: 4px solid #1b5bbf;
 }
 
-/* Absence (supports both "Absent" and "absence") */
+
 .notification-icon.Absent,
 .notification-icon.absence {
-  background: linear-gradient(135deg, #ef4444, #dc2626); /* red gradient */
+  background: linear-gradient(135deg, #ef4444, #dc2626);
   color: #ffffff;
 }
 .notification-icon.Absent i,
@@ -678,7 +678,7 @@
   color: #ffffff;
   font-size: 18px;
 }
-/* Badge styling (optional) */
+
 .type-absence,
 .type-Absent {
   background-color: #fee2e2;
@@ -692,11 +692,11 @@
 }
 
 .notification-icon .fa-clock {
-    color: #2563eb; /* Blue-600 */
+    color: #2563eb;
 }
 
 .notification-icon .fa-user-slash {
-    color: #dc2626; /* Red-600 */
+    color: #dc2626;
 }
 
 .notification-icon.no-work {
