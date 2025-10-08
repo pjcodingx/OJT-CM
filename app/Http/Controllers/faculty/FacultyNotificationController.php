@@ -29,7 +29,7 @@ class FacultyNotificationController extends Controller
         }
 
 
-        $limit = 20;
+        $limit = 10;
 
         $unreadCount = (clone $baseQuery)->where('is_read', false)->count();
         $totalCount  = (clone $baseQuery)->count();
@@ -46,7 +46,7 @@ class FacultyNotificationController extends Controller
             ->where('is_read', false)
             ->update(['is_read' => true]);
 
-        $maxNotifications = 3;
+        $maxNotifications = 20;
         $isAlmostFull = $totalCount >= ($maxNotifications * 0.9);
         $isFull = $totalCount >= $maxNotifications;
 

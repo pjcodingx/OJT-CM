@@ -23,6 +23,83 @@ body {
     display: flex;
     flex-direction: column;
     border-right: 1px solid #6e6e6e;
+    transition: transform 0.3s ease;
+}
+
+/* Desktop: sidebar collapses when class is added */
+@media (min-width: 768px) {
+    .sidebar.sidebar-collapsed {
+        transform: translateX(-280px);
+    }
+
+    .main-content {
+        flex: 1;
+        transition: margin-left 0.3s ease;
+    }
+
+    .main-content.sidebar-collapsed {
+        margin-left: -280px;
+    }
+}
+
+/* Mobile: sidebar is hidden by default, shows when class is added */
+@media (max-width: 767px) {
+    .sidebar {
+        position: fixed;
+        left: 0;
+        top: 0;
+        height: 100%;
+        width: 280px;
+        z-index: 1000;
+        transform: translateX(-280px); /* Hidden by default */
+    }
+
+    .sidebar.sidebar-collapsed {
+        transform: translateX(0); /* Visible when toggled */
+    }
+
+    /* Backdrop */
+    body::after {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 999;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s ease;
+    }
+
+    body.sidebar-open::after {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    .top-bar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        padding: 0 20px;
+        background-color: white;
+        z-index: 1100;
+    }
+
+    .main-content {
+        margin-left: 0;
+        width: 100%;
+        padding-top: 60px;
+    }
+
+    .hamburger-menu {
+        z-index: 1200;
+    }
 }
 
 .sidebar-header {
@@ -105,7 +182,6 @@ body {
     border-top: 1px solid #6e6e6e;
 }
 
-/* Added to remove the underline from links */
 .nav-link {
     text-decoration: none;
     color: #D4D4D4;
@@ -158,13 +234,27 @@ body {
     height: 3px;
     background-color: #393E46;
     border-radius: 2px;
+    transition: all 0.3s ease;
+}
+
+/* Hamburger animation */
+.sidebar-collapsed ~ .main-content .hamburger-line:nth-child(1) {
+    transform: rotate(45deg) translate(5px, 5px);
+}
+
+.sidebar-collapsed ~ .main-content .hamburger-line:nth-child(2) {
+    opacity: 0;
+}
+
+.sidebar-collapsed ~ .main-content .hamburger-line:nth-child(3) {
+    transform: rotate(-45deg) translate(7px, -7px);
 }
 
 .dashboard-content {
     padding: 30px;
 }
 
-/* COMPANY-STYLE DASHBOARD CARDS - UPDATED DESIGN */
+/* COMPANY-STYLE DASHBOARD CARDS */
 .dashboard-title {
     color: #2c3e50;
     margin-top: 10px;
@@ -285,13 +375,6 @@ body {
     background: radial-gradient(circle, #7f8c8d 0%, transparent 70%);
 }
 
-/* REMOVE OLD CARD STYLES - These are no longer needed */
-/*
-.blue-card, .green-card, .red-card, .yellow-card {
-    // Old colored card styles removed
-}
-*/
-
 /* NOTIFICATION BADGES */
 .nav-icon-wrapper {
     position: relative;
@@ -374,10 +457,6 @@ body {
 }
 
 @media (max-width: 768px) {
-    .sidebar {
-        width: 250px;
-    }
-
     .dashboard-content {
         padding: 20px;
     }
@@ -429,19 +508,6 @@ body {
 }
 
 @media (max-width: 480px) {
-    .dashboard-container {
-        flex-direction: column;
-    }
-
-    .sidebar {
-        width: 100%;
-        height: auto;
-    }
-
-    .sidebar-nav {
-        display: none;
-    }
-
     .dashboard-content {
         padding: 15px;
     }
