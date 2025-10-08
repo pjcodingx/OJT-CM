@@ -60,12 +60,12 @@ class MyCompaniesController extends Controller
         $admin = \App\Models\Admin::first();
 
     if ($admin) {
-        Notification::create([
+        Notification::createLimited([
             'user_id' => $admin->id,
             'user_type' => 'admin',
             'title' => 'New Company Registered',
-            'message' => 'Faculty '.$faculty->name.' has added a new company: '.$company->name,
-            'type' => 'info',
+            'message' => 'OJT Adviser '.$faculty->name.' has added a new company: '.$company->name,
+            'type' => 'new_company',
             'is_read' => 0,
         ]);
     }

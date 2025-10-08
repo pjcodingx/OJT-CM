@@ -15,19 +15,32 @@ class CompanyNotificationController extends Controller
     {
         $company = Auth::guard('company')->user();
 
-        // Base query for this company
+
         $baseQuery = Notification::where('user_id', $company->id)
             ->where('user_type', 'company');
 
-        // Stats
+        if(request()->filled('type')){
+            $baseQuery->where('type', request('type'));
+        }
+
+        if(request()->filled('date')){
+            $baseQuery->whereDate('created_at', request('date'));
+        }
+
+        $limit = 10;
+
+
         $unreadCount = (clone $baseQuery)->where('is_read', false)->count();
         $totalCount  = (clone $baseQuery)->count();
         $todayCount  = (clone $baseQuery)->whereDate('created_at', today())->count();
 
-        // Paginated list for displaying notifications
-        $notifications = $baseQuery->orderBy('created_at', 'desc')->paginate(5);
 
-        // Mark all unread as read
+        $notifications = $baseQuery->orderBy('created_at', 'desc')->paginate($limit)->withQueryString();
+
+        $maxNotifications = 3;
+        $isAlmostFull = $totalCount >= ($maxNotifications * 0.9);
+        $isFull = $totalCount >= $maxNotifications;
+
         (clone $baseQuery)->where('is_read', false)->update(['is_read' => true]);
 
         return view('company.notifications.index', compact(
@@ -35,7 +48,10 @@ class CompanyNotificationController extends Controller
             'company',
             'unreadCount',
             'totalCount',
-            'todayCount'
+            'todayCount',
+            'maxNotifications',
+            'isAlmostFull',
+            'isFull'
         ));
     }
 

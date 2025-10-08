@@ -122,7 +122,7 @@ class MultiLoginController extends Controller
 
     // Notify admin only after 3 failed attempts
     if ($attempts >= 3) {
-        Notification::create([
+        Notification::createLimited([
             'user_id' => 1,
             'user_type' => 'admin',
             'title' => 'Multiple Failed Login Attempts',

@@ -42,7 +42,7 @@ class CompanyAttendanceAppealController extends Controller
                  // Notify the student
                 $student = $appeal->attendance->student;
 
-                \App\Models\Notification::create([
+                \App\Models\Notification::createLimited([
                     'user_id' => $student->id,
                     'user_type' => 'student',
                     'type' => 'approve',
@@ -78,7 +78,7 @@ class CompanyAttendanceAppealController extends Controller
              // Notify the student
             $student = $appeal->attendance->student;
 
-            \App\Models\Notification::create([
+            \App\Models\Notification::createLimited([
                 'user_id' => $student->id,
                 'user_type' => 'student',
                 'type' => 'reject',

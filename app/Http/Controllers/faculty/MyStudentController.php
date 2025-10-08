@@ -106,12 +106,12 @@ class MyStudentController extends Controller
         $admin = Admin::first();
 
         if($admin){
-            Notification::create([
+            Notification::createLimited([
                 'user_id' => $admin->id,
                 'user_type' => 'admin',
                 'title' => 'New Trainee Registered',
-                'message' => 'Adviser ' . $faculty->name . ' added a new trainee: ' . $student->name,
-                'type' => 'info',
+                'message' => ' OJT Adviser ' . $faculty->name . ' added a new trainee: ' . $student->name,
+                'type' => 'new_student',
                 'is_read' => 0
             ]);
         }

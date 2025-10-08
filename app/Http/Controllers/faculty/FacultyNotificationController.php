@@ -11,33 +11,57 @@ class FacultyNotificationController extends Controller
 {
     //
 
-    public function index()
+   public function index()
     {
         $faculty = Auth::guard('faculty')->user();
 
-        // Base query (faculty-specific notifications)
+        // ✅ Base query — faculty-specific notifications
         $baseQuery = Notification::where('user_id', $faculty->id)
             ->where('user_type', 'faculty');
 
-        // Stats
+        // ✅ Apply filters from Blade form
+        if (request()->filled('type')) {
+            $baseQuery->where('type', request('type'));
+        }
+
+        if (request()->filled('date')) {
+            $baseQuery->whereDate('created_at', request('date'));
+        }
+
+
+        $limit = 20;
+
         $unreadCount = (clone $baseQuery)->where('is_read', false)->count();
         $totalCount  = (clone $baseQuery)->count();
         $todayCount  = (clone $baseQuery)->whereDate('created_at', today())->count();
 
-        // Paginated notifications (for list display)
-        $notifications = $baseQuery->orderBy('created_at', 'desc')->paginate(5);
 
-        // Mark as read after loading
-        (clone $baseQuery)->where('is_read', false)->update(['is_read' => true]);
+        $notifications = $baseQuery
+            ->orderBy('created_at', 'desc')
+            ->paginate($limit)
+            ->withQueryString();
+
+
+        Notification::whereIn('id', $notifications->pluck('id'))
+            ->where('is_read', false)
+            ->update(['is_read' => true]);
+
+        $maxNotifications = 3;
+        $isAlmostFull = $totalCount >= ($maxNotifications * 0.9);
+        $isFull = $totalCount >= $maxNotifications;
 
         return view('faculty.notifications.index', compact(
             'notifications',
             'faculty',
             'unreadCount',
             'totalCount',
-            'todayCount'
+            'todayCount',
+            'maxNotifications',
+            'isAlmostFull',
+            'isFull'
         ));
     }
+
 
 
     public function markAllAsRead()

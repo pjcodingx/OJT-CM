@@ -69,7 +69,7 @@ class StudentRatingController extends Controller
                 $faculty = $student->facultyAdviser;
 
                 if ($faculty) {
-                    Notification::create([
+                    Notification::createLimited([
                         'user_id' => $faculty->id,
                         'user_type' => 'faculty',
                         'type' => 'company_feedback',
@@ -80,7 +80,7 @@ class StudentRatingController extends Controller
                     ]);
                 }
 
-                            Notification::create([
+                            Notification::createLimited([
                             'user_id' => $student->id,
                             'user_type' => 'student',
                             'type' => 'company_feedback',

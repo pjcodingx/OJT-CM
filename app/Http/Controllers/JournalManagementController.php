@@ -82,7 +82,7 @@ public function deductPenalty(Request $request, Journal $journal)
     $attendance->save();
 
     // Notify student
-    \App\Models\Notification::create([
+    \App\Models\Notification::createLimited([
         'user_id'   => $journal->student->id,
         'user_type' => 'student',
         'type'      => 'penalty',

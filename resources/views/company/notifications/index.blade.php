@@ -691,6 +691,138 @@
 
 }
 
+
+/* Notif error */
+
+
+.inbox-alert {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 15px 20px;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    font-size: 15px;
+    font-weight: 500;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    animation: fadeIn 0.3s ease;
+}
+
+.inbox-alert i {
+    font-size: 18px;
+}
+
+/* Danger (Full) */
+.inbox-full {
+    background-color: #fdecea;
+    color: #b71c1c;
+    border-left: 5px solid #b71c1c;
+}
+
+/* Warning (Almost Full) */
+.inbox-warning {
+    background-color: #fff8e1;
+    color: #ff6f00;
+    border-left: 5px solid #ff6f00;
+}
+
+.inbox-alert-text {
+    line-height: 1.4;
+}
+
+/* Animation */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-4px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsive tweaks */
+@media (max-width: 600px) {
+    .inbox-alert {
+        flex-direction: column;
+        align-items: flex-start;
+        font-size: 14px;
+        padding: 12px 15px;
+    }
+}
+
+.filter-form {
+    background: #ffffff;
+    padding: 18px 20px;
+    border-radius: 10px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+    margin-bottom: 25px;
+    border-left: 4px solid #05aa29;
+}
+
+.filter-fields {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    align-items: flex-end;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    min-width: 180px;
+}
+
+.filter-group label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #043306;
+    margin-bottom: 5px;
+}
+
+.filter-group select,
+.filter-group input[type="date"] {
+    border: 1px solid #cbd5e0;
+    border-radius: 6px;
+    padding: 8px 10px;
+    font-size: 14px;
+    color: #2d3748;
+    background-color: #f8fafc;
+    transition: border-color 0.2s ease;
+}
+
+.filter-group select:focus,
+.filter-group input[type="date"]:focus {
+    border-color: #05aa29;
+    outline: none;
+    background-color: #ffffff;
+}
+
+.filter-btn {
+    background-color: #14532d;
+    color: white;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    padding: 9px 20px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.filter-btn:hover {
+    background-color: #1e7c43;
+    transform: translateY(-1px);
+}
+
+.filter-summary {
+    margin-top: -10px;
+    margin-bottom: 20px;
+    font-size: 14px;
+    color: #555;
+    background-color: #f6fdf8;
+    padding: 10px 15px;
+    border-radius: 6px;
+    border-left: 3px solid #05aa29;
+}
+
 </style>
 
 <div class="notifications-container">
@@ -708,10 +840,57 @@
                     <i class="fas fa-trash-alt"></i>
                     Delete All
                 </button>
-</form>
+            </form>
 
         </div>
-    </div>
+</div>
+
+    @if($isFull)
+        <div class="inbox-alert inbox-full">
+            <i class="fas fa-exclamation-triangle"></i>
+            <div class="inbox-alert-text">
+                <strong>Inbox Full!</strong> Please delete some notifications to receive new ones.
+            </div>
+        </div>
+    @elseif($isAlmostFull)
+        <div class="inbox-alert inbox-warning">
+            <i class="fas fa-exclamation-circle"></i>
+            <div class="inbox-alert-text">
+                <strong>Inbox Almost Full:</strong>
+                {{ $totalCount }}/{{ $maxNotifications }} notifications.
+            </div>
+        </div>
+    @endif
+
+    <form method="GET" action="{{ route('company.notifications.index') }}" class="filter-form">
+        <div class="filter-fields">
+            <div class="filter-group">
+                <label for="type">Type</label>
+                <select name="type" id="type">
+                    <option value="">All</option>
+                    <option value="appeal" {{ request('type')=='appeal'?'selected':'' }}>Appeals</option>
+                    <option value="absence" {{ request('type')=='absence'?'selected':'' }}>Absents</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label for="date">Date</label>
+                <input type="date" name="date" id="date" value="{{ request('date') }}">
+            </div>
+
+            <button type="submit" class="filter-btn">
+                <i class="fas fa-filter"></i> Filter
+            </button>
+        </div>
+    </form>
+
+    @if(request('type') || request('date'))
+        <p class="filter-summary">
+            Showing notifications
+            @if(request('type')) of type <strong>{{ request('type') }}</strong> @endif
+            @if(request('date')) on <strong>{{ request('date') }}</strong> @endif
+        </p>
+    @endif
 
 
     <div class="notifications-stats">
@@ -746,9 +925,6 @@
                     @break
                      @case('absence')
                         <i class="fas fa-user-slash text-red-500"></i>
-                        @break
-                    @case('journal_reminder')
-                        <i class="fas fa-pen text-purple-500"></i>
                         @break
                     @default
                         <i class="fas fa-info-circle"></i>

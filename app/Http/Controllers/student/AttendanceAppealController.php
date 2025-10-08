@@ -115,7 +115,7 @@ class AttendanceAppealController extends Controller
                 $company = $student->company;
 
         if ($company) {
-                    Notification::create([
+                    Notification::createLimited([
                         'user_id' => $company->id,
                         'user_type' => 'company',
                         'type' => 'appeal',
@@ -149,7 +149,7 @@ class AttendanceAppealController extends Controller
     $attendance = $appeal->attendance;
 
     // Notify the student
-    Notification::create([
+    Notification::createLimited([
         'user_id' => $appeal->student_id,
         'user_type' => 'student',
         'type' => 'approve',

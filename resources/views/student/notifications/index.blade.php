@@ -71,6 +71,84 @@
     box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
 }
 
+/* MOVED AND ADJUSTED: Filter form now positioned after header */
+.filter-form {
+    background: #ffffff;
+    padding: 18px 20px;
+    border-radius: 10px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+    margin-bottom: 25px;
+    border-left: 4px solid #05aa29;
+}
+
+.filter-fields {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    align-items: flex-end;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    min-width: 180px;
+}
+
+.filter-group label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #043306;
+    margin-bottom: 5px;
+}
+
+.filter-group select,
+.filter-group input[type="date"] {
+    border: 1px solid #cbd5e0;
+    border-radius: 6px;
+    padding: 8px 10px;
+    font-size: 14px;
+    color: #2d3748;
+    background-color: #f8fafc;
+    transition: border-color 0.2s ease;
+}
+
+.filter-group select:focus,
+.filter-group input[type="date"]:focus {
+    border-color: #05aa29;
+    outline: none;
+    background-color: #ffffff;
+}
+
+.filter-btn {
+    background-color: #14532d;
+    color: white;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    padding: 9px 20px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.filter-btn:hover {
+    background-color: #1e7c43;
+    transform: translateY(-1px);
+}
+
+.filter-summary {
+    margin-top: -10px;
+    margin-bottom: 20px;
+    font-size: 14px;
+    color: #555;
+    background-color: #f6fdf8;
+    padding: 10px 15px;
+    border-radius: 6px;
+    border-left: 3px solid #05aa29;
+}
+
 .notifications-stats {
     display: flex;
     gap: 20px;
@@ -244,7 +322,6 @@
     animation: pulse 2s infinite;
 }
 
-/* Notification Actions */
 .notification-actions {
     position: absolute;
     top: 15px;
@@ -293,7 +370,6 @@
     transform: scale(0.95);
 }
 
-/* Delete confirmation modal */
 .delete-modal {
     display: none;
     position: fixed;
@@ -402,7 +478,6 @@
     }
 }
 
-/* Loading state */
 .notification-item.deleting {
     opacity: 0.5;
     pointer-events: none;
@@ -427,81 +502,179 @@
     100% { transform: rotate(360deg); }
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
-    .notifications-container {
-        padding: 0 15px;
-    }
-
-    .notifications-header {
-        flex-direction: column;
-        gap: 15px;
-        align-items: flex-start;
-    }
-
-    .notifications-title {
-        font-size: 24px;
-    }
-
-    .notifications-stats {
-        flex-direction: column;
-        gap: 10px;
-    }
-
-    .notification-item {
-        padding: 15px 20px;
-        padding-right: 50px;
-    }
-
-    .notification-actions {
-        position: static;
-        opacity: 1;
-        visibility: visible;
-        margin-top: 10px;
-        align-self: flex-start;
-    }
-
-    .notification-icon {
-        width: 35px;
-        height: 35px;
-        align-self: flex-start;
-    }
-
-    .notification-meta {
-        flex-direction: column;
-        gap: 8px;
-        align-items: flex-start;
-    }
-
-    .unread-indicator {
-        right: 20px;
-    }
+.notification-type {
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    display: inline-block;
+    text-transform: capitalize;
 }
 
-@media (max-width: 480px) {
-    .notification-item {
-        padding: 12px 15px;
-        flex-direction: column;
-        gap: 10px;
-    }
+.type-reject {
+    background-color: #ffffff;
+    color: #0f0700;
+    border: 1px solid #ff0000;
+    border-left: 5px solid #d84400;
+}
 
-    .notifications-title {
-        font-size: 20px;
-    }
+.type-journal-reminder {
+    background-color: #f5a9ee;
+    color: #f757e9;
+}
 
-    .stat-number {
-        font-size: 20px;
-    }
+.type-approve {
+    background-color: #ffffff;
+    color: #0f0700;
+    border: 1px solid #005a1e;
+    border-left: 5px solid #005a1e;
+}
 
-    .notifications-actions {
-        flex-direction: column;
-        width: 100%;
-    }
+.type-company_feedback {
+    background-color: #faceb4;
+    color: #8a5200;
 
-    .action-btn {
-        width: 100%;
-        justify-content: center;
-    }
+}
+
+.type-summary_report {
+    background-color: #fef0f0;
+    color: #a82a2a;
+    border: 1px solid #e67e7e;
+    border-left: 4px solid #c0392b;
+}
+
+.type-info {
+    background-color: #d1ecf1;
+    color: #0c5460;
+    border: 1px solid #0c5460;
+}
+
+.notification-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    font-size: 18px;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow:
+        0 2px 4px rgba(0, 0, 0, 0.4),
+        inset 0 1px 2px rgba(255, 255, 255, 0.4);
+}
+
+.notification-icon.journal i {
+    color: #3a75d1;
+    background-color: #dfecfd;
+}
+
+.notification-icon.company_feedback i {
+    color: #d47a00;
+    background-color: #fff0e0;
+}
+
+.notification-icon.summary_report i {
+    color: #d63031;
+    background-color: #ffebee;
+}
+
+.notification-icon.info i {
+    color: #5f6c7b;
+    background-color: #f0f4f8;
+}
+
+.notification-icon:hover {
+    transform: translateY(-2px);
+    box-shadow:
+        0 4px 8px rgba(0, 0, 0, 0.15),
+        inset 0 1px 3px rgba(255, 255, 255, 0.4);
+}
+
+.notification-icon .icon-circle {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    color: white;
+    font-size: 20px;
+}
+
+.notification-icon.approve {
+    background-color: #28a745;
+    color: rgb(253, 253, 253);
+}
+
+.notification-icon.reject {
+    background-color: #dc3545;
+    color: rgb(253, 253, 253);
+}
+
+.notification-icon.journal-reminder {
+    background-color: #fffdfd;
+    color: rgb(155, 9, 123);
+}
+
+.badge-due-today {
+    background-color: #e53935;
+    color: white;
+    font-size: 11px;
+    font-weight: bold;
+    padding: 2px 6px;
+    border-radius: 12px;
+    margin-left: 6px;
+}
+
+.type-absence {
+    background-color: #fee2e2;
+    color: #b91c1c;
+}
+
+.notification-icon.absence {
+    background: linear-gradient(135deg, #dddddd, #e65050);
+    color: #b91c1c;
+}
+
+.notification-icon.absence i {
+    color: #b91c1c;
+    font-size: 18px;
+    background: transparent;
+}
+
+.notification-icon.warning {
+    background-color: #ffffff;
+    color: #ffffff;
+}
+
+.notification-icon.no-work {
+    background-color: #ffffff;
+    color: #f30c0c;
+}
+
+.type-no-work {
+    background-color: hsl(17, 79%, 77%);
+    color: #fa4a59;
+}
+
+.notification-icon.time-override {
+    background-color: #ffffff;
+    color: #1e08e4;
+}
+
+.type-time-override {
+    background-color: #a9d7f1;
+    color: #36b5ff;
+}
+
+.notification-icon.penalty {
+    background-color: #ffffff;
+    color: #ff9100;
+}
+
+.type-penalty {
+    background-color: #e7b87a;
+    color: #ce7604;
 }
 
 .pagination-wrapper {
@@ -558,191 +731,151 @@
     opacity: 0.5;
 }
 
-.notification-type {
-    font-weight: 600;
-    padding: 2px 8px;
-    border-radius: 12px;
-    font-size: 0.85rem;
-    display: inline-block;
-    text-transform: capitalize;
+/* ADDED: Mobile responsive styles for filter */
+@media (max-width: 768px) {
+    .notifications-container {
+        padding: 0 15px;
     }
 
-
-.type-reject {
-    background-color: #ffffff;
-    color: #0f0700;
-    border: 1px solid #ff0000;
-    border-left: 5px solid #d84400;
+    .notifications-header {
+        flex-direction: column;
+        gap: 15px;
+        align-items: flex-start;
     }
 
-.type-journal-reminder {
-    background-color: #f5a9ee;
-    color: #f757e9;
-
+    .notifications-title {
+        font-size: 24px;
     }
 
-.type-approve {
-    background-color: #ffffff;
-    color: #0f0700;
-    border: 1px solid #005a1e;
-    border-left: 5px solid #005a1e;
+    .notifications-stats {
+        flex-direction: column;
+        gap: 10px;
     }
 
-.type-company_feedback {
-    background-color: #ffffff;
-    color: #8a5200;
-    border: 1px solid #ffb347;
-    border-left: 4px solid #ff9500;
+    .notification-item {
+        padding: 15px 20px;
+        padding-right: 50px;
     }
 
-.type-summary_report {
-    background-color: #fef0f0;
-    color: #a82a2a;
-    border: 1px solid #e67e7e;
-    border-left: 4px solid #c0392b;
+    .notification-actions {
+        position: static;
+        opacity: 1;
+        visibility: visible;
+        margin-top: 10px;
+        align-self: flex-start;
     }
 
+    .notification-icon {
+        width: 35px;
+        height: 35px;
+        align-self: flex-start;
+    }
 
-.type-info {
-  background-color: #d1ecf1;
-  color: #0c5460;
-  border: 1px solid #0c5460;
+    .notification-meta {
+        flex-direction: column;
+        gap: 8px;
+        align-items: flex-start;
+    }
+
+    .unread-indicator {
+        right: 20px;
+    }
+
+    /* Filter responsive styles */
+    .filter-fields {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .filter-group {
+        width: 100%;
+    }
+
+    .filter-btn {
+        width: 100%;
+        justify-content: center;
+    }
 }
 
+@media (max-width: 480px) {
+    .notification-item {
+        padding: 12px 15px;
+        flex-direction: column;
+        gap: 10px;
+    }
 
-.notification-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  font-size: 18px;
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow:
-    0 2px 4px rgba(0, 0, 0, 0.4),
-    inset 0 1px 2px rgba(255, 255, 255, 0.4);
+    .notifications-title {
+        font-size: 20px;
+    }
+
+    .stat-number {
+        font-size: 20px;
+    }
+
+    .notifications-actions {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .action-btn {
+        width: 100%;
+        justify-content: center;
+    }
 }
 
-
-.notification-icon.journal i {
-  color: #3a75d1;
-  background-color: #dfecfd;
-}
+/* Notif error */
 
 
-.notification-icon.company_feedback i {
-  color: #d47a00;
-  background-color: #fff0e0;
-}
-
-
-.notification-icon.summary_report i {
-  color: #d63031;
-  background-color: #ffebee;
-}
-
-
-.notification-icon.info i {
-  color: #5f6c7b;
-  background-color: #f0f4f8;
-}
-
-
-.notification-icon:hover {
-  transform: translateY(-2px);
-  box-shadow:
-    0 4px 8px rgba(0, 0, 0, 0.15),
-    inset 0 1px 3px rgba(255, 255, 255, 0.4);
-}
-
-.notification-icon .icon-circle {
-    display: inline-flex;
-    justify-content: center;
+.inbox-alert {
+    display: flex;
     align-items: center;
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    color: white;
-    font-size: 20px;
+    gap: 10px;
+    padding: 15px 20px;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    font-size: 15px;
+    font-weight: 500;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    animation: fadeIn 0.3s ease;
 }
 
-    .notification-icon.approve {
-        background-color: #28a745;
-        color: rgb(253, 253, 253);
+.inbox-alert i {
+    font-size: 18px;
+}
+
+/* Danger (Full) */
+.inbox-full {
+    background-color: #fdecea;
+    color: #b71c1c;
+    border-left: 5px solid #b71c1c;
+}
+
+/* Warning (Almost Full) */
+.inbox-warning {
+    background-color: #fff8e1;
+    color: #ff6f00;
+    border-left: 5px solid #ff6f00;
+}
+
+.inbox-alert-text {
+    line-height: 1.4;
+}
+
+/* Animation */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-4px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsive tweaks */
+@media (max-width: 600px) {
+    .inbox-alert {
+        flex-direction: column;
+        align-items: flex-start;
+        font-size: 14px;
+        padding: 12px 15px;
     }
-
-    .notification-icon.reject {
-        background-color: #dc3545;
-        color: rgb(253, 253, 253);
-
-    }
-    .notification-icon.journal-reminder{
-        background-color: #fffdfd;
-        color: rgb(155, 9, 123);
-    }
-
-    .badge-due-today {
-    background-color: #e53935;
-    color: white;
-    font-size: 11px;
-    font-weight: bold;
-    padding: 2px 6px;
-    border-radius: 12px;
-    margin-left: 6px;
 }
-
-
-.type-absence {
-    background-color: #fee2e2;
-    color: #b91c1c;
-}
-
-.notification-icon.absence {
-  background: linear-gradient(135deg, #dddddd, #e65050);
-  color: #b91c1c;
-}
-
-.notification-icon.absence i {
-  color: #b91c1c;
-  font-size: 18px;
-  background: transparent;
-}
-.notification-icon.warning {
-    background-color: #ffffff;
-    color: #ffffff;
-
-}
-.notification-icon.no-work {
-    background-color: #ffffff;
-    color: #f30c0c;
-}
-
-.type-no-work{
-   background-color: hsl(17, 79%, 77%);
-    color: #fa4a59;
-}
-
-.notification-icon.time-override {
-    background-color: #ffffff;
-    color: #1e08e4;
-}
-
-.type-time-override{
-   background-color: #a9d7f1;
-    color: #36b5ff;
-}
-.notification-icon.penalty {
-    background-color: #ffffff;
-    color: #ff9100;
-}
-
-.type-penalty{
-   background-color: #e7b87a;
-    color: #ce7604;
-}
-
-
 </style>
 
 <div class="notifications-container">
@@ -752,7 +885,6 @@
             Notifications
         </h1>
         <div class="notifications-actions">
-
             <form id="deleteAllForm" action="{{ route('student.notifications.deleteAll') }}" method="POST" style="display:inline;">
                 @csrf
                 @method('DELETE')
@@ -760,10 +892,63 @@
                     <i class="fas fa-trash-alt"></i>
                     Delete All
                 </button>
-</form>
-
+            </form>
         </div>
     </div>
+
+    @if($isFull)
+        <div class="inbox-alert inbox-full">
+            <i class="fas fa-exclamation-triangle"></i>
+            <div class="inbox-alert-text">
+                <strong>Inbox Full!</strong> Please delete some notifications to receive new ones.
+            </div>
+        </div>
+    @elseif($isAlmostFull)
+        <div class="inbox-alert inbox-warning">
+            <i class="fas fa-exclamation-circle"></i>
+            <div class="inbox-alert-text">
+                <strong>Inbox Almost Full:</strong>
+                {{ $totalCount }}/{{ $maxNotifications }} notifications.
+            </div>
+        </div>
+    @endif
+
+    <form method="GET" action="{{ route('student.notifications.index') }}" class="filter-form">
+        <div class="filter-fields">
+            <div class="filter-group">
+                <label for="type">Type</label>
+                <select name="type" id="type">
+                    <option value="">All</option>
+                    <option value="journal-reminder" {{ request('type')=='journal-reminder'?'selected':'' }}>Journal Reminder</option>
+                    <option value="company_feedback" {{ request('type')=='company_feedback'?'selected':'' }}>Feedback</option>
+                    <option value="time-override" {{ request('type')=='time-override'?'selected':'' }}>New Attendance Set</option>
+                    <option value="absence" {{ request('type')=='absence'?'selected':'' }}>Absent</option>
+                    <option value="no-work" {{ request('type')=='no-work'?'selected':'' }}>No Work</option>
+                    <option value="warning" {{ request('type')=='warning'?'selected':'' }}>Missed Journals</option>
+                    <option value="penalty" {{ request('type')=='penalty'?'selected':'' }}>Journal Penalty</option>
+                    <option value="reject" {{ request('type')=='reject'?'selected':'' }}>Rejected Appeals</option>
+                    <option value="approve" {{ request('type')=='approve'?'selected':'' }}>Approved Appeals</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label for="date">Date</label>
+                <input type="date" name="date" id="date" value="{{ request('date') }}">
+            </div>
+
+            <button type="submit" class="filter-btn">
+                <i class="fas fa-filter"></i> Filter
+            </button>
+        </div>
+    </form>
+
+    @if(request('type') || request('date'))
+        <p class="filter-summary">
+            Showing notifications
+            @if(request('type')) of type <strong>{{ request('type') }}</strong> @endif
+            @if(request('date')) on <strong>{{ request('date') }}</strong> @endif
+        </p>
+    @endif
 
     <div class="notifications-stats">
         <div class="stat-item">
@@ -780,8 +965,6 @@
         </div>
     </div>
 
-
-
     <div class="notifications-list">
         @forelse($notifications as $notification)
             <div class="notification-item {{ !$notification->is_read ? 'unread' : '' }}" id="notification-{{ $notification->id }}">
@@ -789,53 +972,48 @@
                     <div class="unread-indicator"></div>
                 @endif
 
-
-
-
-
                 <div class="notification-icon {{ $notification->type ?? 'info' }}">
-                @switch($notification->type ?? 'info')
-                    @case('approve')
-                        <i class="fas fa-check-circle"></i>
-                    @break
-                      @case('penalty')
+                    @switch($notification->type ?? 'info')
+                        @case('approve')
+                            <i class="fas fa-check-circle"></i>
+                            @break
+                        @case('penalty')
                             <i class="fas fa-hourglass-half text-orange-500"></i>
-                        @break
-                    @case('no-work')
-                        <i class="fas fa-ban text-red-500"></i>
-                    @break
-                    @case('reject')
-                        <i class="fas fa-times-circle"></i>
-                    @break
-                    @case('company_feedback')
-                        <i class="fas fa-briefcase"></i>
-                        @break
-                    @case('summary_report')
-                        <i class="fas fa-file-pdf"></i>
-                        @break
-                    @case('journal-reminder')
-                        <i class="fas fa-pen text-purple-500"></i>
-                        @break
+                            @break
+                        @case('no-work')
+                            <i class="fas fa-ban text-red-500"></i>
+                            @break
+                        @case('reject')
+                            <i class="fas fa-times-circle"></i>
+                            @break
+                        @case('company_feedback')
+                            <i class="fas fa-briefcase"></i>
+                            @break
+                        @case('summary_report')
+                            <i class="fas fa-file-pdf"></i>
+                            @break
+                        @case('journal-reminder')
+                            <i class="fas fa-pen text-purple-500"></i>
+                            @break
                         @case('absence')
-                        <i class="fas fa-user-slash text-red-500"></i>
-                        @break
-                    @case('warning')
-                        <i class="fas fa-exclamation-circle text-yellow-500"></i>
-                    @break
-                    @case('time-override')
-                        <i class="fas fa-clock text-blue-500"></i>
-                    @break
-                    @default
-                        <i class="fas fa-info-circle"></i>
-                @endswitch
-            </div>
-
+                            <i class="fas fa-user-slash text-red-500"></i>
+                            @break
+                        @case('warning')
+                            <i class="fas fa-exclamation-circle text-yellow-500"></i>
+                            @break
+                        @case('time-override')
+                            <i class="fas fa-clock text-blue-500"></i>
+                            @break
+                        @default
+                            <i class="fas fa-info-circle"></i>
+                    @endswitch
+                </div>
 
                 <div class="notification-content">
                     <div class="notification-title">
                         {{ $notification->title }}
                         @if($notification->type === 'journal-reminder')
-                            <span class="badge-due-today">Due 11:59pm </span>
+                            <span class="badge-due-today">Due 11:59pm</span>
                         @endif
                     </div>
 
@@ -851,7 +1029,6 @@
                         </span>
                     </div>
                 </div>
-
             </div>
         @empty
             <div class="empty-state">
@@ -866,8 +1043,6 @@
 <div class="pagination-wrapper">
     {{ $notifications->withQueryString()->links('vendor.pagination.prev-next-only') }}
 </div>
-
-
 
 <script>
 let currentNotificationId = null;
@@ -888,7 +1063,6 @@ function markAsRead(notificationId) {
                 indicator.remove();
             }
 
-            // Hide the mark as read button
             const markReadBtn = item.querySelector('.mark-read-btn');
             if (markReadBtn) {
                 markReadBtn.remove();
@@ -917,7 +1091,6 @@ function markAllAsRead() {
                     indicator.remove();
                 }
 
-
                 const markReadBtn = item.querySelector('.mark-read-btn');
                 if (markReadBtn) {
                     markReadBtn.remove();
@@ -931,9 +1104,6 @@ function markAllAsRead() {
     });
 }
 
-
-
-
 function updateStats() {
     const unreadItems = document.querySelectorAll('.notification-item.unread').length;
     const totalItems = document.querySelectorAll('.notification-item').length;
@@ -941,7 +1111,6 @@ function updateStats() {
     document.querySelectorAll('.stat-number')[0].textContent = unreadItems;
     document.querySelectorAll('.stat-number')[1].textContent = totalItems;
 }
-
 
 window.onclick = function(event) {
     const deleteModal = document.getElementById('deleteModal');
@@ -954,7 +1123,6 @@ window.onclick = function(event) {
         hideDeleteAllModal();
     }
 }
-
 
 document.addEventListener('keydown', function(event) {
     if (event.key === 'Escape') {

@@ -56,7 +56,7 @@ class NotifyMissingJournals extends Command
 
             if (!empty($missedDates)) {
                 // Student notification
-                Notification::create([
+                Notification::createLimited([
                     'user_id' => $student->id,
                     'user_type' => 'student',
                     'title' => 'Missing Journal Submission',
@@ -68,7 +68,7 @@ class NotifyMissingJournals extends Command
 
                 // Faculty notification
                 if ($student->faculty_id) {
-                    Notification::create([
+                    Notification::createLimited([
                         'user_id' => $student->faculty_id,
                         'user_type' => 'faculty',
                         'title' => 'Student Missing Journal Alert',

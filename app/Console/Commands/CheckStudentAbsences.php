@@ -42,7 +42,7 @@ class CheckStudentAbsences extends Command
                 ->delete();
 
             // Notify Student
-            Notification::create([
+            Notification::createLimited([
                 'user_id'   => $student->id,
                 'user_type' => 'student',
                 'title'     => 'Absence Alert',
@@ -54,7 +54,7 @@ class CheckStudentAbsences extends Command
 
             // Notify Faculty
             if ($student->faculty_id) {
-                Notification::create([
+                Notification::createLimited([
                     'user_id'   => $student->faculty_id,
                     'user_type' => 'faculty',
                     'title'     => 'Student Absence Alert',
@@ -67,7 +67,7 @@ class CheckStudentAbsences extends Command
 
             // Notify Company
             if ($company->id) {
-                Notification::create([
+                Notification::createLimited([
                     'user_id'   => $company->id,
                     'user_type' => 'company',
                     'title'     => 'Student Absence Alert',

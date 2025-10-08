@@ -19,13 +19,31 @@ class StudentNotificationController extends Controller
         $baseQuery = Notification::where('user_id', $student->id)
             ->where('user_type', 'student');
 
+        if(request()->filled('type')){
+            $baseQuery->where('type', request('type'));
+        }
+
+        if(request()->filled('date')){
+            $baseQuery->whereDate('created_at', request('date'));
+        }
+
+        $limit = 10;
+
 
         $unreadCount = (clone $baseQuery)->where('is_read', false)->count();
         $totalCount  = (clone $baseQuery)->count();
         $todayCount  = (clone $baseQuery)->whereDate('created_at', today())->count();
 
 
-        $notifications = $baseQuery->orderBy('created_at', 'desc')->paginate(5);
+        $notifications = $baseQuery->orderBy('created_at', 'desc')->paginate($limit)->withQueryString();
+
+         Notification::whereIn('id', $notifications->pluck('id'))
+        ->where('is_read', false)
+        ->update(['is_read' => true]);
+
+        $maxNotifications = 20;
+        $isAlmostFull = $totalCount >= ($maxNotifications * 0.9);
+        $isFull = $totalCount >= $maxNotifications;
 
 
         (clone $baseQuery)->where('is_read', false)->update(['is_read' => true]);
@@ -35,7 +53,10 @@ class StudentNotificationController extends Controller
             'student',
             'unreadCount',
             'totalCount',
-            'todayCount'
+            'todayCount',
+            'maxNotifications',
+            'isAlmostFull',
+            'isFull'
         ));
     }
 

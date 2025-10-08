@@ -42,7 +42,7 @@ class CompanySettingsController extends Controller
         $company->save();
 
 
-       Notification::create([
+       Notification::createLimited([
             'user_id'   => 1,
             'user_type' => 'admin',
             'title'     => 'Default Attendance Time Set',
@@ -50,10 +50,11 @@ class CompanySettingsController extends Controller
                         . 'Time In (' . $company->allowed_time_in_start . '–' . $company->allowed_time_in_end . '), '
                         . 'Time Out (' . $company->allowed_time_out_start . '–' . $company->allowed_time_out_end . ')',
             'is_read'   => false,
+            'type' => 'default_time'
         ]);
 
        if ($faculty) { // check if a faculty is assigned
-            Notification::create([
+            Notification::createLimited([
                 'user_id'   => $faculty->id,
                 'user_type' => 'faculty',
                 'type'      => 'attendance_time',
@@ -94,7 +95,7 @@ class CompanySettingsController extends Controller
 
 
 
-    Notification::create([
+    Notification::createLimited([
         'user_id'   => 1,
         'user_type' => 'admin',
         'title'     => 'New Attendance Time Set',
@@ -102,11 +103,12 @@ class CompanySettingsController extends Controller
                      . ($override->is_no_work ? ' (No Work Today)' : '')
                      . ': Time In (' . ($override->time_in_start ?? '-') . '–' . ($override->time_in_end ?? '-') . '), '
                      . 'Time Out (' . ($override->time_out_start ?? '-') . '–' . ($override->time_out_end ?? '-') . ')',
+        'type'      => $override->is_no_work ? 'no-work' : 'override_schedule',
         'is_read'   => false,
     ]);
 
     if ($faculty) {
-    Notification::create([
+    Notification::createLimited([
                 'user_id'   => $faculty->id,
                 'user_type' => 'faculty',
                 'type'      => $override->is_no_work ? 'no-work' : 'attendance_time',
@@ -133,13 +135,12 @@ class CompanySettingsController extends Controller
             ]
         );
 
-        // Send notification for override regardless of no-work
         $msg = $override->is_no_work
             ? 'No Work today.'
             : 'Attendance time was updated. Time In: ' . ($override->time_in_start ?? '-') . '–' . ($override->time_in_end ?? '-') .
               ', Time Out: ' . ($override->time_out_start ?? '-') . '–' . ($override->time_out_end ?? '-');
 
-        Notification::create([
+        Notification::createLimited([
             'user_id'   => $student->id,
             'user_type' => 'student',
             'type'      => $override->is_no_work ? 'no-work' : 'time-override',

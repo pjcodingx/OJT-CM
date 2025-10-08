@@ -43,7 +43,7 @@ class SendDailyJournalReminder extends Command
                 ->exists();
 
             if (!$alreadySent) {
-                Notification::create([
+                Notification::createLimited([
                     'user_id' => $student->id,
                     'user_type' => 'student',
                     'title'   => 'Daily Journal Reminder',

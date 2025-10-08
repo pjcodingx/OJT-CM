@@ -14,27 +14,50 @@ class AdminNotificationController extends Controller
     {
         $admin = Auth::guard('admin')->user();
 
-        // Base query (only this admin’s notifications)
+
         $baseQuery = Notification::where('user_id', $admin->id)
             ->where('user_type', 'admin');
 
-        // Stats
+        if(request()->filled('type')){
+            $baseQuery->where('type', request('type'));
+        }
+
+        if (request()->filled('date')) {
+            $baseQuery->whereDate('created_at', request('date'));
+        }
+
+
+        $limit = 10;
+
+
         $unreadCount = (clone $baseQuery)->where('is_read', false)->count();
         $totalCount  = (clone $baseQuery)->count();
         $todayCount  = (clone $baseQuery)->whereDate('created_at', today())->count();
 
-        // Paginated list
-        $notifications = $baseQuery->orderBy('created_at', 'desc')->paginate(10);
+
+        $notifications = $baseQuery->orderBy('created_at', 'desc')->paginate($limit)->WithQueryString();
+
+         Notification::whereIn('id', $notifications->pluck('id'))
+        ->where('is_read', false)
+        ->update(['is_read' => true]);
 
         // Mark unread as read after fetching
         (clone $baseQuery)->where('is_read', false)->update(['is_read' => 1]);
+
+        $maxNotifications = 25; //!Design this error
+        $isAlmostFull = $totalCount >= ($maxNotifications * 0.9);
+        $isFull = $totalCount >= $maxNotifications;
+
 
         return view('admin.notifications.index', compact(
             'notifications',
             'admin',
             'unreadCount',
             'totalCount',
-            'todayCount'
+            'todayCount',
+            'maxNotifications',
+            'isAlmostFull',
+            'isFull'
         ));
     }
 
