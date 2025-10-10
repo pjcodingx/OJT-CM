@@ -524,10 +524,9 @@
 }
 
 .type-approve {
-    background-color: #ffffff;
+    background-color: #affdb9;
     color: #0f0700;
-    border: 1px solid #005a1e;
-    border-left: 5px solid #005a1e;
+
 }
 
 .type-company_feedback {

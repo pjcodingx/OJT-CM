@@ -244,7 +244,7 @@
     align-items: center;
     gap: 6px;
     padding: 6px 14px;
-    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    background: linear-gradient(135deg, #eb3c25, #d8421d);
     color: white !important;
     font-size: 0.85rem;
     font-weight: 500;
@@ -259,7 +259,7 @@
 }
 
 .download-word-btn:hover {
-    background: linear-gradient(135deg, #1e40af, #1d4ed8);
+    background: linear-gradient(135deg, #af1e1e, #d8391d);
     transform: translateY(-2px);
     box-shadow: 0 4px 10px rgba(0,0,0,0.25);
 }
@@ -307,10 +307,10 @@
                     @endif
 
                    <div class="download-btn">
-    <a href="{{ route('journals.download', $journal->id) }}" class="download-word-btn">
-        <i class="fa-solid fa-file-word"></i> Download Word
-    </a>
-</div>
+                        <a href="{{ route('journals.download', $journal->id) }}" class="download-word-btn">
+                            <i class="fa-solid fa-file-pdf"></i> Download PDF
+                        </a>
+                    </div>
 
                 </div>
 

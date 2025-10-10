@@ -186,9 +186,13 @@ Route::middleware(['student'])->prefix('student')->group(function () {
     ->name('certificate_pdf.preview');
 
 
- Route::get('/journals/{journal}/download-word', [StudentJournalController::class, 'downloadWord'])->name('journals.download');
+ Route::get('/journals/{journal}/downloadPdf', [StudentJournalController::class, 'download'])->name('journals.download');
 
 
+ //? Calendar if possible
+ Route::get('/calendar', [StudentDashboardController::class, 'calendarData'])->name('student.calendar');
+
+ //?Announcement
 
 });
 

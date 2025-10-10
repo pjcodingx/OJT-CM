@@ -11,6 +11,10 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="icon" sizes="32x32" href="{{ asset('favicon/cmlogo.png') }}" type="image/png">
 
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.css" rel="stylesheet">
+
+
+
     @yield('styles')
 </head>
 <body>
@@ -162,8 +166,12 @@
         </div>
     </div>
 
+
     @yield('scripts')
 
+
+{{-- implement soon calendar --}}
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.js"></script>
 <script>
 const hamburger = document.querySelector('.hamburger-menu');
 const sidebar = document.querySelector('.sidebar');
@@ -200,6 +208,8 @@ window.addEventListener('resize', () => {
         document.body.classList.remove('sidebar-open');
     }
 });
+
+
 </script>
 
 

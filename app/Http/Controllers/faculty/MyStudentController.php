@@ -91,6 +91,7 @@ class MyStudentController extends Controller
         $validated =  $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:students,email',
+            'username' => 'required|string|max:20|unique:students',
             'password' => 'required|string|min:8',
 
             'course_id' => 'required|exists:courses,id',
@@ -163,6 +164,7 @@ class MyStudentController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:students,email,' . $student->id,
+            'username' => 'required|string|max:20|unique:students,username,' . $student->id,
             'password' => 'nullable|string|min:8|confirmed',
             'course_id' => 'required|exists:courses,id',
             'company_id' => 'nullable|exists:companies,id',
@@ -175,6 +177,7 @@ class MyStudentController extends Controller
             $student->update([
             'name' => $validated['name'],
             'email' => $validated['email'],
+            'username' => $validated['username'],
             'course_id' => $validated['course_id'],
             'company_id' => $validated['company_id'],
 

@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers\student;
 
+use Carbon\Carbon;
 use App\Models\Journal;
 use App\Models\Student;
+use App\Models\Attendance;
 use Illuminate\Http\Request;
 use App\Models\AttendanceAppeal;
+use App\Models\CompanyTimeOverride;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -78,4 +81,13 @@ class StudentDashboardController extends Controller
     }
 
 
+
+
+
+
 }
+
+
+
+
+

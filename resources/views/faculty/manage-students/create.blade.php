@@ -192,6 +192,11 @@
             <input type="email" name="email" required>
         </div>
 
+        <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" name="username" value="{{ old('username') }}" required>
+        </div>
+
         <div class="password-row">
 
         <div class="form-group password-col">
@@ -240,16 +245,6 @@
                 @endforeach
             </select>
         </div>
-
-        {{-- <div class="form-group">
-            <label>Assign Adviser</label>
-            <select name="faculty_id">
-                <option value="">-- None --</option>
-                @foreach ($faculties as $faculty)
-                    <option value="{{ $faculty->id }}">{{ $faculty->name }}</option>
-                @endforeach
-            </select>
-        </div> --}}
 
         <div class="form-group">
             <label>Required OJT Hours</label>

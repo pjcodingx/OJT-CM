@@ -13,7 +13,7 @@ class Student extends Authenticatable
     use HasFactory, Notifiable;
 
     protected $fillable = [
-        'name', 'email', 'password','photo','course_id', 'course', 'company_id', 'faculty_id', 'required_hours', 'status'
+        'name', 'email', 'password','photo','course_id', 'course', 'company_id', 'faculty_id', 'required_hours', 'status', 'username'
     ];
 
     //to get the time in and out and deduct in required hours

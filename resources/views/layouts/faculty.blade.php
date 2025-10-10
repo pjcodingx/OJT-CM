@@ -58,14 +58,6 @@
                     </li>
 
 
-                    <!-- 2. My Students -->
-                    {{-- <li class="nav-item {{ request()->routeIs('faculty.students.index') ? 'active' : '' }}">
-                        <a href="{{ route('faculty.students.index') }}" class="nav-link">
-                            <i class="fas fa-users nav-icon"></i>
-                            <span class="nav-text">My Students</span>
-                        </a>
-                    </li> --}}
-
                     <!-- 3. Task Management -->
                     <li class="nav-item {{ request()->routeIs('faculty.journals.index') ? 'active' : '' }}">
                         <a href="{{ route('faculty.journals.index') }}" class="nav-link">
@@ -171,6 +163,42 @@
     @yield('scripts')
 
     <script>
+
+         const hamburger = document.querySelector('.hamburger-menu');
+const sidebar = document.querySelector('.sidebar');
+const mainContent = document.querySelector('.main-content');
+const topBar = document.querySelector('.top-bar');
+
+hamburger.addEventListener('click', () => {
+    sidebar.classList.toggle('sidebar-collapsed');
+    mainContent.classList.toggle('sidebar-collapsed');
+    topBar.classList.toggle('sidebar-collapsed');
+
+
+    if (window.innerWidth <= 767) {
+        document.body.classList.toggle('sidebar-open');
+    }
+});
+
+
+document.addEventListener('click', (e) => {
+    if (window.innerWidth <= 767 &&
+        document.body.classList.contains('sidebar-open') &&
+        !sidebar.contains(e.target) &&
+        !hamburger.contains(e.target)) {
+        sidebar.classList.remove('sidebar-collapsed');
+        mainContent.classList.remove('sidebar-collapsed');
+        topBar.classList.remove('sidebar-collapsed');
+        document.body.classList.remove('sidebar-open');
+    }
+});
+
+
+window.addEventListener('resize', () => {
+    if (window.innerWidth > 767) {
+        document.body.classList.remove('sidebar-open');
+    }
+});
 document.getElementById('notificationToggle').addEventListener('click', function(e) {
     e.preventDefault();
     let dropdown = document.getElementById('notificationDropdown');
@@ -275,6 +303,10 @@ document.addEventListener('DOMContentLoaded', function() {
         item.style.transition = 'all 0.3s ease';
     });
 });
+
+
+
+
 </script>
 </body>
 </html>

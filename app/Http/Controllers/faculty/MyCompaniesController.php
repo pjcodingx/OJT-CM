@@ -48,6 +48,7 @@ class MyCompaniesController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:companies,email',
+            'username' => 'required|string|max:20|unique:students',
             'password' => 'required|string|min:8',
             'address' => 'nullable|string|max:255',
         ]);
@@ -90,6 +91,7 @@ class MyCompaniesController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email'=> 'required|email|unique:companies,email,' . $company->id,
+            'username' => 'required|string|max:20|unique:students,username,' . $company->id,
             'password' => 'nullable|string|min:6|confirmed',
             'address' => 'nullable|string|max:255'
 
@@ -97,6 +99,7 @@ class MyCompaniesController extends Controller
 
         $company->name = $validated['name'];
         $company->email = $validated['email'];
+        $company->username = $validated['username'];
         $company->address = $validated['address'] ?? null;
 
 

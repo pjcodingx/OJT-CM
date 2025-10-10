@@ -271,14 +271,14 @@
             <form action="{{ route('multi.login') }}" method="post" novalidate>
                 @csrf
                 <div class="form-group">
-                    <label for="email">Email Address</label>
+                    <label for="username">Username</label>
                     <input
-                        type="email"
-                        id="email"
-                        name="email"
-                        placeholder="Enter your email address"
+                        type="text"
+                        id="username"
+                        name="username"
+                        placeholder="Enter your Username"
                         required
-                        autocomplete="email"
+                        autocomplete="username"
                     />
                 </div>
 

@@ -74,14 +74,15 @@ class FacultyController extends Controller
         $validated = $request->validate([
         'name' => 'required|string|max:255',
         'email' => 'required|email|unique:faculties,email,' . $faculty->id,
-        'password' => 'nullable|string|min:6|confirmed',
+        'username' => 'required|string|max:20|unique:faculties,username,' . $faculty->id,
+        'password' => 'nullable|string|min:8|confirmed',
         'course_id' => 'required|exists:courses,id',
     ]);
 
          $validated = $request->validate([
         'name' => 'required|string|max:255',
         'email' => 'required|email|unique:faculties,email,' . $faculty->id,
-        'password' => 'nullable|string|min:6|confirmed',
+        'password' => 'nullable|string|min:8|confirmed',
         'course_id' => 'required|exists:courses,id',
     ]);
 
@@ -134,7 +135,8 @@ if ($request->has('company_ids')) {
             $validated = $request->validate([
                 'name' => 'required|string|max:255',
                 'email' => 'required|email|unique:faculties,email',
-                'password' => 'required|min:6|confirmed',
+                'username' => 'required|string|max:20|unique:faculties,username',
+                'password' => 'required|min:8|confirmed',
                 'course_id' => 'required|exists:courses,id',
                 'company_ids' => 'nullable|array',
                 'company_ids.*' => 'exists:companies,id',
@@ -144,6 +146,7 @@ if ($request->has('company_ids')) {
             $faculty = Faculty::create([
                 'name' => $validated['name'],
                 'email' => $validated['email'],
+                'username' => $validated['username'],
                 'password' => bcrypt($validated['password']),
                 'course_id' => $validated['course_id'],
             ]);
@@ -152,13 +155,6 @@ if ($request->has('company_ids')) {
                     Company::whereIn('id', $validated['company_ids'])
                         ->update(['faculty_id' => $faculty->id]);
                 }
-
-
-
-            // if (isset($validated['company_ids'])) {
-            //     $faculty->companies()->attach($validated['company_ids']);
-            // }
-
 
             return redirect()->route('admin.faculties.index')
                 ->with('success', 'Adviser created successfully.');

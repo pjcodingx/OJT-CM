@@ -202,6 +202,71 @@
         width: 220px;
     }
 }
+
+
+
+ .quick-actions-section {
+        margin-bottom: 32px;
+    }
+
+    .section-title {
+        color: #064e17;
+        font-size: 20px;
+        font-weight: 600;
+        margin-bottom: 16px;
+    }
+
+    .quick-actions {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 16px;
+        margin-bottom: 32px;
+    }
+
+    .action-card {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        text-align: center;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        border: 1px solid #f3f4f6;
+    }
+
+    .action-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(6, 78, 23, 0.1);
+        border-color: #064e17;
+    }
+
+    .action-icon {
+        width: 48px;
+        height: 48px;
+        background-color: #f0fdf4;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 12px;
+        color: #064e17;
+        font-size: 20px;
+    }
+
+    .action-title {
+        color: #064e17;
+        font-size: 14px;
+        font-weight: 600;
+        margin: 0;
+    }
+
+    @media (max-width: 768px) {
+        .quick-actions {
+            grid-template-columns: 1fr;
+        }
+    }
+
+
 </style>
 
 <div class="dashboard-content">
@@ -278,6 +343,33 @@
             </p>
         </div>
     </div>
+
+    <!-- Quick Actions Section -->
+<div class="quick-actions-section" style="margin-top: 30px;">
+    <h3 class="section-title">Quick Actions</h3>
+    <div class="quick-actions">
+        <a href="{{ route('faculty.manage-students.create') }}" class="action-card">
+            <div class="action-icon">
+                <i class="fas fa-user-plus"></i>
+            </div>
+            <p class="action-title">Add Trainee</p>
+        </a>
+
+        <a href="{{ route('faculty.manage-companies.create') }}" class="action-card">
+            <div class="action-icon">
+                <i class="fas fa-building"></i>
+            </div>
+            <p class="action-title">Add Company</p>
+        </a>
+
+        <a href="{{ route('faculty.students.exportPdf') }}" class="action-card">
+            <div class="action-icon">
+                <i class="fa-solid fa-file-pdf"></i>
+            </div>
+            <p class="action-title">Download latest report</p>
+        </a>
+    </div>
+</div>
 
 
 </div>

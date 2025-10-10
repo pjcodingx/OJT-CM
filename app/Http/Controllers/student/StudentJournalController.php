@@ -6,10 +6,12 @@ use App\Models\Journal;
 use App\Models\Notification;
 use Illuminate\Http\Request;
 use PhpOffice\PhpWord\PhpWord;
+use Barryvdh\DomPDF\Facade\Pdf;
 use PhpOffice\PhpWord\IOFactory;
 use App\Models\JournalAttachment;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+
 
 class StudentJournalController extends Controller
 {
@@ -129,64 +131,19 @@ public function store(Request $request)
         return redirect()->route('student.journals.create')->with('success', 'Journal submitted successfully.');
     }
 
-    public function downloadWord($id)
+    public function download($id)
     {
-        $journal = Journal::with(['attachments', 'student.company'])->findOrFail($id);
+       $journal = Journal::with('attachments')->findOrFail($id);
+        $student = Auth::guard('student')->user();
 
-        $phpWord = new PhpWord();
+        // Pass data to a Blade view for PDF
+        $pdf = Pdf::loadView('student.journals.pdf', [
+            'journal' => $journal,
+            'student' => $student
+        ]);
 
-        // Create section with header/footer
-        $section = $phpWord->addSection();
-
-        // --- HEADER ---
-        $header = $section->addHeader();
-        $header->addText(
-            'TCM OJT Monitoring System',
-            ['bold' => true, 'size' => 12],
-            ['align' => 'center']
-        );
-
-        // --- FOOTER ---
-        $footer = $section->addFooter();
-        $footer->addPreserveText(
-            'Page {PAGE} of {NUMPAGES}',
-            ['italic' => true, 'size' => 10],
-            ['align' => 'center']
-        );
-
-        // --- TITLE ---
-        $section->addText("OJT Journal Entry", ['bold' => true, 'size' => 18], ['align' => 'center']);
-        $section->addTextBreak(1);
-
-        // --- Student Info ---
-        $section->addText("Name: " . $journal->student->name, ['bold' => true, 'size' => 12]);
-        $section->addText("Company: " . ($journal->student->company->name ?? 'Not Assigned'), ['bold' => true, 'size' => 12]);
-        $section->addText("Date: " . \Carbon\Carbon::parse($journal->journal_date)->format('F d, Y'), ['bold' => true, 'size' => 12]);
-        $section->addTextBreak(1);
-
-        // --- Journal Content (JUSTIFIED) ---
-        $section->addText("Journal Content", ['bold' => true, 'size' => 14]);
-        $section->addText(
-            $journal->content,
-            ['size' => 12],
-            ['alignment' => \PhpOffice\PhpWord\SimpleType\Jc::BOTH] // <-- Justify
-        );
-        $section->addTextBreak(1);
-
-        // --- Attachments ---
-        if ($journal->attachments->count()) {
-            $section->addText("Attachments:", ['bold' => true, 'size' => 12]);
-            foreach ($journal->attachments as $file) {
-                $section->addText("• " . basename($file->file_path), ['size' => 11, 'color' => '555555']);
-            }
-        }
-
-        $fileName = 'journal_' . $journal->student->name . '_' . $journal->journal_date . '.docx';
-        $tempFile = tempnam(sys_get_temp_dir(), 'word');
-        $writer = IOFactory::createWriter($phpWord, 'Word2007');
-        $writer->save($tempFile);
-
-        return response()->download($tempFile, $fileName)->deleteFileAfterSend(true);
+        $filename = 'Journal_' . $journal->journal_date . '.pdf';
+        return $pdf->download($filename);
     }
 
 

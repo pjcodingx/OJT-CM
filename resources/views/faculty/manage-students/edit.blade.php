@@ -119,6 +119,12 @@
                 <input type="email" name="email" value="{{ $student->email }}" required>
             </div>
 
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" name="username" value="{{ old('username', $student->username) }}" required>
+            </div>
+
+
             <div class="password-row">
                 <div class="form-group password-col">
                     <label>Password</label>
@@ -135,7 +141,6 @@
                     <label>Confirm Password</label>
                     <div class="input-wrapper">
                         <input type="password" name="password_confirmation" id="password_confirmation" class="input-field">
-                        {{-- <button type="button" class="toggle-password" onclick="toggleVisibility('password_confirmation', this)">👁</button> --}}
                     </div>
                 </div>
             </div>
@@ -151,8 +156,6 @@
                     </ul>
                 </div>
             @endif
-
-
 
             <div class="form-group">
                 <label>Course</label>
@@ -174,18 +177,6 @@
                 </select>
             </div>
 
-
-
-
-            {{-- <div class="form-group">
-                <label>Assign Adviser</label>
-                <select name="faculty_id">
-                    <option value="">-- None --</option>
-                    @foreach($faculties as $faculty)
-                        <option value="{{ $faculty->id }}" {{ $student->faculty_id == $faculty->id ? 'selected' : '' }}>{{ $faculty->name }}</option>
-                    @endforeach
-                </select>
-            </div> --}}
 
             <div class="form-group">
                 <label>Required OJT Hours</label>

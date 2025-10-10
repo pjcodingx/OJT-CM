@@ -149,5 +149,43 @@
     </div>
 
     @yield('scripts')
+
+    <script>
+         const hamburger = document.querySelector('.hamburger-menu');
+const sidebar = document.querySelector('.sidebar');
+const mainContent = document.querySelector('.main-content');
+const topBar = document.querySelector('.top-bar');
+
+hamburger.addEventListener('click', () => {
+    sidebar.classList.toggle('sidebar-collapsed');
+    mainContent.classList.toggle('sidebar-collapsed');
+    topBar.classList.toggle('sidebar-collapsed');
+
+
+    if (window.innerWidth <= 767) {
+        document.body.classList.toggle('sidebar-open');
+    }
+});
+
+
+document.addEventListener('click', (e) => {
+    if (window.innerWidth <= 767 &&
+        document.body.classList.contains('sidebar-open') &&
+        !sidebar.contains(e.target) &&
+        !hamburger.contains(e.target)) {
+        sidebar.classList.remove('sidebar-collapsed');
+        mainContent.classList.remove('sidebar-collapsed');
+        topBar.classList.remove('sidebar-collapsed');
+        document.body.classList.remove('sidebar-open');
+    }
+});
+
+
+window.addEventListener('resize', () => {
+    if (window.innerWidth > 767) {
+        document.body.classList.remove('sidebar-open');
+    }
+});
+    </script>
 </body>
 </html>

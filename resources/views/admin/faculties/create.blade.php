@@ -148,6 +148,12 @@
             <input type="email" name="email" value="{{ old('email') }}" required>
         </div>
 
+        <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" name="username" value="{{ old('username') }}" required>
+        </div>
+
+
         <div class="form-group password-row">
         <div class="password-wrapper">
             <label for="password">Password</label>

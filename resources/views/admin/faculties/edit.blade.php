@@ -205,6 +205,12 @@
             <input type="email" name="email" value="{{ $faculty->email }}" required>
         </div>
 
+        <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" name="username" value="{{ old('username', $faculty->username) }}" required>
+        </div>
+
+
         <div class="form-row" style="display: flex; gap: 30px; margin-bottom: 8px;">
     <!-- New Password -->
             <div class="form-group password-wrapper" style="flex: 1;">

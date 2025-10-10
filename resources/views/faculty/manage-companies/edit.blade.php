@@ -144,6 +144,11 @@
             <input type="email" name="email" value="{{ old('email', $company->email) }}" required>
         </div>
 
+        <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" name="username" value="{{ old('username', $company->username) }}" required>
+        </div>
+
         <div class="password-row">
             <div class="form-group password-col">
                 <label>Password</label>

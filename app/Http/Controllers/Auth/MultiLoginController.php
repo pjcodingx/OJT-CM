@@ -21,11 +21,11 @@ class MultiLoginController extends Controller
     public function login(Request $request)
     {
         $request->validate([
-            'email' => 'required|email',
+            'username' => 'required|string',
             'password' => 'required'
         ]);
 
-        $credentials = $request->only('email', 'password');
+        $credentials = $request->only('username', 'password');
 
         // Try Admin guard
         if (Auth::guard('admin')->attempt($credentials)) {
@@ -116,7 +116,7 @@ class MultiLoginController extends Controller
 {
 
    // Track failed login attempts in session
-    $key = 'failed_login_attempts_' . $request->email;
+    $key = 'failed_login_attempts_' . $request->username;
     $attempts = session()->get($key, 0) + 1;
     session()->put($key, $attempts);
 

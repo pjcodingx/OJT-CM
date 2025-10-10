@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Carbon\Carbon;
 use App\Models\Journal;
+use App\Models\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -82,7 +83,7 @@ public function deductPenalty(Request $request, Journal $journal)
     $attendance->save();
 
     // Notify student
-    \App\Models\Notification::createLimited([
+    Notification::createLimited([
         'user_id'   => $journal->student->id,
         'user_type' => 'student',
         'type'      => 'penalty',

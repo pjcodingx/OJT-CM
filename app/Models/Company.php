@@ -14,7 +14,7 @@ class Company extends Authenticatable
     use HasFactory, Notifiable;
 
     protected $fillable = [
-        'name', 'email', 'password', 'photo', 'address', 'location', 'faculty_id', 'working_days','default_start_date'
+        'name', 'email', 'password', 'photo', 'address', 'location', 'faculty_id', 'working_days','default_start_date', 'username'
 
     ];
 

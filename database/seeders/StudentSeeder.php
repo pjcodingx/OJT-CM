@@ -17,18 +17,13 @@ class StudentSeeder extends Seeder
         $student = new Student();
         $student->name = 'Student';
         $student->email = 'student@gmail.com';
+        $student->username = '20223053';
         $student->password = Hash::make('password'); // Use a secure password
 
 
         $student->save();
 
-        if(!Student::where('email', 'student1@gmail.com')->exists()){
-            Student::create([
-                'name' => 'Kiana Dacunos',
-                'email' => 'kiana@gmail.com',
-                'password' => Hash::make('password'), // Use a secure password
-            ]);
-        }
+
 
     }
 }
