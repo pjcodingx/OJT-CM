@@ -463,6 +463,16 @@
         .then(data => {
             console.log('Scan response:', data);
 
+           if(data.success){
+                new Audio('/sounds/success.mp3').play().catch(e => console.log('Audio play failed'));
+            } else if(data.message.toLowerCase().includes("too early") || data.message.toLowerCase().includes("not allowed")){
+                new Audio('/sounds/denied.mp3').play().catch(e => console.log('Audio play failed'));
+            } else {
+                new Audio('/sounds/error.mp3').play().catch(e => console.log('Audio play failed'));
+            }
+
+
+
             statusEl.className = "scanner-status status-ready";
             statusEl.innerHTML = '<span>Scanner ready - Point camera at QR code</span><span class="date-display">{{ \Carbon\Carbon::now()->format('F d, Y') }}</span>';
 
@@ -492,7 +502,7 @@
             updateScanCount();
 
             // Optional: Play success sound (uncomment if you add audio file)
-            // new Audio('/sounds/beep.mp3').play().catch(e => console.log('Audio play failed'));
+
 
             setTimeout(() => {
                 canScan = true;
