@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -12,36 +13,36 @@ class Student extends Authenticatable
 {
     use HasFactory, Notifiable;
 
+
     protected $fillable = [
-        'name', 'email', 'password','photo','course_id', 'course', 'company_id', 'faculty_id', 'required_hours', 'status', 'username'
+        'name', 'email', 'password','photo','course_id', 'course', 'company_id', 'faculty_id', 'required_hours', 'status', 'username',
     ];
 
     //to get the time in and out and deduct in required hours
 
-    public function getAccumulatedHoursAttribute()
-{
-    $totalSeconds = $this->attendances->reduce(function ($carry, $attendance) {
-        if ($attendance->time_in && $attendance->time_out) {
-            $in = Carbon::parse($attendance->date . ' ' . $attendance->time_in);
-            $out = Carbon::parse($attendance->date . ' ' . $attendance->time_out);
+  public function getAccumulatedHoursAttribute()
+    {
+        $totalSeconds = DB::table('attendances')
+            ->where('student_id', $this->id)
+            ->whereNotNull('time_in_counted')
+            ->whereNotNull('time_out_counted')
+            ->selectRaw('SUM(TIME_TO_SEC(time_out_counted) - TIME_TO_SEC(time_in_counted)) as total_seconds')
+            ->value('total_seconds') ?? 0;
 
-            $carry += abs($out->timestamp - $in->timestamp);
-        }
+        // Subtract penalties
+        $penaltySeconds = $this->attendances()
+            ->sum('penalty_hours') * 3600;
 
-        // Subtract penalty hours stored in DB
-        $carry -= ($attendance->penalty_hours ?? 0) * 3600;
+        $totalSeconds -= $penaltySeconds;
 
-        return $carry;
-    }, 0);
+        $hoursFromAttendance = $totalSeconds / 3600;
 
-    $hoursFromAttendance = $totalSeconds / 3600;
+        $hoursFromAppeals = $this->attendanceAppeals()
+                                ->where('status', 'approved')
+                                ->sum('credited_hours');
 
-    $hoursFromAppeals = $this->attendanceAppeals()
-        ->where('status', 'approved')
-        ->sum('credited_hours');
-
-    return round(max($hoursFromAttendance + $hoursFromAppeals, 0), 2);
-}
+        return round(max($hoursFromAttendance + $hoursFromAppeals, 0), 2);
+    }
 
 
 

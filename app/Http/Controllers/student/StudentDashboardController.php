@@ -17,17 +17,14 @@ use Illuminate\Support\Facades\Hash;
 class StudentDashboardController extends Controller
 {
     public function dashboard(){
-        $student = Auth::guard('student')->user();
+    $student = Student::with('attendances', 'attendanceAppeals')->find(Auth::guard('student')->id());
 
-         $journalCount = Journal::where('student_id', $student->id)->count();
-        $studentsOjt = Student::with('attendances')->findOrFail(Auth::guard('student')->id());
+    $journalCount = Journal::where('student_id', $student->id)->count();
+    $appealsCount = AttendanceAppeal::where('student_id', $student->id)->count();
 
-       $appealsCount = AttendanceAppeal::where('student_id', $student->id)->count();
+    return view('student.dashboard', compact('student', 'journalCount', 'appealsCount'));
+}
 
-
-
-        return view('student.dashboard', compact('student', 'journalCount', 'studentsOjt', 'appealsCount'));
-    }
 
     public function profile(){
         $student = Auth::guard('student')->user();

@@ -61,19 +61,21 @@ class FacultyReportController extends Controller
             ->avg('rating');
 
 
-        $student->total_hours = $student->attendances()
-            ->when($request->start_date && $request->end_date, function ($q) use ($request) {
-                $q->whereBetween('date', [$request->start_date, $request->end_date]);
-            })
-            ->get()
-            ->reduce(function ($carry, $attendance) {
-                if ($attendance->time_in && $attendance->time_out) {
-                    $in = \Carbon\Carbon::parse($attendance->date . ' ' . $attendance->time_in);
-                    $out = \Carbon\Carbon::parse($attendance->date . ' ' . $attendance->time_out);
-                    $carry += abs($out->timestamp - $in->timestamp) / 3600;
-                }
-                return $carry;
-            }, 0);
+       $student->total_hours = $student->attendances
+    ->when($request->start_date && $request->end_date, function ($attendances) use ($request) {
+        return $attendances->filter(function ($attendance) use ($request) {
+            return $attendance->date >= $request->start_date && $attendance->date <= $request->end_date;
+        });
+    })
+    ->reduce(function ($carry, $attendance) {
+        if ($attendance->time_in_counted && $attendance->time_out_counted) {
+            $in  = \Carbon\Carbon::parse($attendance->time_in_counted);
+            $out = \Carbon\Carbon::parse($attendance->time_out_counted);
+            $carry += $out->diffInSeconds($in) / 3600;
+        }
+        return $carry;
+    }, 0);
+
     }
 
     return view('faculty.reports.index', compact('students', 'faculty'));
@@ -111,14 +113,9 @@ class FacultyReportController extends Controller
     foreach ($students as $student) {
         $student->total_journals = $student->journal()->count();
         $student->average_rating = $student->ratings()->avg('rating');
-        $student->total_hours = $student->attendances()->get()->reduce(function ($carry, $attendance) {
-            if ($attendance->time_in && $attendance->time_out) {
-                $in = \Carbon\Carbon::parse($attendance->date . ' ' . $attendance->time_in);
-                $out = \Carbon\Carbon::parse($attendance->date . ' ' . $attendance->time_out);
-                $carry += abs($out->timestamp - $in->timestamp) / 3600;
-            }
-            return $carry;
-        }, 0);
+       $student->total_hours = $student->accumulated_hours;
+
+
     }
 
     $pdf = Pdf::loadView('faculty.reports.students-pdf', compact('students'));

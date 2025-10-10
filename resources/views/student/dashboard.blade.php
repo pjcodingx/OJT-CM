@@ -211,7 +211,7 @@
                 @if ($student->hasCompletedOjt())
                     <span class="badge bg-green-600">Done OJT</span>
                 @else
-                    <span>{{ $student->accumulated_hours }} / {{ $student->required_hours }}</span>
+                    <span>{{ number_format($student->accumulated_hours , 1)}} / {{ $student->required_hours }}</span>
                 @endif
             </div>
             <a href="{{ route('student.attendance.index') }}" class="card-link">More info <i class="fas fa-chevron-right"></i></a>

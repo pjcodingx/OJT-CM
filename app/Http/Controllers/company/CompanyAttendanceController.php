@@ -7,6 +7,7 @@ use App\Models\Company;
 use App\Models\Student;
 use App\Models\Attendance;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use App\Models\CompanyTimeOverride;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
@@ -24,7 +25,6 @@ class CompanyAttendanceController extends Controller
 public function scan(Request $request)
 {
     try {
-        // Validate QR input
         $request->validate([
             'qr_code' => 'required|string',
         ]);
@@ -45,11 +45,9 @@ public function scan(Request $request)
         $today = Carbon::today();
         $now = Carbon::now();
 
-        // Map Carbon dayOfWeek to day name
         $dayNames = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
         $todayName = $dayNames[$today->dayOfWeek];
 
-        // Check student assigned to company
         if ($student->company_id !== $company->id) {
             return response()->json([
                 'success' => false,
@@ -64,10 +62,9 @@ public function scan(Request $request)
         $timeOutStart = Carbon::parse($company->allowed_time_out_start ?? '00:00:00');
         $timeOutEnd   = Carbon::parse($company->allowed_time_out_end ?? '23:59:59');
 
-        // Decode working days
         $workingDays = json_decode($company->working_days ?? '["Monday","Tuesday","Wednesday","Thursday","Friday"]', true);
 
-        // Fetch override for today
+        // Check for overrides
         $override = CompanyTimeOverride::where('company_id', $company->id)
                                        ->whereDate('date', $today)
                                        ->first();
@@ -91,10 +88,8 @@ public function scan(Request $request)
                 $timeOutEnd   = Carbon::parse($override->time_out_end);
             }
 
-            // Override allows attendance even if today is not in default working days
             $allowAttendance = true;
         } else {
-            // No override → check default working days
             $allowAttendance = in_array($todayName, $workingDays);
         }
 
@@ -106,81 +101,75 @@ public function scan(Request $request)
             ]);
         }
 
-        // Force times to today for accurate comparison
-        $timeInStart  = Carbon::today()->setTimeFromTimeString($timeInStart->format('H:i:s'));
-        $timeInEnd    = Carbon::today()->setTimeFromTimeString($timeInEnd->format('H:i:s'));
-        $timeOutStart = Carbon::today()->setTimeFromTimeString($timeOutStart->format('H:i:s'));
-        $timeOutEnd   = Carbon::today()->setTimeFromTimeString($timeOutEnd->format('H:i:s'));
+        // Adjust times to today (Carbon objects)
+        $timeInStart->setDate($today->year, $today->month, $today->day);
+        $timeInEnd->setDate($today->year, $today->month, $today->day);
+        $timeOutStart->setDate($today->year, $today->month, $today->day);
+        $timeOutEnd->setDate($today->year, $today->month, $today->day);
 
-        // Get today's attendance
-        $attendance = Attendance::where('student_id', $student->id)
-                                ->where('company_id', $company->id)
-                                ->whereDate('date', $today)
-                                ->first();
+        // Get or create today's attendance
+        $attendance = Attendance::firstOrCreate(
+            ['student_id' => $student->id, 'company_id' => $company->id, 'date' => $today],
+            ['time_in' => null, 'time_out' => null]
+        );
 
-        // --- Time In ---
-        if (!$attendance || !$attendance->time_in) {
-            if ($now->between($timeInStart, $timeInEnd)) {
-                if (!$attendance) {
-                    $attendance = Attendance::create([
-                        'student_id' => $student->id,
-                        'company_id' => $company->id,
-                        'time_in'    => $now,
-                        'date'       => $today,
-                    ]);
-                } else {
-                    $attendance->update(['time_in' => $now]);
-                }
-
-                return response()->json([
-                    'success' => true,
-                    'name' => $student->name,
-                    'message' => 'Time In recorded successfully.'
-                ]);
+        // --- TIME IN ---
+        if (!$attendance->time_in) {
+            if ($now->lt($timeInStart)) {
+                return response()->json(['success' => false, 'name' => $student->name, 'message' => 'Too early to Time In.']);
             }
 
-            return response()->json([
-                'success' => false,
-                'name' => $student->name,
-                'message' => 'Time In not allowed at this time.'
+            if ($now->gt($timeInEnd)) {
+                return response()->json(['success' => false, 'name' => $student->name, 'message' => 'Time In window has ended.']);
+            }
+
+            $attendance->update([
+                'time_in'         => $now,
+                'time_in_counted' => $timeInEnd->toTimeString(),
             ]);
+
+            return response()->json(['success' => true, 'name' => $student->name, 'message' => "Time In recorded successfully!"]);
         }
 
-        // --- Time Out ---
+        // --- TIME OUT ---
         if (!$attendance->time_out) {
-            if ($now->between($timeOutStart, $timeOutEnd)) {
-                $attendance->update(['time_out' => $now]);
-
-                return response()->json([
-                    'success' => true,
-                    'name' => $student->name,
-                    'message' => 'Time Out recorded successfully.'
-                ]);
+            if ($now->lt($timeOutStart)) {
+                return response()->json(['success' => false, 'name' => $student->name, 'message' => 'Too early to Time Out.']);
             }
 
-            return response()->json([
-                'success' => false,
-                'name' => $student->name,
-                'message' => 'Time Out not allowed at this time.'
+            if ($now->gt($timeOutEnd)) {
+                return response()->json(['success' => false, 'name' => $student->name, 'message' => 'Time Out window has ended.']);
+            }
+
+            $attendance->update([
+                'time_out'         => $now,
+                'time_out_counted' => $timeOutStart->toTimeString(),
             ]);
+
+            // Total hours in seconds
+            $totalSeconds = DB::table('attendances')
+                ->where('id', $attendance->id)
+                ->selectRaw('TIME_TO_SEC(time_out_counted) - TIME_TO_SEC(time_in_counted) as total_seconds')
+                ->value('total_seconds') ?? 0;
+
+            // Subtract penalty hours
+            $totalSeconds -= ($attendance->penalty_hours ?? 0) * 3600;
+
+            $attendance->update(['total_hours' => round($totalSeconds / 3600, 2)]);
+
+            return response()->json(['success' => true, 'name' => $student->name, 'message' => 'Time Out recorded successfully (based on schedule).']);
         }
 
-        // Already completed
-        return response()->json([
-            'success' => false,
-            'name' => $student->name,
-            'message' => 'Already completed attendance for today.'
-        ]);
+        return response()->json(['success' => false, 'name' => $student->name, 'message' => 'Already completed attendance for today.']);
 
     } catch (\Exception $e) {
         Log::error('Scan error: ' . $e->getMessage());
-        return response()->json([
-            'success' => false,
-            'name' => 'Error',
-            'message' => 'Server error: ' . $e->getMessage()
-        ], 500);
+        return response()->json(['success' => false, 'name' => 'Error', 'message' => 'Server error: ' . $e->getMessage()], 500);
     }
 }
+
+
+
 
 
 

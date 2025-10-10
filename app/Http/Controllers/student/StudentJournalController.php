@@ -82,9 +82,9 @@ public function store(Request $request)
 
             // Determine effective Time Out
             if ($override && $override->time_out_end) {
-                $timeOut = $journalDate->copy()->setTimeFromTimeString($override->time_out_end);
+                $timeOut = $journalDate->copy()->setTimeFromTimeString($override->time_out_start);
             } elseif ($company->allowed_time_out_end) {
-                $timeOut = $journalDate->copy()->setTimeFromTimeString($company->allowed_time_out_end);
+                $timeOut = $journalDate->copy()->setTimeFromTimeString($company->allowed_time_out_start);
             } else {
                 return back()->with('error', 'Company has not set Time Out yet.')->withInput();
             }
