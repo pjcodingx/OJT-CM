@@ -3,10 +3,15 @@
 @section('content')
 
 <style>
+* {
+    box-sizing: border-box;
+}
+
 .qr-layout {
     display: flex;
     flex-wrap: wrap;
     gap: 20px;
+    margin-top: 20px;
 }
 
 #reader {
@@ -46,7 +51,7 @@
 
 #log-box {
     flex: 1;
-    max-width: 500px;
+    min-width: 280px;
     height: 500px;
     overflow-y: auto;
     background: #f9f9f9;
@@ -61,6 +66,7 @@
     margin-bottom: 10px;
     border-left: 5px solid #28a745;
     border-radius: 4px;
+    word-wrap: break-word;
 }
 
 .log-entry.error {
@@ -80,23 +86,32 @@
 
 .scanner-status {
     margin: 10px 0;
-    padding: 5px;
-    border-radius: 4px;
+    padding: 12px;
+    border-radius: 8px;
     font-size: 14px;
-
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
 }
 
 .status-ready {
     background-color: #d4edda;
     color: #155724;
     border: 1px solid #c3e6cb;
-
 }
 
 .status-processing {
     background-color: #fff3cd;
     color: #856404;
     border: 1px solid #ffeaa7;
+}
+
+.status-error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
 }
 
 .live-clock {
@@ -106,144 +121,411 @@
     background: rgba(255, 255, 255, 0.9);
     padding: 20px 35px;
     border-radius: 20px;
-    margin: -15px 0;
+    margin: 20px 0;
     border: 1px solid rgba(0, 0, 0, 0.1);
     box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
-    width: 250px;
+    display: inline-block;
+}
+
+.date-display {
+    color: rgba(0, 0, 0, 0.5);
+    font-size: 14px;
+    white-space: nowrap;
+}
+
+.header-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 10px;
+}
+
+.scanner-controls {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+}
+
+.btn-control {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn-pause {
+    background-color: #ffc107;
+    color: #000;
+}
+
+.btn-pause:hover {
+    background-color: #ffb300;
+}
+
+.btn-resume {
+    background-color: #28a745;
+    color: white;
+}
+
+.btn-resume:hover {
+    background-color: #218838;
+}
+
+.btn-clear {
+    background-color: #dc3545;
+    color: white;
+}
+
+.btn-clear:hover {
+    background-color: #c82333;
+}
+
+.log-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.scan-count {
+    background-color: darkgreen;
+    color: white;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+/* Animations */
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+.processing {
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(-20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.log-entry {
+    animation: slideIn 0.3s ease-out;
+}
+
+/* Mobile Responsive Styles */
+@media (max-width: 768px) {
+    .container {
+        padding: 10px !important;
+    }
+
+    h2 {
+        font-size: 20px !important;
+        margin-bottom: 10px !important;
+    }
+
+    .header-section {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .scanner-status {
+        font-size: 13px;
+        padding: 10px;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .date-display {
+        font-size: 12px;
+    }
+
+    .qr-layout {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    #reader {
+        max-width: 100%;
+    }
+
+    #log-box {
+        height: 400px;
+        min-width: 100%;
+        padding: 10px;
+    }
+
+    .live-clock {
+        font-size: 20px;
+        padding: 15px 25px;
+        width: 100%;
+        text-align: center;
+    }
+
+    .log-entry p {
+        font-size: 13px;
+    }
+
+    .scanner-controls {
+        width: 100%;
+    }
+
+    .btn-control {
+        flex: 1;
+        min-width: 80px;
+        padding: 10px;
+    }
+
+    .log-header h4 {
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    h2 {
+        font-size: 18px !important;
+    }
+
+    .live-clock {
+        font-size: 18px;
+        padding: 12px 20px;
+    }
+
+    #log-box {
+        height: 350px;
+    }
+
+    .scanner-status {
+        font-size: 12px;
+    }
+
+    .log-entry {
+        padding: 8px;
+    }
+
+    .log-entry p {
+        font-size: 12px;
+    }
+
+    .btn-control {
+        font-size: 13px;
+        padding: 8px;
+    }
+}
+
+/* Landscape orientation on mobile */
+@media (max-height: 600px) and (orientation: landscape) {
+    #log-box {
+        height: 250px;
+    }
+
+    .live-clock {
+        padding: 10px 20px;
+        font-size: 16px;
+    }
 }
 </style>
 
 <div class="container mt-4">
-    <h2 style="color:darkgreen;">QR Code Attendance Scanner</h2>
+    <div class="header-section">
+        <h2 style="color:darkgreen;">QR Code Attendance Scanner</h2>
+        <div class="live-clock" id="live-clock"></div>
+    </div>
 
     <div id="scanner-status" class="scanner-status status-ready">
-        Scanner ready - Point camera at QR code
-        <p style="color: rgba(0, 0, 0, 0.3); font-size: 14px; margin-left: 88%;">{{ (\Carbon\Carbon::now()->format('F d, Y')) }}</p>
+        <span>Scanner ready - Point camera at QR code</span>
+        <span class="date-display">{{ \Carbon\Carbon::now()->format('F d, Y') }}</span>
+    </div>
+
+    <div class="scanner-controls">
+        <button id="pauseBtn" class="btn-control btn-pause" onclick="toggleScanner()">Pause Scanner</button>
+        <button class="btn-control btn-clear" onclick="clearLogs()">Clear History</button>
     </div>
 
     <div class="qr-layout">
-
-        <div style="flex: 1;">
+        <div style="flex: 1; min-width: 280px;">
             <div id="reader"></div>
             <div id="result"></div>
         </div>
 
-
         <div id="log-box">
-
-            <p style="color: #838282; font-size: 12px;">Scan history will appear here...</p>
-            <h4 style="color: rgba(3, 71, 3, 0.7); margin-bottom: 15px;">Recent Scans </h4>
-
+            <div class="log-header">
+                <h4 style="color: rgba(3, 71, 3, 0.7); margin: 0;">Recent Scans</h4>
+                <span class="scan-count" id="scan-count">0 scans</span>
+            </div>
+            <p style="color: #838282; font-size: 12px; margin-bottom: 15px;">Scan history will appear here...</p>
         </div>
-
-
     </div>
-<div class="live-clock" id="live-clock"></div>
-
 </div>
 
 <script src="https://unpkg.com/html5-qrcode"></script>
 <script>
+    let scanCount = 0;
+    let isPaused = false;
+
     function updateClock() {
         let now = new Date();
-
         let hours = now.getHours();
         let minutes = now.getMinutes();
         let seconds = now.getSeconds();
         let ampm = hours >= 12 ? 'PM' : 'AM';
 
-        // Convert 24h to 12h format
         hours = hours % 12;
         hours = hours ? hours : 12;
-
-        // Add leading zeros
         minutes = minutes < 10 ? '0' + minutes : minutes;
         seconds = seconds < 10 ? '0' + seconds : seconds;
 
         let timeString = hours + ':' + minutes + ':' + seconds + ' ' + ampm;
-
         document.getElementById('live-clock').innerText = timeString;
     }
     updateClock();
     setInterval(updateClock, 1000);
 
+    function updateScanCount() {
+        scanCount++;
+        document.getElementById('scan-count').innerText = scanCount + ' scan' + (scanCount !== 1 ? 's' : '');
+    }
 
-
-
-
-let html5QrcodeScanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: 250 });
-
-
-let canScan = true;
-
-function onScanSuccess(decodedText) {
-    if (!canScan) return;
-
-    canScan = false;
-
-
-    const statusEl = document.getElementById("scanner-status");
-    statusEl.className = "scanner-status status-processing";
-    statusEl.innerText = "Processing scan...";
-
-    fetch("{{ route('company.attendance.scan') }}", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "X-CSRF-TOKEN": "{{ csrf_token() }}"
-        },
-        body: JSON.stringify({ qr_code: decodedText })
-    })
-    .then(res => res.json())
-    .then(data => {
-        console.log('Scan response:', data);
-
-
-        statusEl.className = "scanner-status status-ready";
-        statusEl.innerText = "Scanner ready - Point camera at QR code";
-
-
-        let displayName = data.name || 'ID: ' + decodedText;
-
-
-        let logBox = document.getElementById("log-box");
-        let entry = document.createElement("div");
-        entry.classList.add("log-entry");
-
-        if (!data.success) {
-            entry.classList.add(data.message.toLowerCase().includes("not allowed") ? "denied" : "error");
+    function clearLogs() {
+        if (confirm('Clear all scan history?')) {
+            const logBox = document.getElementById('log-box');
+            logBox.innerHTML = `
+                <div class="log-header">
+                    <h4 style="color: rgba(3, 71, 3, 0.7); margin: 0;">Recent Scans</h4>
+                    <span class="scan-count" id="scan-count">0 scans</span>
+                </div>
+                <p style="color: #838282; font-size: 12px; margin-bottom: 15px;">Scan history will appear here...</p>
+            `;
+            scanCount = 0;
         }
+    }
 
-        entry.innerHTML = `<p style="color:darkgreen;"><strong>${displayName}</strong> - ${data.message} (${new Date().toLocaleTimeString()})</p>`;
-        logBox.prepend(entry);
+    function toggleScanner() {
+        isPaused = !isPaused;
+        const btn = document.getElementById('pauseBtn');
+        const statusEl = document.getElementById('scanner-status');
 
+        if (isPaused) {
+            btn.innerText = 'Resume Scanner';
+            btn.className = 'btn-control btn-resume';
+            statusEl.className = 'scanner-status status-processing';
+            statusEl.innerHTML = '<span>Scanner paused</span><span class="date-display">{{ \Carbon\Carbon::now()->format('F d, Y') }}</span>';
+        } else {
+            btn.innerText = 'Pause Scanner';
+            btn.className = 'btn-control btn-pause';
+            statusEl.className = 'scanner-status status-ready';
+            statusEl.innerHTML = '<span>Scanner ready - Point camera at QR code</span><span class="date-display">{{ \Carbon\Carbon::now()->format('F d, Y') }}</span>';
+        }
+    }
 
-        setTimeout(() => {
-            canScan = true;
-        }, 3000);
-    })
-    .catch(err => {
-        console.error("Scan error:", err);
-        statusEl.className = "scanner-status status-error";
-        statusEl.innerText = "Error occurred - see console.";
-
-
-        let logBox = document.getElementById("log-box");
-        let entry = document.createElement("div");
-        entry.classList.add("log-entry", "error");
-        entry.innerHTML = `<p><strong>ID: ${decodedText}</strong> - Network error occurred (${new Date().toLocaleTimeString()})</p>`;
-        logBox.prepend(entry);
-
-
-        setTimeout(() => {
-            canScan = true;
-            statusEl.className = "scanner-status status-ready";
-            statusEl.innerText = "Scanner ready - Point camera at QR code";
-        }, 3000);
+    let html5QrcodeScanner = new Html5QrcodeScanner("reader", {
+        fps: 10,
+        qrbox: { width: 250, height: 250 },
+        aspectRatio: 1.0
     });
-}
 
-html5QrcodeScanner.render(onScanSuccess);
+    let canScan = true;
+
+    function onScanSuccess(decodedText) {
+        if (!canScan || isPaused) return;
+
+        canScan = false;
+
+        const statusEl = document.getElementById('scanner-status');
+        statusEl.className = "scanner-status status-processing processing";
+        statusEl.innerHTML = '<span>Processing scan...</span><span class="date-display">{{ \Carbon\Carbon::now()->format('F d, Y') }}</span>';
+
+        fetch("{{ route('company.attendance.scan') }}", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRF-TOKEN": "{{ csrf_token() }}"
+            },
+            body: JSON.stringify({ qr_code: decodedText })
+        })
+        .then(res => res.json())
+        .then(data => {
+            console.log('Scan response:', data);
+
+            statusEl.className = "scanner-status status-ready";
+            statusEl.innerHTML = '<span>Scanner ready - Point camera at QR code</span><span class="date-display">{{ \Carbon\Carbon::now()->format('F d, Y') }}</span>';
+
+            let displayName = data.name || 'ID: ' + decodedText;
+
+            let logBox = document.getElementById("log-box");
+            let entry = document.createElement("div");
+            entry.classList.add("log-entry");
+
+            if (!data.success) {
+                entry.classList.add(data.message.toLowerCase().includes("not allowed") ? "denied" : "error");
+            }
+
+            entry.innerHTML = `<p style="color:darkgreen;"><strong>${displayName}</strong> - ${data.message} (${new Date().toLocaleTimeString()})</p>`;
+
+            // Insert after the header
+            const logHeader = logBox.querySelector('.log-header');
+            const infoText = logBox.querySelector('p[style*="color: #838282"]');
+            if (infoText) infoText.remove();
+
+            if (logHeader && logHeader.nextSibling) {
+                logBox.insertBefore(entry, logHeader.nextSibling);
+            } else {
+                logBox.appendChild(entry);
+            }
+
+            updateScanCount();
+
+            // Optional: Play success sound (uncomment if you add audio file)
+            // new Audio('/sounds/beep.mp3').play().catch(e => console.log('Audio play failed'));
+
+            setTimeout(() => {
+                canScan = true;
+            }, 3000);
+        })
+        .catch(err => {
+            console.error("Scan error:", err);
+            statusEl.className = "scanner-status status-error";
+            statusEl.innerHTML = '<span>Error occurred - see console</span><span class="date-display">{{ \Carbon\Carbon::now()->format('F d, Y') }}</span>';
+
+            let logBox = document.getElementById("log-box");
+            let entry = document.createElement("div");
+            entry.classList.add("log-entry", "error");
+            entry.innerHTML = `<p><strong>ID: ${decodedText}</strong> - Network error occurred (${new Date().toLocaleTimeString()})</p>`;
+
+            const logHeader = logBox.querySelector('.log-header');
+            if (logHeader && logHeader.nextSibling) {
+                logBox.insertBefore(entry, logHeader.nextSibling);
+            } else {
+                logBox.appendChild(entry);
+            }
+
+            updateScanCount();
+
+            setTimeout(() => {
+                canScan = true;
+                statusEl.className = "scanner-status status-ready";
+                statusEl.innerHTML = '<span>Scanner ready - Point camera at QR code</span><span class="date-display">{{ \Carbon\Carbon::now()->format('F d, Y') }}</span>';
+            }, 3000);
+        });
+    }
+
+    html5QrcodeScanner.render(onScanSuccess);
 </script>
 
 @endsection
