@@ -22,7 +22,7 @@ class Notification extends Model
     public static function createLimited(array $data)
 {
     $limits = [
-        'admin'   => 25,
+        'admin'   => 35,
         'faculty' => 20,
         'student' => 20,
         'company' => 20,
