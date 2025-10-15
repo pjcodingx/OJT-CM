@@ -75,6 +75,10 @@ class Company extends Authenticatable
             return $this->hasMany(StudentRating::class);
         }
 
+        public function overtimeRequests()
+        {
+            return $this->hasMany(OvertimeRequest::class);
+        }
 
 
 

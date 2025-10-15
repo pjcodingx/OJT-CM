@@ -191,7 +191,7 @@
         <div class="sign-box" style="float:left; width:45%; text-align:center;">
             <div style="height:60px;"></div>
             <div>_____________________________</div>
-            <div>Company Representative</div>
+            <div>Trainee</div>
         </div>
 
         <div class="sign-box" style="float:right; width:45%; text-align:center;">

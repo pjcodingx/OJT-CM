@@ -66,6 +66,13 @@
                         </a>
                     </li>
 
+                     <li class="nav-item {{ request()->routeIs('company.overtime.index') ? 'active' : '' }}">
+                        <a href="{{ route('company.overtime.index') }}" class="nav-link">
+                            <i class="fas fa-clock nav-icon"></i>
+                            <span class="nav-text">Overtime Requests</span>
+                        </a>
+                    </li>
+
 
                     <li class="nav-item {{ request()->routeIs('company.students.ratings.index') ? 'active' : '' }}">
                         <a href="{{ route('company.students.rating.index') }}" class="nav-link">

@@ -56,15 +56,15 @@ public function scan(Request $request)
             ]);
         }
 
-        // Default allowed times
-        $timeInStart  = Carbon::parse($company->allowed_time_in_start ?? '00:00:00');
-        $timeInEnd    = Carbon::parse($company->allowed_time_in_end ?? '23:59:59');
-        $timeOutStart = Carbon::parse($company->allowed_time_out_start ?? '00:00:00');
-        $timeOutEnd   = Carbon::parse($company->allowed_time_out_end ?? '23:59:59');
+        // --- Get normal allowed times ---
+        $timeInStart  = Carbon::parse($company->allowed_time_in_start ?? '00:00:00')->setDate($today->year, $today->month, $today->day);
+        $timeInEnd    = Carbon::parse($company->allowed_time_in_end ?? '23:59:59')->setDate($today->year, $today->month, $today->day);
+        $timeOutStart = Carbon::parse($company->allowed_time_out_start ?? '00:00:00')->setDate($today->year, $today->month, $today->day);
+        $timeOutEnd   = Carbon::parse($company->allowed_time_out_end ?? '23:59:59')->setDate($today->year, $today->month, $today->day);
 
         $workingDays = json_decode($company->working_days ?? '["Monday","Tuesday","Wednesday","Thursday","Friday"]', true);
 
-        // Check for overrides
+        // --- Check for company overrides ---
         $override = CompanyTimeOverride::where('company_id', $company->id)
                                        ->whereDate('date', $today)
                                        ->first();
@@ -79,13 +79,13 @@ public function scan(Request $request)
             }
 
             if ($override->time_in_start && $override->time_in_end) {
-                $timeInStart = Carbon::parse($override->time_in_start);
-                $timeInEnd   = Carbon::parse($override->time_in_end);
+                $timeInStart = Carbon::parse($override->time_in_start)->setDate($today->year, $today->month, $today->day);
+                $timeInEnd   = Carbon::parse($override->time_in_end)->setDate($today->year, $today->month, $today->day);
             }
 
             if ($override->time_out_start && $override->time_out_end) {
-                $timeOutStart = Carbon::parse($override->time_out_start);
-                $timeOutEnd   = Carbon::parse($override->time_out_end);
+                $timeOutStart = Carbon::parse($override->time_out_start)->setDate($today->year, $today->month, $today->day);
+                $timeOutEnd   = Carbon::parse($override->time_out_end)->setDate($today->year, $today->month, $today->day);
             }
 
             $allowAttendance = true;
@@ -101,19 +101,13 @@ public function scan(Request $request)
             ]);
         }
 
-        // Adjust times to today (Carbon objects)
-        $timeInStart->setDate($today->year, $today->month, $today->day);
-        $timeInEnd->setDate($today->year, $today->month, $today->day);
-        $timeOutStart->setDate($today->year, $today->month, $today->day);
-        $timeOutEnd->setDate($today->year, $today->month, $today->day);
-
-        // Get or create today's attendance
+        // --- Get or create today's attendance ---
         $attendance = Attendance::firstOrCreate(
             ['student_id' => $student->id, 'company_id' => $company->id, 'date' => $today],
-            ['time_in' => null, 'time_out' => null]
+            ['time_in' => null, 'time_out' => null, 'total_hours' => 0]
         );
 
-        // --- TIME IN ---
+        // --- NORMAL TIME IN ---
         if (!$attendance->time_in) {
             if ($now->lt($timeInStart)) {
                 return response()->json(['success' => false, 'name' => $student->name, 'message' => 'Too early to Time In.']);
@@ -124,14 +118,14 @@ public function scan(Request $request)
             }
 
             $attendance->update([
-                'time_in'         => $now,
+                'time_in' => $now,
                 'time_in_counted' => $timeInEnd->toTimeString(),
             ]);
 
-            return response()->json(['success' => true, 'name' => $student->name, 'message' => "Time In recorded successfully!"]);
+            return response()->json(['success' => true, 'name' => $student->name, 'message' => 'Time In recorded successfully!']);
         }
 
-        // --- TIME OUT ---
+        // --- NORMAL TIME OUT ---
         if (!$attendance->time_out) {
             if ($now->lt($timeOutStart)) {
                 return response()->json(['success' => false, 'name' => $student->name, 'message' => 'Too early to Time Out.']);
@@ -142,25 +136,67 @@ public function scan(Request $request)
             }
 
             $attendance->update([
-                'time_out'         => $now,
+                'time_out' => $now,
                 'time_out_counted' => $timeOutStart->toTimeString(),
             ]);
 
-            // Total hours in seconds
+            // Calculate total hours
             $totalSeconds = DB::table('attendances')
                 ->where('id', $attendance->id)
                 ->selectRaw('TIME_TO_SEC(time_out_counted) - TIME_TO_SEC(time_in_counted) as total_seconds')
                 ->value('total_seconds') ?? 0;
 
-            // Subtract penalty hours
             $totalSeconds -= ($attendance->penalty_hours ?? 0) * 3600;
-
             $attendance->update(['total_hours' => round($totalSeconds / 3600, 2)]);
 
-            return response()->json(['success' => true, 'name' => $student->name, 'message' => 'Time Out recorded successfully (based on schedule).']);
+            return response()->json(['success' => true, 'name' => $student->name, 'message' => 'Time Out recorded successfully.']);
         }
 
-        return response()->json(['success' => false, 'name' => $student->name, 'message' => 'Already completed attendance for today.']);
+        // --- OVERTIME SCAN ---
+$overtime = \App\Models\OvertimeRequest::where('student_id', $student->id)
+    ->whereDate('date', $today)
+    ->where('status', 'approved')
+    ->first();
+
+if ($overtime) {
+    $scanStart = Carbon::parse($overtime->scan_start)->setDate($today->year, $today->month, $today->day);
+    $scanEnd   = Carbon::parse($overtime->scan_end)->setDate($today->year, $today->month, $today->day);
+
+    if ($now->lt($scanStart)) {
+        return response()->json([
+            'success' => false,
+            'name' => $student->name,
+            'message' => 'Too early to start overtime.'
+        ]);
+    }
+
+    if ($now->gt($scanEnd)) {
+        return response()->json([
+            'success' => false,
+            'name' => $student->name,
+            'message' => 'Overtime scan window has ended.'
+        ]);
+    }
+
+    // Calculate total hours including OT
+    $totalHours = $attendance->total_hours ?? 0;
+    $totalHours += $overtime->approved_hours;
+
+    $attendance->update(['total_hours' => $totalHours]);
+
+    // Mark OT as completed
+    $overtime->update(['status' => 'completed']);
+
+    return response()->json([
+        'success' => true,
+        'name' => $student->name,
+        'message' => "Overtime scanned successfully! Total hours updated."
+    ]);
+}
+
+
+        // --- Already completed normal + OT ---
+        return response()->json(['success' => false, 'name' => $student->name, 'message' => 'Attendance already completed for today.']);
 
     } catch (\Exception $e) {
         Log::error('Scan error: ' . $e->getMessage());

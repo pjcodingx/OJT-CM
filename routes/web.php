@@ -22,6 +22,7 @@ use App\Http\Controllers\student\StudentJournalController;
 use App\Http\Controllers\student\StudentSummaryController;
 use App\Http\Controllers\admin\AdminNotificationController;
 use App\Http\Controllers\Company\CompanySettingsController;
+use App\Http\Controllers\student\OvertimeRequestController;
 use App\Http\Controllers\company\AssignedStudentsController;
 use App\Http\Controllers\company\CompanyDashboardController;
 use App\Http\Controllers\faculty\FacultyDashboardController;
@@ -33,6 +34,7 @@ use App\Http\Controllers\student\StudentAttendanceController;
 use App\Http\Controllers\company\CompanyNotificationController;
 use App\Http\Controllers\faculty\FacultyNotificationController;
 use App\Http\Controllers\student\StudentNotificationController;
+use App\Http\Controllers\company\CompanyOvertimeRequestController;
 use App\Http\Controllers\company\CompanyAttendanceAppealController;
 use App\Http\Controllers\student\StudentAttendanceAppealController;
 
@@ -186,13 +188,18 @@ Route::middleware(['student'])->prefix('student')->group(function () {
     ->name('certificate_pdf.preview');
 
 
- Route::get('/journals/{journal}/downloadPdf', [StudentJournalController::class, 'download'])->name('journals.download');
+    Route::get('/journals/{journal}/downloadPdf', [StudentJournalController::class, 'download'])->name('journals.download');
 
 
- //? Calendar if possible
- Route::get('/calendar', [StudentDashboardController::class, 'calendarData'])->name('student.calendar');
+    //? Calendar if possible
+    Route::get('/calendar', [StudentDashboardController::class, 'calendarData'])->name('student.calendar');
 
- //?Announcement
+    //?For Overtime Request
+    Route::get('/overtime', [OvertimeRequestController::class, 'index'])->name('student.overtime.index');
+    Route::post('/overtime/request', [OvertimeRequestController::class, 'store'])->name('student.overtime.store');
+    Route::post('/overtime/scan', [OvertimeRequestController::class, 'completeScan'])->name('student.overtime.scan');
+
+
 
 });
 
@@ -311,6 +318,14 @@ Route::middleware(['company'])->prefix('company')->group(function(){
       Route::post('/company/change-password/{id}', [CompanyDashboardController::class, 'updatePassword'])
     ->name('company.update.password');
 
+    //?Overtime Requests
+    Route::get('/overtime', [CompanyOvertimeRequestController::class, 'index'])->name('company.overtime.index');
+    Route::post('/overtime/update/{id}', [CompanyOvertimeRequestController::class, 'update'])->name('company.overtime.update');
+    Route::post('/overtime-requests/{id}/approve', [CompanyOvertimeRequestController::class, 'approve'])->name('company.overtime.approve');
+    Route::post('/overtime-requests/{id}/reject', [CompanyOvertimeRequestController::class, 'reject'])->name('company.overtime.reject');
+
+    Route::post('/company/overtime/approve-all', [CompanyOvertimeRequestController::class, 'approveAll'])->name('company.overtime.approveAll');
+    Route::post('/company/overtime/reject-all', [CompanyOvertimeRequestController::class, 'rejectAll'])->name('company.overtime.rejectAll');
 
 
 

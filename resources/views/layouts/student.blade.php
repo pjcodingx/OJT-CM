@@ -81,6 +81,14 @@
                         </a>
                     </li>
 
+                    <li class="nav-item {{ request()->routeIs('student.overtime.index') ? 'active' : '' }}">
+                        <a href="{{ route('student.overtime.index') }}" class="nav-link">
+                            <i class="fas fa-clock nav-icon"></i>
+                            <span class="nav-text">Overtime Requests</span>
+                        </a>
+                    </li>
+
+
                     <!-- 4. Attendance Logs -->
                     <li class="nav-item {{ request()->routeIs('student.attendance.index') ? 'active' : '' }}">
                         <a href="{{ route('student.attendance.index') }}" class="nav-link">

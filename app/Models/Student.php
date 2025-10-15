@@ -41,7 +41,11 @@ class Student extends Authenticatable
                                 ->where('status', 'approved')
                                 ->sum('credited_hours');
 
-        return round(max($hoursFromAttendance + $hoursFromAppeals, 0), 2);
+        $hoursFromOvertime = $this->overtimeRequests()
+                                ->where('status', 'completed')
+                                ->sum('approved_hours');
+
+        return round(max($hoursFromAttendance + $hoursFromAppeals, $hoursFromOvertime, 0), 2);
     }
 
 
@@ -221,6 +225,10 @@ public function ensureAttendanceForDate($date)
     }
 
 
+    public function overtimeRequests()
+    {
+        return $this->hasMany(OvertimeRequest::class);
+    }
 
 
 
