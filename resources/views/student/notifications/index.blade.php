@@ -520,7 +520,7 @@
 
 .type-journal-reminder {
     background-color: #f5a9ee;
-    color: #f757e9;
+    color: #94318c;
 }
 
 .type-approve {
@@ -663,7 +663,7 @@
 
 .type-time-override {
     background-color: #a9d7f1;
-    color: #36b5ff;
+    color: #154a69;
 }
 
 .notification-icon.penalty {
@@ -674,6 +674,26 @@
 .type-penalty {
     background-color: #e7b87a;
     color: #ce7604;
+}
+
+.type-overtime {
+    background-color: #e7af7a;
+    color: #5e4503;
+}
+
+.notification-icon.overtime i{
+    background-color: #ffffff;
+    color: #e7af7a;
+}
+
+.type-overtime-rejected {
+    background-color: #fcafba;
+    color: #750303;
+}
+
+.notification-icon.overtime-rejected i{
+    background-color: #ffffff;
+    color: #a80a0a;
 }
 
 .pagination-wrapper {
@@ -875,6 +895,8 @@
         padding: 12px 15px;
     }
 }
+
+
 </style>
 
 <div class="notifications-container">
@@ -927,6 +949,8 @@
                     <option value="penalty" {{ request('type')=='penalty'?'selected':'' }}>Journal Penalty</option>
                     <option value="reject" {{ request('type')=='reject'?'selected':'' }}>Rejected Appeals</option>
                     <option value="approve" {{ request('type')=='approve'?'selected':'' }}>Approved Appeals</option>
+                    <option value="overtime" {{ request('type')=='overtime'?'selected':'' }}>Overtime Approves</option>
+                    <option value="overtime-rejected" {{ request('type')=='overtime-rejected'?'selected':'' }}>Overtime Rejects</option>
                 </select>
             </div>
 
@@ -1003,6 +1027,12 @@
                         @case('time-override')
                             <i class="fas fa-clock text-blue-500"></i>
                             @break
+                        @case('overtime')
+                            <i class="fas fa-clock "></i>
+                        @break
+                        @case('overtime-rejected')
+                            <i class="fas fa-clock "></i>
+                        @break
                         @default
                             <i class="fas fa-info-circle"></i>
                     @endswitch

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\company;
 
+use App\Models\Notification;
 use Illuminate\Http\Request;
 use App\Models\OvertimeRequest;
 use App\Http\Controllers\Controller;
@@ -63,6 +64,16 @@ class CompanyOvertimeRequestController extends Controller
             'status'         => 'approved',
         ]);
 
+        Notification::createLimited([
+                    'user_id' => $ot->student_id,
+                    'user_type' => 'student',
+                    'type' => 'overtime',
+                    'title' => 'Overtime request Approved',
+                    'message' => "Your overtime request for {$ot->date} has been approved for {$ot->approved_hours} hours.",
+                    'is_read' => false,
+
+            ]);
+
         return back()->with('success', 'Overtime request approved.');
     }
 
@@ -77,6 +88,17 @@ class CompanyOvertimeRequestController extends Controller
             'status'  => 'rejected',
             'remarks' => $request->remarks,
         ]);
+
+        Notification::createLimited([
+                    'user_id' => $ot->student_id,
+                    'user_type' => 'student',
+                    'type' => 'overtime-rejected',
+                    'title' => 'Overtime request Rejected',
+                    'message' => "Your overtime request for {$ot->date} has been rejected",
+
+                    'is_read' => false,
+
+            ]);
 
         return back()->with('error', 'Overtime request rejected.');
     }

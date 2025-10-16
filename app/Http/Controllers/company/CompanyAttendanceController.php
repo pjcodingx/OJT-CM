@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use App\Models\Company;
 use App\Models\Student;
 use App\Models\Attendance;
+use App\Models\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\CompanyTimeOverride;
@@ -152,47 +153,49 @@ public function scan(Request $request)
             return response()->json(['success' => true, 'name' => $student->name, 'message' => 'Time Out recorded successfully.']);
         }
 
-        // --- OVERTIME SCAN ---
-$overtime = \App\Models\OvertimeRequest::where('student_id', $student->id)
-    ->whereDate('date', $today)
-    ->where('status', 'approved')
-    ->first();
+                // --- OVERTIME SCAN ---
+        $overtime = \App\Models\OvertimeRequest::where('student_id', $student->id)
+            ->whereDate('date', $today)
+            ->where('status', 'approved')
+            ->first();
 
-if ($overtime) {
-    $scanStart = Carbon::parse($overtime->scan_start)->setDate($today->year, $today->month, $today->day);
-    $scanEnd   = Carbon::parse($overtime->scan_end)->setDate($today->year, $today->month, $today->day);
+        if ($overtime) {
+            $scanStart = Carbon::parse($overtime->scan_start)->setDate($today->year, $today->month, $today->day);
+            $scanEnd   = Carbon::parse($overtime->scan_end)->setDate($today->year, $today->month, $today->day);
 
-    if ($now->lt($scanStart)) {
-        return response()->json([
-            'success' => false,
-            'name' => $student->name,
-            'message' => 'Too early to start overtime.'
-        ]);
-    }
+            if ($now->lt($scanStart)) {
+                return response()->json([
+                    'success' => false,
+                    'name' => $student->name,
+                    'message' => 'Too early to start overtime.'
+                ]);
+            }
 
-    if ($now->gt($scanEnd)) {
-        return response()->json([
-            'success' => false,
-            'name' => $student->name,
-            'message' => 'Overtime scan window has ended.'
-        ]);
-    }
+            if ($now->gt($scanEnd)) {
+                return response()->json([
+                    'success' => false,
+                    'name' => $student->name,
+                    'message' => 'Overtime scan window has ended.'
+                ]);
+            }
 
-    // Calculate total hours including OT
-    $totalHours = $attendance->total_hours ?? 0;
-    $totalHours += $overtime->approved_hours;
+            // Calculate total hours including OT
+            $totalHours = $attendance->total_hours ?? 0;
+            $totalHours += $overtime->approved_hours;
 
-    $attendance->update(['total_hours' => $totalHours]);
+            $attendance->update(['total_hours' => $totalHours]);
 
-    // Mark OT as completed
-    $overtime->update(['status' => 'completed']);
+            // Mark OT as completed
+            $overtime->update(['status' => 'completed']);
 
-    return response()->json([
-        'success' => true,
-        'name' => $student->name,
-        'message' => "Overtime scanned successfully! Total hours updated."
-    ]);
-}
+
+
+            return response()->json([
+                'success' => true,
+                'name' => $student->name,
+                'message' => "Overtime scanned successfully! Total hours Added."
+            ]);
+        }
 
 
         // --- Already completed normal + OT ---

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\student;
 
 use Carbon\Carbon;
 use App\Models\Attendance;
+use App\Models\Notification;
 use Illuminate\Http\Request;
 use App\Models\OvertimeRequest;
 use App\Http\Controllers\Controller;
@@ -26,12 +27,23 @@ class OvertimeRequestController extends Controller
         }
 
         // ✅ Create new OT request (pending)
-        OvertimeRequest::create([
+        $ot = OvertimeRequest::create([
             'student_id' => $student->id,
             'company_id' => $student->company_id,
             'date'       => $today,
             'status'     => 'pending',
         ]);
+
+        Notification::createLimited([
+                    'user_id' => $student->company_id,
+                    'user_type' => 'company',
+                    'type' => 'overtime',
+                    'title' => 'New Overtime Request',
+                    'message' => "Student {$student->name} submitted an overtime request for today",
+                    'link'      => route('company.overtime.index'),
+                    'is_read' => false,
+
+            ]);
 
         return back()->with('success', 'Overtime request submitted and waiting for company approval.');
     }

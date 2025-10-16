@@ -609,6 +609,16 @@
   border: 1px solid #0c5460;
 }
 
+.type-overtime {
+  background-color: #cbf174;
+  color: #57600c;
+
+}
+.notification-icon.overtime i {
+    background-color: #f1f1ef;
+    color: #57600c;
+}
+
 
 .notification-icon {
   display: inline-flex;
@@ -870,6 +880,7 @@
                     <option value="">All</option>
                     <option value="appeal" {{ request('type')=='appeal'?'selected':'' }}>Appeals</option>
                     <option value="absence" {{ request('type')=='absence'?'selected':'' }}>Absents</option>
+                    <option value="overtime" {{ request('type')=='overtime'?'selected':'' }}>Overtime Requests</option>
                 </select>
             </div>
 
@@ -912,42 +923,53 @@
 
     <div class="notifications-list">
         @forelse($notifications as $notification)
-            <div class="notification-item {{ !$notification->is_read ? 'unread' : '' }}" id="notification-{{ $notification->id }}">
-                @if(!$notification->is_read)
-                    <div class="unread-indicator"></div>
-                @endif
+            @if($notification->link)
+    <a href="{{ $notification->link }}" class="notification-item {{ !$notification->is_read ? 'unread' : '' }}" id="notification-{{ $notification->id }}">
+@else
+    <div class="notification-item {{ !$notification->is_read ? 'unread' : '' }}" id="notification-{{ $notification->id }}">
+@endif
 
-                {{-- I will add here new type of notifications --}}
-                <div class="notification-icon {{ $notification->type ?? 'info' }}">
-                @switch($notification->type ?? 'info')
-                    @case('appeal')
-                      <i class="fa-solid fa-clipboard-user"></i>
-                    @break
-                     @case('absence')
-                        <i class="fas fa-user-slash text-red-500"></i>
-                        @break
-                    @default
-                        <i class="fas fa-info-circle"></i>
-                @endswitch
+    @if(!$notification->is_read)
+        <div class="unread-indicator"></div>
+    @endif
+
+    <div class="notification-icon {{ $notification->type ?? 'info' }}">
+        @switch($notification->type ?? 'info')
+            @case('appeal')
+                <i class="fa-solid fa-clipboard-user"></i>
+                @break
+            @case('absence')
+                <i class="fas fa-user-slash text-red-500"></i>
+                @break
+            @case('overtime')
+                <i class="fas fa-clock"></i>
+                @break
+            @default
+                <i class="fas fa-info-circle"></i>
+        @endswitch
+    </div>
+
+    <div class="notification-content">
+        <div class="notification-title">{{ $notification->title }}</div>
+        <div class="notification-message">{{ $notification->message }}</div>
+
+        <div class="notification-meta">
+            <div class="notification-time">
+                <i class="far fa-clock"></i>
+                {{ $notification->created_at->diffForHumans() }}
             </div>
+            <span class="notification-type type-{{ $notification->type ?? 'info' }}">
+                {{ ucfirst($notification->type ?? 'info') }}
+            </span>
+        </div>
+    </div>
 
+@if($notification->link)
+    </a>
+@else
+    </div>
+@endif
 
-                <div class="notification-content">
-                        <div class="notification-title">{{ $notification->title }}</div>
-                        <div class="notification-message">{{ $notification->message }}</div>
-
-                        <div class="notification-meta">
-                            <div class="notification-time">
-                                <i class="far fa-clock"></i>
-                                {{ $notification->created_at->diffForHumans() }}
-                            </div>
-                            <span class="notification-type type-{{ $notification->type ?? 'info' }}">
-                                {{ ucfirst($notification->type ?? 'info') }}
-                            </span>
-                        </div>
-                </div>
-
-            </div>
         @empty
             <div class="empty-state">
                 <i class="far fa-bell-slash"></i>
