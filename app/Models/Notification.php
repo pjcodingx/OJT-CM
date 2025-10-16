@@ -25,7 +25,7 @@ class Notification extends Model
         'admin'   => 35,
         'faculty' => 20,
         'student' => 20,
-        'company' => 20,
+        'company' => 25,
     ];
 
     $maxPerUser = $limits[$data['user_type']] ?? 15;

@@ -37,7 +37,7 @@ class CompanyNotificationController extends Controller
 
         $notifications = $baseQuery->orderBy('created_at', 'desc')->paginate($limit)->withQueryString();
 
-        $maxNotifications = 3;
+        $maxNotifications = 25;
         $isAlmostFull = $totalCount >= ($maxNotifications * 0.9);
         $isFull = $totalCount >= $maxNotifications;
 

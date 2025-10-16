@@ -375,10 +375,13 @@
 </div>
 
 <script src="https://unpkg.com/html5-qrcode"></script>
+<!-- Replace the entire script section in your blade file with this -->
+<script src="https://unpkg.com/html5-qrcode"></script>
 <script>
     let scanCount = 0;
     let isPaused = false;
 
+    // Live clock update
     function updateClock() {
         let now = new Date();
         let hours = now.getHours();
@@ -425,31 +428,71 @@
             btn.innerText = 'Resume Scanner';
             btn.className = 'btn-control btn-resume';
             statusEl.className = 'scanner-status status-processing';
-            statusEl.innerHTML = '<span>Scanner paused</span><span class="date-display">{{ \Carbon\Carbon::now()->format('F d, Y') }}</span>';
+            statusEl.innerHTML = '<span>Scanner paused</span>';
         } else {
             btn.innerText = 'Pause Scanner';
             btn.className = 'btn-control btn-pause';
             statusEl.className = 'scanner-status status-ready';
-            statusEl.innerHTML = '<span>Scanner ready - Point camera at QR code</span><span class="date-display">{{ \Carbon\Carbon::now()->format('F d, Y') }}</span>';
+            statusEl.innerHTML = '<span>Scanner ready - Point camera at QR code</span>';
         }
     }
 
+    // OPTIMIZED SCANNER CONFIG - Works for BOTH print and phone screens
     let html5QrcodeScanner = new Html5QrcodeScanner("reader", {
-        fps: 10,
-        qrbox: { width: 250, height: 250 },
-        aspectRatio: 1.0
+        fps: 15,  // Balanced frame rate - not too fast, not too slow
+        qrbox: { width: 300, height: 300 },  // Standard scan box
+        aspectRatio: 1.0,
+
+        // Enable all helpful features
+        formatsToSupport: [ Html5QrcodeSupportedFormats.QR_CODE ],
+
+        // Use browser's native detector when available (better for printed codes)
+        experimentalFeatures: {
+            useBarCodeDetectorIfSupported: true
+        },
+
+        // Remember camera selection
+        rememberLastUsedCamera: true,
+
+        // Show torch/flashlight button if available (helps with print scanning)
+        showTorchButtonIfSupported: true,
+
+        // Advanced camera settings for better scanning
+        videoConstraints: {
+            facingMode: "environment",  // Use back camera on mobile
+            advanced: [{
+                focusMode: "continuous",      // Auto-focus continuously
+                exposureMode: "continuous",   // Auto-adjust exposure
+                whiteBalanceMode: "continuous" // Auto-adjust white balance
+            }]
+        }
     });
 
     let canScan = true;
+    let lastScannedCode = null;
+    let lastScanTime = 0;
 
     function onScanSuccess(decodedText) {
+        // Debug: Log what was scanned
+        console.log('🔍 Scanned QR code:', decodedText);
+        console.log('🔍 Data type:', typeof decodedText);
+
         if (!canScan || isPaused) return;
 
+        // Prevent duplicate scans within 3 seconds
+        const now = Date.now();
+        if (decodedText === lastScannedCode && (now - lastScanTime) < 3000) {
+            console.log('⚠️ Duplicate scan ignored');
+            return;
+        }
+
+        lastScannedCode = decodedText;
+        lastScanTime = now;
         canScan = false;
 
         const statusEl = document.getElementById('scanner-status');
         statusEl.className = "scanner-status status-processing processing";
-        statusEl.innerHTML = '<span>Processing scan...</span><span class="date-display">{{ \Carbon\Carbon::now()->format('F d, Y') }}</span>';
+        statusEl.innerHTML = '<span>Processing scan...</span>';
 
         fetch("{{ route('company.attendance.scan') }}", {
             method: "POST",
@@ -461,20 +504,20 @@
         })
         .then(res => res.json())
         .then(data => {
-            console.log('Scan response:', data);
+            console.log('✅ Server response:', data);
 
-           if(data.success){
+            // Play appropriate sound
+            if(data.success){
                 new Audio('/sounds/success.mp3').play().catch(e => console.log('Audio play failed'));
-            } else if(data.message.toLowerCase().includes("too early") || data.message.toLowerCase().includes("not allowed")){
+            } else if(data.message.toLowerCase().includes("too early") ||
+                      data.message.toLowerCase().includes("not allowed")){
                 new Audio('/sounds/denied.mp3').play().catch(e => console.log('Audio play failed'));
             } else {
-                new Audio('/sounds/error.mp3').play().catch(e => console.log('Audio play failed'));
+                new Audio('/sounds/denied.mp3').play().catch(e => console.log('Audio play failed'));
             }
 
-
-
             statusEl.className = "scanner-status status-ready";
-            statusEl.innerHTML = '<span>Scanner ready - Point camera at QR code</span><span class="date-display">{{ \Carbon\Carbon::now()->format('F d, Y') }}</span>';
+            statusEl.innerHTML = '<span>Scanner ready - Point camera at QR code</span>';
 
             let displayName = data.name || 'ID: ' + decodedText;
 
@@ -501,17 +544,15 @@
 
             updateScanCount();
 
-            // Optional: Play success sound (uncomment if you add audio file)
-
-
+            // Re-enable scanning after 3 seconds
             setTimeout(() => {
                 canScan = true;
             }, 3000);
         })
         .catch(err => {
-            console.error("Scan error:", err);
+            console.error("❌ Scan error:", err);
             statusEl.className = "scanner-status status-error";
-            statusEl.innerHTML = '<span>Error occurred - see console</span><span class="date-display">{{ \Carbon\Carbon::now()->format('F d, Y') }}</span>';
+            statusEl.innerHTML = '<span>Error occurred - check connection</span>';
 
             let logBox = document.getElementById("log-box");
             let entry = document.createElement("div");
@@ -530,11 +571,12 @@
             setTimeout(() => {
                 canScan = true;
                 statusEl.className = "scanner-status status-ready";
-                statusEl.innerHTML = '<span>Scanner ready - Point camera at QR code</span><span class="date-display">{{ \Carbon\Carbon::now()->format('F d, Y') }}</span>';
+                statusEl.innerHTML = '<span>Scanner ready - Point camera at QR code</span>';
             }, 3000);
         });
     }
 
+    // Start the scanner
     html5QrcodeScanner.render(onScanSuccess);
 </script>
 

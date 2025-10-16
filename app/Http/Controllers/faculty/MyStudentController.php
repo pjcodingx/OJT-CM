@@ -20,6 +20,8 @@ use Illuminate\Support\Facades\Hash;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Storage;
 use App\Exports\FacultyManageStudentsExport;
+use Endroid\QrCode\ErrorCorrectionLevel;
+
 
 class MyStudentController extends Controller
 {
@@ -131,8 +133,9 @@ class MyStudentController extends Controller
 
         $result = Builder::create()
         ->data($qrText)
-        ->size(300)
-        ->margin(10)
+       ->size(400)
+        ->margin(30)
+        ->errorCorrectionLevel(ErrorCorrectionLevel::High)
         ->build();
 
         Storage::disk('public')->put($filename, $result->getString());
@@ -200,8 +203,9 @@ class MyStudentController extends Controller
             $result = Builder::create()
             ->data($qrdata)
             ->writer(new PngWriter())
-            ->size(300)
-            ->margin(10)
+            ->size(400)
+            ->margin(30)
+            ->errorCorrectionLevel(ErrorCorrectionLevel::High)
             ->build();
 
               $filename = 'student_qr' . $student->id . '.png'; //file name sa photo stored sa storage
