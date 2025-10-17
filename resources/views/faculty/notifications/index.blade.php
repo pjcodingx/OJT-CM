@@ -824,6 +824,58 @@
     }
 }
 
+.alert {
+    position: fixed;
+    top: 130px;
+    right: 160px;
+    padding: 14px 22px;
+    border-radius: 8px;
+    font-weight: 500;
+    font-size: 14px;
+    color: #fff;
+    z-index: 9999;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    animation: slideIn 0.5s ease, fadeOut 0.5s ease 4s forwards;
+}
+
+/* Success (your green tone) */
+.success-alert {
+    background: #ecfdf5;
+    color: #065f46;
+    border: 1px solid #a7f3d0;
+}
+
+/* Info (blue) */
+.info-alert {
+    background: #eff6ff;
+    color: #1e3a8a;
+    border: 1px solid #bfdbfe;
+}
+
+/* Error (red) */
+.error-alert {
+    background: #fef2f2;
+    color: #991b1b;
+    border: 1px solid #fecaca;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(120%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes fadeOut {
+    to {
+        opacity: 0;
+        transform: translateX(120%);
+    }
+}
 
 </style>
 
@@ -844,6 +896,12 @@
             </form>
         </div>
     </div>
+
+    @if (session('success'))
+        <div class="alert success-alert">
+            {{ session('success') }}
+        </div>
+    @endif
 
     @if($isFull)
         <div class="inbox-alert inbox-full">
