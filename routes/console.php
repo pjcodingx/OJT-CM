@@ -8,10 +8,8 @@ Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote');
 
-Schedule::command('reminder:daily-journal')->everyMinute();
+Schedule::command('reminder:daily-journal')->everyFourMinutes();
 
-//! $schedule->command('reminder:daily-journal')->dailyAt('15:00');
+Schedule::command('students:check-absences')->everyFourMinutes();
 
-Schedule::command('students:check-absences')->everyFiveSeconds();
-
-Schedule::command('notify:missing-journals')->everyMinute();
+Schedule::command('notify:missing-journals')->everyFourMinutes();
