@@ -120,6 +120,13 @@
                         </a>
                 </li>
 
+                <li class="nav-item {{ request()->routeIs('admin.backup.download') ? 'active' : '' }}">
+                        <a href="{{ route('admin.backup.download') }}" class="nav-link">
+                            <i class="fa-solid fa-box"></i>
+                            <span class="nav-text">Backup Data</span>
+                        </a>
+                </li>
+
                 </ul>
             </nav>
 

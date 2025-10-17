@@ -9,6 +9,7 @@ use App\Http\Controllers\admin\FacultyController;
 use App\Http\Controllers\admin\StudentController;
 use App\Http\Controllers\Auth\MultiLoginController;
 use App\Http\Controllers\student\FeedbackController;
+use App\Http\Controllers\Admin\AdminBackupController;
 use App\Http\Controllers\faculty\MyStudentController;
 use App\Http\Controllers\JournalManagementController;
 use App\Http\Controllers\admin\AttendanceLogController;
@@ -136,6 +137,10 @@ Route::middleware(['admin'])->prefix('admin')->group(function () {
     Route::post('notifications/{id}/read', [AdminNotificationController::class, 'markAsRead'])->name('admin.notifications.read');
 
     Route::delete('notifications/delete-all', [AdminNotificationController::class, 'deleteAll'])->name('admin.notifications.deleteAll');
+
+
+    //*Backup route
+         Route::get('/backup-download', [AdminBackupController::class, 'download'])->name('admin.backup.download');
 });
 
 

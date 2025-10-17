@@ -378,13 +378,123 @@
     </div>
 </div>
 
-<script src="https://unpkg.com/html5-qrcode"></script>
+<script src="/js/html5-qrcode.min.js"></script>
 
 <script>
- let scanCount = 0;
+//////////////////// OFFLINE QUEUE SETUP ////////////////////
+let db;
+
+const request = indexedDB.open("qrScannerDB", 1);
+
+request.onupgradeneeded = function(event) {
+    db = event.target.result;
+    const store = db.createObjectStore("scans", { keyPath: "id", autoIncrement: true });
+    store.createIndex("timestamp", "timestamp", { unique: false });
+};
+
+request.onsuccess = function(event) {
+    db = event.target.result;
+    console.log("✅ IndexedDB ready for offline queue");
+};
+
+request.onerror = function(event) {
+    console.error("❌ IndexedDB failed:", event.target.error);
+};
+
+async function saveScanOffline(decodedText, photoBlob) {
+    if (!db) return console.error("IndexedDB not ready");
+    const tx = db.transaction(["scans"], "readwrite");
+    const store = tx.objectStore("scans");
+    store.add({
+        qr_code: decodedText,
+        photo: photoBlob,
+        timestamp: Date.now(),
+        status: "pending"
+    });
+    console.log("💾 Scan saved locally (offline queue)");
+
+    // Add pending log entry for immediate feedback
+    addLogEntry(decodedText, '⏳ Pending Sync', 'pending');
+}
+
+async function syncOfflineScans() {
+    if (!db) return;
+    const tx = db.transaction(["scans"], "readonly");
+    const store = tx.objectStore("scans");
+    const request = store.getAll();
+
+    request.onsuccess = async function(event) {
+        const scans = event.target.result;
+
+        for (let scan of scans) {
+            const formData = new FormData();
+            formData.append('qr_code', scan.qr_code);
+            if (scan.photo) formData.append('photo', scan.photo, 'scan_' + scan.timestamp + '.jpg');
+
+            try {
+                const res = await fetch("{{ route('company.attendance.scan') }}", {
+                    method: "POST",
+                    headers: { "X-CSRF-TOKEN": "{{ csrf_token() }}" },
+                    body: formData
+                });
+                const data = await res.json();
+                console.log("📤 Offline scan uploaded:", data);
+
+                // Update pending log entry
+                updatePendingLog(scan.qr_code, data.name || 'ID: ' + scan.qr_code, data.message);
+
+                // Delete uploaded scan from IndexedDB
+                const delTx = db.transaction(["scans"], "readwrite");
+                delTx.objectStore("scans").delete(scan.id);
+            } catch (error) {
+                console.error("❌ Failed to upload offline scan:", error);
+            }
+        }
+    };
+}
+
+window.addEventListener('online', () => {
+    console.log("🌐 Internet restored, syncing queued scans...");
+    syncOfflineScans();
+});
+
+//////////////////// LOG HELPERS ////////////////////
+function addLogEntry(displayName, message, status='success') {
+    let logBox = document.getElementById("log-box");
+    let entry = document.createElement("div");
+    entry.classList.add("log-entry");
+    if(status === 'pending') entry.classList.add("pending");
+    else if(status === 'error') entry.classList.add("error");
+    else if(status === 'denied') entry.classList.add("denied");
+
+    entry.innerHTML = `<p style="color:darkgreen;"><strong>${displayName}</strong> - ${message} (${new Date().toLocaleTimeString()})</p>`;
+
+    const logHeader = logBox.querySelector('.log-header');
+    const infoText = logBox.querySelector('p[style*="color: #838282"]');
+    if (infoText) infoText.remove();
+    if (logHeader && logHeader.nextSibling) logBox.insertBefore(entry, logHeader.nextSibling);
+    else logBox.appendChild(entry);
+
+    updateScanCount();
+}
+
+function updatePendingLog(qrCode, displayName, message) {
+    const logBox = document.getElementById("log-box");
+    const entries = logBox.querySelectorAll(".log-entry.pending");
+
+    entries.forEach(entry => {
+        if(entry.innerHTML.includes(qrCode)) {
+            entry.classList.remove('pending');
+            entry.innerHTML = `<p style="color:darkgreen;"><strong>${displayName}</strong> - ${message} (Synced at ${new Date().toLocaleTimeString()})</p>`;
+        }
+    });
+}
+
+//////////////////// MAIN SCANNER LOGIC ////////////////////
+let scanCount = 0;
 let isPaused = false;
 
-// Live clock update
+// Live clock
 function updateClock() {
     let now = new Date();
     let hours = now.getHours();
@@ -392,13 +502,11 @@ function updateClock() {
     let seconds = now.getSeconds();
     let ampm = hours >= 12 ? 'PM' : 'AM';
 
-    hours = hours % 12;
-    hours = hours ? hours : 12;
-    minutes = minutes < 10 ? '0' + minutes : minutes;
-    seconds = seconds < 10 ? '0' + seconds : seconds;
+    hours = hours % 12 || 12;
+    minutes = minutes < 10 ? '0'+minutes : minutes;
+    seconds = seconds < 10 ? '0'+seconds : seconds;
 
-    let timeString = hours + ':' + minutes + ':' + seconds + ' ' + ampm;
-    document.getElementById('live-clock').innerText = timeString;
+    document.getElementById('live-clock').innerText = `${hours}:${minutes}:${seconds} ${ampm}`;
 }
 updateClock();
 setInterval(updateClock, 1000);
@@ -440,71 +548,38 @@ function toggleScanner() {
     }
 }
 
-// Function to capture photo from video stream
+// Capture photo
 async function capturePhoto() {
     try {
-        // Try multiple selectors to find the video element
-        let video = document.querySelector('#reader video');
-
-        if (!video) {
-            video = document.querySelector('video');
-        }
-
-        if (!video) {
-            console.error('❌ No video element found');
-            return null;
-        }
-
-        // Check if video is playing and has dimensions
-        if (video.videoWidth === 0 || video.videoHeight === 0) {
-            console.error('❌ Video dimensions are 0');
-            return null;
-        }
-
-        console.log('📸 Capturing photo from video:', video.videoWidth + 'x' + video.videoHeight);
+        let video = document.querySelector('#reader video') || document.querySelector('video');
+        if (!video || video.videoWidth === 0 || video.videoHeight === 0) return null;
 
         const canvas = document.createElement('canvas');
         canvas.width = video.videoWidth;
         canvas.height = video.videoHeight;
+        canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
 
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-        // Convert to blob with higher quality
-        return new Promise((resolve) => {
-            canvas.toBlob((blob) => {
-                if (blob) {
-                    console.log('✅ Photo captured successfully, size:', blob.size, 'bytes');
-                } else {
-                    console.error('❌ Failed to create blob from canvas');
-                }
-                resolve(blob);
-            }, 'image/jpeg', 0.95);
+        return new Promise(resolve => {
+            canvas.toBlob(blob => resolve(blob), 'image/jpeg', 0.95);
         });
-    } catch (error) {
-        console.error('❌ Error capturing photo:', error);
+    } catch (e) {
+        console.error('❌ Error capturing photo:', e);
         return null;
     }
 }
 
-// OPTIMIZED SCANNER CONFIG
+// Scanner
 let html5QrcodeScanner = new Html5QrcodeScanner("reader", {
     fps: 15,
     qrbox: { width: 250, height: 250 },
     aspectRatio: 1.0,
     formatsToSupport: [ Html5QrcodeSupportedFormats.QR_CODE ],
-    experimentalFeatures: {
-        useBarCodeDetectorIfSupported: true
-    },
+    experimentalFeatures: { useBarCodeDetectorIfSupported: true },
     rememberLastUsedCamera: true,
     showTorchButtonIfSupported: true,
     videoConstraints: {
         facingMode: "environment",
-        advanced: [{
-            focusMode: "continuous",
-            exposureMode: "continuous",
-            whiteBalanceMode: "continuous"
-        }]
+        advanced: [{ focusMode: "continuous", exposureMode: "continuous", whiteBalanceMode: "continuous" }]
     }
 });
 
@@ -513,15 +588,10 @@ let lastScannedCode = null;
 let lastScanTime = 0;
 
 async function onScanSuccess(decodedText) {
-    console.log('🔍 Scanned QR code:', decodedText);
-
     if (!canScan || isPaused) return;
 
     const now = Date.now();
-    if (decodedText === lastScannedCode && (now - lastScanTime) < 3000) {
-        console.log('⚠️ Duplicate scan ignored');
-        return;
-    }
+    if (decodedText === lastScannedCode && (now - lastScanTime) < 3000) return;
 
     lastScannedCode = decodedText;
     lastScanTime = now;
@@ -531,108 +601,48 @@ async function onScanSuccess(decodedText) {
     statusEl.className = "scanner-status status-processing processing";
     statusEl.innerHTML = '<span>Capturing photo...</span>';
 
-    // Add small delay to ensure video is ready
-    await new Promise(resolve => setTimeout(resolve, 200));
-
-    // Capture photo
+    await new Promise(r => setTimeout(r, 200));
     const photoBlob = await capturePhoto();
-
-    if (!photoBlob) {
-        console.warn('⚠️ No photo captured, continuing without photo');
-    }
-
     statusEl.innerHTML = '<span>Processing scan...</span>';
 
-    // Prepare form data with photo
-    const formData = new FormData();
-    formData.append('qr_code', decodedText);
-    if (photoBlob) {
-        formData.append('photo', photoBlob, 'scan_' + Date.now() + '.jpg');
-        console.log('📤 Sending photo with scan data');
+    if (!navigator.onLine) {
+        await saveScanOffline(decodedText, photoBlob);
+        statusEl.innerHTML = "<span>Offline - Scan saved locally</span>";
+        canScan = true;
     } else {
-        console.log('📤 Sending scan data without photo');
-    }
+        const formData = new FormData();
+        formData.append('qr_code', decodedText);
+        if (photoBlob) formData.append('photo', photoBlob, 'scan_' + Date.now() + '.jpg');
 
-    fetch("{{ route('company.attendance.scan') }}", {
-        method: "POST",
-        headers: {
-            "X-CSRF-TOKEN": "{{ csrf_token() }}"
-        },
-        body: formData
-    })
-    .then(res => res.json())
-    .then(data => {
-        console.log('✅ Server response:', data);
+        fetch("{{ route('company.attendance.scan') }}", {
+            method: "POST",
+            headers: { "X-CSRF-TOKEN": "{{ csrf_token() }}" },
+            body: formData
+        })
+        .then(res => res.json())
+        .then(data => {
+            if(data.success) new Audio('/sounds/success.mp3').play().catch(()=>{});
+            else new Audio('/sounds/denied.mp3').play().catch(()=>{});
 
-        if(data.success){
-            new Audio('/sounds/success.mp3').play().catch(e => console.log('Audio play failed'));
-        } else if(data.message.toLowerCase().includes("too early") ||
-                  data.message.toLowerCase().includes("not allowed")){
-            new Audio('/sounds/denied.mp3').play().catch(e => console.log('Audio play failed'));
-        } else {
-            new Audio('/sounds/denied.mp3').play().catch(e => console.log('Audio play failed'));
-        }
+            addLogEntry(data.name || 'ID: ' + decodedText, data.message, data.success ? 'success' : 'denied');
 
-        statusEl.className = "scanner-status status-ready";
-        statusEl.innerHTML = '<span>Scanner ready - Point camera at QR code</span>';
-
-        let displayName = data.name || 'ID: ' + decodedText;
-
-        let logBox = document.getElementById("log-box");
-        let entry = document.createElement("div");
-        entry.classList.add("log-entry");
-
-        if (!data.success) {
-            entry.classList.add(data.message.toLowerCase().includes("not allowed") ? "denied" : "error");
-        }
-
-        entry.innerHTML = `<p style="color:darkgreen;"><strong>${displayName}</strong> - ${data.message} (${new Date().toLocaleTimeString()})</p>`;
-
-        const logHeader = logBox.querySelector('.log-header');
-        const infoText = logBox.querySelector('p[style*="color: #838282"]');
-        if (infoText) infoText.remove();
-
-        if (logHeader && logHeader.nextSibling) {
-            logBox.insertBefore(entry, logHeader.nextSibling);
-        } else {
-            logBox.appendChild(entry);
-        }
-
-        updateScanCount();
-
-        setTimeout(() => {
-            canScan = true;
-        }, 3000);
-    })
-    .catch(err => {
-        console.error("❌ Scan error:", err);
-        statusEl.className = "scanner-status status-error";
-        statusEl.innerHTML = '<span>Error occurred - check connection</span>';
-
-        let logBox = document.getElementById("log-box");
-        let entry = document.createElement("div");
-        entry.classList.add("log-entry", "error");
-        entry.innerHTML = `<p><strong>ID: ${decodedText}</strong> - Network error occurred (${new Date().toLocaleTimeString()})</p>`;
-
-        const logHeader = logBox.querySelector('.log-header');
-        if (logHeader && logHeader.nextSibling) {
-            logBox.insertBefore(entry, logHeader.nextSibling);
-        } else {
-            logBox.appendChild(entry);
-        }
-
-        updateScanCount();
-
-        setTimeout(() => {
-            canScan = true;
             statusEl.className = "scanner-status status-ready";
             statusEl.innerHTML = '<span>Scanner ready - Point camera at QR code</span>';
-        }, 3000);
-    });
+
+            setTimeout(()=>{ canScan = true; }, 3000);
+        })
+        .catch(async err => {
+            console.error("❌ Scan error:", err);
+            statusEl.className = "scanner-status status-error";
+            statusEl.innerHTML = '<span>Error occurred - check connection</span>';
+            await saveScanOffline(decodedText, photoBlob); // Save offline if failed
+            canScan = true;
+        });
+    }
 }
 
-// Start the scanner
 html5QrcodeScanner.render(onScanSuccess);
 </script>
+
 
 @endsection

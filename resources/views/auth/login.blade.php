@@ -243,6 +243,26 @@
             input[type="password"]::-ms-reveal {
                 display: none;
             }
+
+            #error-message {
+                background-color: #fee2e2; /* light red */
+                border: 1px solid #fca5a5; /* red border */
+                color: #b91c1c; /* dark red text */
+                padding: 10px 15px;
+                border-radius: 6px;
+                margin-bottom: 1rem;
+                font-size: 0.875rem;
+                list-style: none;
+            }
+/* Hide FontAwesome eye in Edge only */
+@supports (-ms-ime-align:auto) {
+    #togglePassword {
+        display: none;
+    }
+}
+
+
+
         </style>
     </head>
     <body>
