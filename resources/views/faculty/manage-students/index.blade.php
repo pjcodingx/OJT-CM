@@ -298,6 +298,186 @@ tbody tr:hover {
 }
 
 
+
+/* Tablet and Mobile Styles */
+    @media (max-width: 768px) {
+        h2.table-title {
+            font-size: 1.75rem;
+            margin-bottom: 1.5rem;
+            padding: 0 1rem;
+        }
+
+        .filter-form {
+            padding: 0 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .date-input {
+            font-size: 0.9375rem;
+            padding: 0.625rem 0.875rem;
+        }
+
+        table {
+            display: block;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin: 0 1rem;
+            width: calc(100% - 2rem);
+        }
+
+        thead th {
+            padding: 0.75rem 0.5rem;
+            font-size: 0.8125rem;
+            white-space: nowrap;
+        }
+
+        tbody td {
+            padding: 0.75rem 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .photo-thumbnail {
+            width: 40px;
+            height: 40px;
+        }
+
+        .no-photo-badge {
+            font-size: 0.625rem;
+            padding: 2px 6px;
+        }
+
+        .pagination-wrapper {
+            margin-top: 1.5rem;
+            padding: 0 1rem;
+        }
+
+        .page-link {
+            padding: 0.4375rem 0.75rem;
+            font-size: 0.75rem;
+            min-width: 2rem;
+            height: 2rem;
+        }
+
+        .photo-modal-close {
+            top: 10px;
+            right: 20px;
+            font-size: 35px;
+        }
+
+        .photo-modal-info {
+            bottom: 20px;
+            padding: 10px 20px;
+            font-size: 0.875rem;
+        }
+
+        .photo-modal-info strong {
+            font-size: 1rem;
+        }
+    }
+
+    /* Phone Styles */
+    @media (max-width: 480px) {
+        h2.table-title {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .filter-form {
+            margin-bottom: 1rem;
+        }
+
+        .date-input {
+            font-size: 0.875rem;
+            padding: 0.5rem 0.75rem;
+            max-width: 100%;
+        }
+
+        table {
+            margin: 0 0.5rem;
+            width: calc(100% - 1rem);
+            font-size: 0.8125rem;
+        }
+
+        thead th {
+            padding: 0.625rem 0.375rem;
+            font-size: 0.75rem;
+        }
+
+        tbody td {
+            padding: 0.625rem 0.375rem;
+            font-size: 0.8125rem;
+        }
+
+        .photo-thumbnail {
+            width: 35px;
+            height: 35px;
+        }
+
+        .no-photo-badge {
+            font-size: 0.5625rem;
+            padding: 2px 4px;
+        }
+
+        .pagination-wrapper {
+            margin-top: 1rem;
+            padding: 0 0.5rem;
+        }
+
+        .pagination {
+            gap: 0.25rem;
+        }
+
+        .page-link {
+            padding: 0.375rem 0.625rem;
+            font-size: 0.6875rem;
+            min-width: 1.75rem;
+            height: 1.75rem;
+        }
+
+        .photo-modal-content {
+            max-width: 95%;
+            max-height: 85%;
+        }
+
+        .photo-modal-close {
+            top: 5px;
+            right: 10px;
+            font-size: 30px;
+        }
+
+        .photo-modal-info {
+            bottom: 10px;
+            padding: 8px 15px;
+            font-size: 0.8125rem;
+            max-width: 90%;
+        }
+
+        .photo-modal-info strong {
+            font-size: 0.9375rem;
+        }
+    }
+
+    /* Extra Small Phones */
+    @media (max-width: 375px) {
+        h2.table-title {
+            font-size: 1.25rem;
+        }
+
+        thead th {
+            padding: 0.5rem 0.25rem;
+            font-size: 0.6875rem;
+        }
+
+        tbody td {
+            padding: 0.5rem 0.25rem;
+            font-size: 0.75rem;
+        }
+
+        .photo-thumbnail {
+            width: 30px;
+            height: 30px;
+        }
+    }
 </style>
 
 

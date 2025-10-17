@@ -72,14 +72,16 @@ class AttendanceAppealController extends Controller
 
 
 
-    public function create($attendanceId){
-           $studentId = Auth::guard('student')->id();
+    public function create($attendanceId)
+{
+    $student = Auth::guard('student')->user();
 
-        $attendance = Attendance::where('student_id', $studentId)
-            ->findOrFail($attendanceId);
+    $attendance = Attendance::where('student_id', $student->id)
+        ->findOrFail($attendanceId);
 
-        return view('student.attendance-appeals.create', compact('attendance'));
-    }
+    return view('student.attendance-appeals.create', compact('attendance', 'student'));
+}
+
 
     public function store(Request $request){
 
@@ -106,6 +108,7 @@ class AttendanceAppealController extends Controller
             'reason' => $request->reason,
             'attachment' => $path,
             'status' => 'pending',
+
         ]);
 
 

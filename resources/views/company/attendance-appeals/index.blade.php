@@ -1,22 +1,94 @@
 @extends('layouts.company')
 
 @section('content')
+
+<style>
+    .alert {
+    position: fixed;
+    top: 100px;
+    right: 20px;
+    padding: 14px 22px;
+    border-radius: 8px;
+    font-weight: 500;
+    font-size: 14px;
+    color: #fff;
+    z-index: 9999;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    animation: slideIn 0.5s ease, fadeOut 0.5s ease 4s forwards;
+}
+
+
+.success-alert {
+    background: #ecfdf5;
+    color: #065f46;
+    border: 1px solid #a7f3d0;
+}
+
+
+.info-alert {
+    background: #eff6ff;
+    color: #1e3a8a;
+    border: 1px solid #bfdbfe;
+}
+
+
+.error-alert {
+    background: #fef2f2;
+    color: #991b1b;
+    border: 1px solid #fecaca;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(120%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes fadeOut {
+    to {
+        opacity: 0;
+        transform: translateX(120%);
+    }
+}
+</style>
+
+
 <div style="background:#f8fafb; min-height:100vh; padding:32px 24px;">
 
     <div style="max-width:1400px; margin:0 auto;">
 
         <!-- Header Section -->
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
+
             <div>
                 <h1 style="font-size:28px; margin:0 0 4px 0; color:#0f172a; font-weight:700;">Attendance Appeals</h1>
                 <p style="margin:0; color:#64748b; font-size:14px;">Review and manage trainee attendance appeals</p>
             </div>
 
-            @if(session('success'))
-                <div style="background:#ecfdf5; color:#065f46; padding:12px 16px; border-radius:8px; border:1px solid #a7f3d0; font-weight:500;">
+            @if (session('success'))
+                <div class="alert success-alert">
                     {{ session('success') }}
                 </div>
             @endif
+
+            @if (session('info'))
+                <div class="alert info-alert">
+                    {{ session('info') }}
+                </div>
+            @endif
+
+            @if (session('error'))
+                <div class="alert error-alert">
+                    {{ session('error') }}
+                </div>
+            @endif
+
+
         </div>
 
         <!-- Main Content Card -->
@@ -170,13 +242,107 @@
                             </tr>
                         @endforelse
                     </tbody>
+
+
                 </table>
+
+                <div style="display:flex; gap:8px; justify-content:flex-end; padding:16px 24px;">
+                    <!-- Approve All -->
+                    <button id="btn-approve-all"
+                        style="background:#059669; color:#fff; border:none; padding:8px 16px; border-radius:6px; cursor:pointer; font-weight:600; font-size:13px; transition:background 0.2s;"
+                        onmouseover="this.style.background='#047857'" onmouseout="this.style.background='#059669'">
+                        ✓ Approve All
+                    </button>
+
+                    <!-- Reject All -->
+                    <button id="btn-reject-all"
+                        style="background:#dc2626; color:#fff; border:none; padding:8px 16px; border-radius:6px; cursor:pointer; font-weight:600; font-size:13px; transition:background 0.2s;"
+                        onmouseover="this.style.background='#b91c1c'" onmouseout="this.style.background='#dc2626'">
+                        ✕ Reject All
+                    </button>
+                </div>
             </div>
         </div>
     </div>
+
+    <!-- APPROVE ALL MODAL -->
+        <div id="modal-approve-all"
+            style="display:none; position:fixed; top:0; left:0; width:100%; height:100%;
+            background:rgba(0,0,0,0.5); align-items:center; justify-content:center; z-index:1000;">
+
+            <div style="background:#fff; padding:24px; border-radius:12px; max-width:400px; width:90%; box-shadow:0 2px 10px rgba(0,0,0,0.2); text-align:center;">
+                <h3 style="font-size:18px; color:#065f46; font-weight:700; margin-bottom:8px;">Approve All Appeals</h3>
+                <p style="color:#334155; font-size:14px; margin-bottom:16px;">Are you sure you want to approve all pending attendance appeals?</p>
+
+                <form method="POST" action="{{ route('company.attendance-appeals.approveAllAppeal') }}">
+                    @csrf
+                    <label style="display:block; font-size:13px; color:#065f46; font-weight:600; margin-bottom:6px;">Default Credited Hours (each)</label>
+                    <input type="number" name="credited_hours" step="0.01" min="0" max="10" required
+                        style="width:100%; padding:8px; border:1px solid #86efac; border-radius:6px; font-size:14px; margin-bottom:12px;">
+                    <div style="display:flex; gap:8px; justify-content:center;">
+                        <button type="submit" style="background:#16a34a; color:#fff; border:none; padding:8px 16px; border-radius:6px; font-weight:600; cursor:pointer;">Confirm</button>
+                        <button type="button" id="cancel-approve-all" style="background:#e5e7eb; color:#64748b; border:none; padding:8px 16px; border-radius:6px; font-weight:600; cursor:pointer;">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+<!-- REJECT ALL MODAL -->
+    <div id="modal-reject-all"
+        style="display:none; position:fixed; top:0; left:0; width:100%; height:100%;
+        background:rgba(0,0,0,0.5); align-items:center; justify-content:center; z-index:1000;">
+
+        <div style="background:#fff; padding:24px; border-radius:12px; max-width:400px; width:90%; box-shadow:0 2px 10px rgba(0,0,0,0.2); text-align:center;">
+            <h3 style="font-size:18px; color:#991b1b; font-weight:700; margin-bottom:8px;">Reject All Appeals</h3>
+            <p style="color:#334155; font-size:14px; margin-bottom:16px;">Are you sure you want to reject all pending attendance appeals?</p>
+
+            <form method="POST" action="{{ route('company.attendance-appeals.rejectAllAppeal') }}">
+                @csrf
+                <label style="display:block; font-size:13px; color:#991b1b; font-weight:600; margin-bottom:6px;">Rejection Reason (applies to all)</label>
+                <textarea name="reject_reason" rows="3" placeholder="Please provide a reason..." required
+                    style="width:100%; padding:8px; border:1px solid #fca5a5; border-radius:6px; font-size:13px; margin-bottom:12px; resize:vertical;"></textarea>
+                <div style="display:flex; gap:8px; justify-content:center;">
+                    <button type="submit" style="background:#dc2626; color:#fff; border:none; padding:8px 16px; border-radius:6px; font-weight:600; cursor:pointer;">Confirm</button>
+                    <button type="button" id="cancel-reject-all" style="background:#e5e7eb; color:#64748b; border:none; padding:8px 16px; border-radius:6px; font-weight:600; cursor:pointer;">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
 </div>
 
 <script>
+
+
+const approveAllBtn = document.getElementById('btn-approve-all');
+const approveAllModal = document.getElementById('modal-approve-all');
+const cancelApproveAll = document.getElementById('cancel-approve-all');
+
+approveAllBtn.addEventListener('click', () => {
+    approveAllModal.style.display = 'flex';
+});
+cancelApproveAll.addEventListener('click', () => {
+    approveAllModal.style.display = 'none';
+});
+
+
+const rejectAllBtn = document.getElementById('btn-reject-all');
+const rejectAllModal = document.getElementById('modal-reject-all');
+const cancelRejectAll = document.getElementById('cancel-reject-all');
+
+rejectAllBtn.addEventListener('click', () => {
+    rejectAllModal.style.display = 'flex';
+});
+cancelRejectAll.addEventListener('click', () => {
+    rejectAllModal.style.display = 'none';
+});
+
+// Close modals if clicking outside
+window.addEventListener('click', function(e){
+    if(e.target === approveAllModal) approveAllModal.style.display = 'none';
+    if(e.target === rejectAllModal) rejectAllModal.style.display = 'none';
+});
+
     document.addEventListener('DOMContentLoaded', function () {
 
         document.querySelectorAll('.btn-approve').forEach(function(btn){

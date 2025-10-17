@@ -328,5 +328,11 @@ Route::middleware(['company'])->prefix('company')->group(function(){
     Route::post('/company/overtime/reject-all', [CompanyOvertimeRequestController::class, 'rejectAll'])->name('company.overtime.rejectAll');
 
 
+    //Approve all appeals
+    Route::post('/attendance-appeals/approve-all', [CompanyAttendanceAppealController::class, 'approveAllAppeal'])
+    ->name('company.attendance-appeals.approveAllAppeal');
+    Route::post('/attendance-appeals/reject-all', [CompanyAttendanceAppealController::class, 'rejectAllAppeal'])
+        ->name('company.attendance-appeals.rejectAllAppeal');
+
 
 });

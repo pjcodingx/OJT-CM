@@ -176,17 +176,104 @@
 
         .page-title {
             font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .success-alert {
+            padding: 0.875rem 1rem;
+            font-size: 0.875rem;
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            margin: 1.5rem 0 1rem 0;
         }
 
         .attendance-item {
             flex-direction: column;
             gap: 1rem;
             text-align: center;
+            padding: 1rem;
+        }
+
+        .attendance-date {
+            font-size: 1rem;
+        }
+
+        .attendance-times {
+            font-size: 0.8125rem;
+        }
+
+        .appeal-button {
+            width: 100%;
+            text-align: center;
+            padding: 0.875rem 1rem;
+        }
+
+        /* Make table responsive with horizontal scroll */
+        .modern-table {
+            display: block;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .modern-table thead,
+        .modern-table tbody,
+        .modern-table tr {
+            display: table;
+            width: 100%;
+            table-layout: fixed;
         }
 
         .modern-table thead th,
         .modern-table tbody td {
+            padding: 0.75rem 0.5rem;
+            font-size: 0.75rem;
+            word-wrap: break-word;
+        }
+
+        .modern-table thead th {
+            font-size: 0.75rem;
+        }
+
+        .reject-box {
+            max-width: 100%;
+            font-size: 0.75rem;
+            padding: 0.5rem;
+        }
+
+        .empty-message {
+            padding: 2rem 1rem;
+            font-size: 0.9375rem;
+        }
+    }
+
+    /* Extra small phones */
+    @media (max-width: 480px) {
+        .appeals-container {
             padding: 0.75rem;
+        }
+
+        .page-title {
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+        }
+
+        .modern-table thead th,
+        .modern-table tbody td {
+            padding: 0.625rem 0.375rem;
+            font-size: 0.6875rem;
+        }
+
+        .attendance-item {
+            padding: 0.875rem;
+        }
+
+        .attendance-date {
+            font-size: 0.9375rem;
+        }
+
+        .attachment-link {
             font-size: 0.8125rem;
         }
     }

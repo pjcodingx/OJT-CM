@@ -5,6 +5,7 @@ namespace App\Http\Controllers\company;
 use App\Models\Notification;
 use Illuminate\Http\Request;
 use App\Models\OvertimeRequest;
+use App\Models\AttendanceAppeal;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 
@@ -144,5 +145,10 @@ public function rejectAll(Request $request)
 
     return redirect()->back()->with('success', 'All pending overtime requests have been rejected.');
 }
+
+
+
+
+
 
 }

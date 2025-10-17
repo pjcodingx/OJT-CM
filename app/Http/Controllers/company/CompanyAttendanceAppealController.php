@@ -123,4 +123,66 @@ class CompanyAttendanceAppealController extends Controller
 
         return redirect()->back()->with('success', 'Appeal updated Successfuly!');
     }
+
+public function approveAllAppeal(Request $request)
+{
+    $request->validate([
+        'credited_hours' => 'required|numeric|min:0',
+    ]);
+
+    $company = Auth::guard('company')->user();
+
+    // Get all pending appeals of this company's students
+    $appeals = AttendanceAppeal::whereHas('attendance', function ($q) use ($company) {
+        $q->where('company_id', $company->id);
+    })->where('status', 'pending')->get();
+
+    if ($appeals->isEmpty()) {
+        return back()->with('info', 'There are no pending appeals to approve.');
+    }
+
+    foreach ($appeals as $appeal) {
+        $appeal->update([
+            'status' => 'approved',
+            'credited_hours' => $request->credited_hours, // ✅ now recorded properly
+        ]);
+
+        if ($appeal->attendance) {
+            $attendance = $appeal->attendance;
+
+            // Ensure both are numeric
+            $creditedHours = (float) $request->credited_hours;
+            $currentCounted = (float) ($attendance->time_out_counted ?? 0);
+
+            $attendance->time_out_counted = $currentCounted + $creditedHours;
+            $attendance->save();
+        }
+
+
+    }
+
+    return back()->with('success', 'All pending appeals have been approved and credited hours recorded.');
+}
+
+
+public function rejectAllAppeal()
+{
+    $companyId = Auth::guard('company')->id();
+
+    $pendingCount = AttendanceAppeal::whereHas('attendance', function ($q) use ($companyId) {
+        $q->where('company_id', $companyId);
+    })->where('status', 'pending')->count();
+
+    if ($pendingCount === 0) {
+        return redirect()->back()->with('info', 'There are no pending appeals to reject.');
+    }
+
+    AttendanceAppeal::whereHas('attendance', function ($q) use ($companyId) {
+        $q->where('company_id', $companyId);
+    })->where('status', 'pending')
+      ->update(['status' => 'rejected']);
+
+    return redirect()->back()->with('success', "All $pendingCount pending appeals have been rejected.");
+}
+
 }
