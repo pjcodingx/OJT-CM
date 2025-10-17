@@ -310,7 +310,7 @@
                                 <span class="no-photo-badge">No Photo</span>
                             @endif
                         </td>
-                        <td>{{ number_format($attendance->total_hours, 2) }} hrs</td>
+                        <td>{{ number_format($attendance->student->accumulated_hours, 2) }} hrs</td>
                         <td class="photo-cell">
                             @if($attendance->overtime_photo)
                                 <img src="{{ asset('storage/' . $attendance->overtime_photo) }}"
