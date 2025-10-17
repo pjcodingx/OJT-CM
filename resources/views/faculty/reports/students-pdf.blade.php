@@ -62,6 +62,7 @@
             <th>Rating</th>
             <th>Appeals submitted</th>
             <th>Absences</th>
+            <th>OT hours</th>
             <th>Total Hours</th>
         </tr>
     </thead>
@@ -76,6 +77,7 @@
             <td>{{ number_format($student->average_rating ?? 0, 0) . '/' . '5' }}</td>
             <td>{{ $student->appealsCount() }}</td>
             <td>{{ $student->calculateAbsences() }}</td>
+            <td>{{ number_format($student->overtimeRequests()->where('status', 'completed')->sum('approved_hours'), 1) }}</td>
             <td>{{ number_format($student->accumulated_hours, 1) }}</td>
         </tr>
         @endforeach

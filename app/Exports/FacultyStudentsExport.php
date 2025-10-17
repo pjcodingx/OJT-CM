@@ -14,10 +14,6 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 class FacultyStudentsExport implements FromCollection, WithHeadings, WithColumnWidths, WithStyles
 {
-    /**
-    * @return \Illuminate\Support\Collection
-    */
-
     protected $facultyId;
     protected $startDate;
     protected $search;
@@ -58,18 +54,26 @@ class FacultyStudentsExport implements FromCollection, WithHeadings, WithColumnW
                 return $carry;
             }, 0), 1);
 
+            $student->total_overtime_hours = $student->overtimeRequests()
+                ->where('status', 'completed')
+                ->sum('approved_hours');
 
-                return collect([
-                    'Name'           => $student->name ?? '--',
-                    'Email'          => $student->email ?? '--',
-                    'Company'        => $student->company->name ?? '--',
-                    'Address'        => $student->company->address ?? '--',
-                    'Total Journals' => $student->total_journals ?? '0',
-                    'Rating'         => (float) ($student->average_rating ?? 0),
-                    'Appeals Count'  => (int) ($student->appealsCount() ?? 0),
-                    'Absences'       => (int) ($student->calculateAbsences() ?? 0),
-                    'Total Hours'    => (float) ($student->accumulated_hours ?? 0),
-                ]);
+            // Get appeals count and absences properly
+            $appealsCount = $student->appealsCount();
+            $absences = $student->calculateAbsences();
+
+            return collect([
+                'Name'           => $student->name ?? '--',
+                'Email'          => $student->email ?? '--',
+                'Company'        => $student->company->name ?? '--',
+                'Address'        => $student->company->address ?? '--',
+                'Total Journals' => (int) ($student->total_journals ?: 0),
+                'Rating'         => (float) ($student->average_rating ?: 0),
+                'Appeals Count'  => (int) ($appealsCount ?: 0),
+                'Absences'       => (int) ($absences ?: 0),
+                'OT Hours'       => (float) ($student->total_overtime_hours ?: 0),
+                'Total Hours'    => (float) ($student->accumulated_hours ?: 0),
+            ]);
         });
     }
 
@@ -84,45 +88,41 @@ class FacultyStudentsExport implements FromCollection, WithHeadings, WithColumnW
             'Rating',
             'Appeals Submitted',
             'Absences',
+            'OT hours',
             'Total Hours Accumulated'
         ];
     }
 
-      public function columnWidths(): array
+    public function columnWidths(): array
     {
         return [
             'A' => 25, // Name
             'B' => 30, // Email
             'C' => 25, // Company
             'D' => 30, // Address
-            'E' =>  30, // Total Journals
+            'E' => 30, // Total Journals
             'F' => 15, // Rating
-            'G' => 20, // Total Hours
-            'H' => 15,
-            'I' => 25,
+            'G' => 20, // Appeals
+            'H' => 15, // Absences
+            'I' => 10, // OT Hours
+            'J' => 25  // Total Hours
         ];
     }
 
-      public function styles(Worksheet $sheet)
+    public function styles(Worksheet $sheet)
     {
+        $sheet->getStyle('A1:J1')->getFont()->setBold(true);
+        $sheet->getStyle('A1:J1')->getAlignment()->setHorizontal('center');
 
-        $sheet->getStyle('A1:I1')->getFont()->setBold(true);
-        $sheet->getStyle('A1:I1')->getAlignment()->setHorizontal('center');
+        $sheet->getStyle('A1:J1')->getFill()
+            ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
+            ->getStartColor()->setARGB('0b4222');
 
-         $sheet->getStyle('A1:I1')->getFill()
-          ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
-          ->getStartColor()->setARGB('0b4222');
+        $sheet->getStyle('A1:J1')->getFont()->getColor()->setARGB('FFFFFF');
 
-         $sheet->getStyle('A1:I1')->getFont()->getColor()->setARGB('FFFFFF');
-
-        $sheet->getStyle('A2:I'.$sheet->getHighestRow())
-              ->getAlignment()
-              ->setHorizontal('center')
-              ->setVertical('center');
+        $sheet->getStyle('A2:J'.$sheet->getHighestRow())
+            ->getAlignment()
+            ->setHorizontal('center')
+            ->setVertical('center');
     }
-
-
-    }
-
-
-
+}
