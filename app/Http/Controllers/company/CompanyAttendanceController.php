@@ -26,8 +26,15 @@ class CompanyAttendanceController extends Controller
 public function scan(Request $request)
 {
     try {
+        // Debug log
+        Log::info('Scan request received', [
+            'has_photo' => $request->hasFile('photo'),
+            'qr_code' => $request->qr_code,
+        ]);
+
         $request->validate([
             'qr_code' => 'required|string',
+            'photo' => 'nullable|image|max:5120',
         ]);
 
         $student = Student::where('id', $request->qr_code)
@@ -57,7 +64,20 @@ public function scan(Request $request)
             ]);
         }
 
-        // --- Get normal allowed times ---
+        // Function to save photo
+        $savePhoto = function() use ($request, $student, $today) {
+            if ($request->hasFile('photo')) {
+                $photo = $request->file('photo');
+                $filename = 'attendance_' . $student->id . '_' . $today->format('Ymd') . '_' . time() . '.' . $photo->getClientOriginalExtension();
+                $path = $photo->storeAs('attendance_photos', $filename, 'public');
+                Log::info('Photo saved', ['path' => $path]);
+                return $path;
+            }
+            Log::info('No photo in request');
+            return null;
+        };
+
+        // Get normal allowed times
         $timeInStart  = Carbon::parse($company->allowed_time_in_start ?? '00:00:00')->setDate($today->year, $today->month, $today->day);
         $timeInEnd    = Carbon::parse($company->allowed_time_in_end ?? '23:59:59')->setDate($today->year, $today->month, $today->day);
         $timeOutStart = Carbon::parse($company->allowed_time_out_start ?? '00:00:00')->setDate($today->year, $today->month, $today->day);
@@ -65,7 +85,7 @@ public function scan(Request $request)
 
         $workingDays = json_decode($company->working_days ?? '["Monday","Tuesday","Wednesday","Thursday","Friday"]', true);
 
-        // --- Check for company overrides ---
+        // Check for company overrides
         $override = CompanyTimeOverride::where('company_id', $company->id)
                                        ->whereDate('date', $today)
                                        ->first();
@@ -102,13 +122,13 @@ public function scan(Request $request)
             ]);
         }
 
-        // --- Get or create today's attendance ---
+        // Get or create today's attendance
         $attendance = Attendance::firstOrCreate(
             ['student_id' => $student->id, 'company_id' => $company->id, 'date' => $today],
             ['time_in' => null, 'time_out' => null, 'total_hours' => 0]
         );
 
-        // --- NORMAL TIME IN ---
+        // TIME IN
         if (!$attendance->time_in) {
             if ($now->lt($timeInStart)) {
                 return response()->json(['success' => false, 'name' => $student->name, 'message' => 'Too early to Time In.']);
@@ -118,15 +138,18 @@ public function scan(Request $request)
                 return response()->json(['success' => false, 'name' => $student->name, 'message' => 'Time In window has ended.']);
             }
 
+            $photoPath = $savePhoto();
+
             $attendance->update([
                 'time_in' => $now,
                 'time_in_counted' => $timeInEnd->toTimeString(),
+                'time_in_photo' => $photoPath,
             ]);
 
             return response()->json(['success' => true, 'name' => $student->name, 'message' => 'Time In recorded successfully!']);
         }
 
-        // --- NORMAL TIME OUT ---
+        // TIME OUT
         if (!$attendance->time_out) {
             if ($now->lt($timeOutStart)) {
                 return response()->json(['success' => false, 'name' => $student->name, 'message' => 'Too early to Time Out.']);
@@ -136,9 +159,12 @@ public function scan(Request $request)
                 return response()->json(['success' => false, 'name' => $student->name, 'message' => 'Time Out window has ended.']);
             }
 
+            $photoPath = $savePhoto();
+
             $attendance->update([
                 'time_out' => $now,
                 'time_out_counted' => $timeOutStart->toTimeString(),
+                'time_out_photo' => $photoPath,
             ]);
 
             // Calculate total hours
@@ -153,7 +179,7 @@ public function scan(Request $request)
             return response()->json(['success' => true, 'name' => $student->name, 'message' => 'Time Out recorded successfully.']);
         }
 
-                // --- OVERTIME SCAN ---
+        // OVERTIME SCAN
         $overtime = \App\Models\OvertimeRequest::where('student_id', $student->id)
             ->whereDate('date', $today)
             ->where('status', 'approved')
@@ -179,16 +205,18 @@ public function scan(Request $request)
                 ]);
             }
 
+            $photoPath = $savePhoto();
+
             // Calculate total hours including OT
             $totalHours = $attendance->total_hours ?? 0;
             $totalHours += $overtime->approved_hours;
 
-            $attendance->update(['total_hours' => $totalHours]);
+            $attendance->update([
+                'total_hours' => $totalHours,
+                'overtime_photo' => $photoPath,
+            ]);
 
-            // Mark OT as completed
             $overtime->update(['status' => 'completed']);
-
-
 
             return response()->json([
                 'success' => true,
@@ -197,8 +225,6 @@ public function scan(Request $request)
             ]);
         }
 
-
-        // --- Already completed normal + OT ---
         return response()->json(['success' => false, 'name' => $student->name, 'message' => 'Attendance already completed for today.']);
 
     } catch (\Exception $e) {
@@ -206,7 +232,6 @@ public function scan(Request $request)
         return response()->json(['success' => false, 'name' => 'Error', 'message' => 'Server error: ' . $e->getMessage()], 500);
     }
 }
-
 
 
 

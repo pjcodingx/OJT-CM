@@ -14,19 +14,19 @@ class FacultySeeder extends Seeder
      */
     public function run(): void
     {
-        $faculty = new Faculty();
-        $faculty->name = 'Faculty';
-        $faculty->email = 'faculty@gmail.com';
-        $faculty->password = Hash::make('password');
-        $faculty->save();
+    //     $faculty = new Faculty();
+    //     $faculty->name = 'Faculty';
+    //     $faculty->email = 'faculty@gmail.com';
+    //     $faculty->password = Hash::make('password');
+    //     $faculty->save();
 
-        if(!Faculty::where('email', 'monica@gmail.com')->exists()){
-            $faculty = Faculty::create([
-                'name' => 'Monica',
-                'email' => 'monica@gmail.com',
-                'password' => Hash::make('password'),
-                ]);
-    }
+    //     if(!Faculty::where('email', 'monica@gmail.com')->exists()){
+    //         $faculty = Faculty::create([
+    //             'name' => 'Monica',
+    //             'email' => 'monica@gmail.com',
+    //             'password' => Hash::make('password'),
+    //             ]);
+    // }
 
     }
 }

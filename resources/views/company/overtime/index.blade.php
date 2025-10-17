@@ -64,6 +64,7 @@
 .alert-success-custom {
     border-left-color: #28a745;
     background: linear-gradient(to right, #d4edda 0%, #ffffff 100%);
+    color: #28a745;
 }
 
 .alert-icon {

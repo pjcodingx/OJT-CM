@@ -263,7 +263,11 @@
 
     #reader {
         max-width: 100%;
+
+
     }
+
+
 
     #log-box {
         height: 400px;
@@ -375,209 +379,260 @@
 </div>
 
 <script src="https://unpkg.com/html5-qrcode"></script>
-<!-- Replace the entire script section in your blade file with this -->
-<script src="https://unpkg.com/html5-qrcode"></script>
+
 <script>
-    let scanCount = 0;
-    let isPaused = false;
+ let scanCount = 0;
+let isPaused = false;
 
-    // Live clock update
-    function updateClock() {
-        let now = new Date();
-        let hours = now.getHours();
-        let minutes = now.getMinutes();
-        let seconds = now.getSeconds();
-        let ampm = hours >= 12 ? 'PM' : 'AM';
+// Live clock update
+function updateClock() {
+    let now = new Date();
+    let hours = now.getHours();
+    let minutes = now.getMinutes();
+    let seconds = now.getSeconds();
+    let ampm = hours >= 12 ? 'PM' : 'AM';
 
-        hours = hours % 12;
-        hours = hours ? hours : 12;
-        minutes = minutes < 10 ? '0' + minutes : minutes;
-        seconds = seconds < 10 ? '0' + seconds : seconds;
+    hours = hours % 12;
+    hours = hours ? hours : 12;
+    minutes = minutes < 10 ? '0' + minutes : minutes;
+    seconds = seconds < 10 ? '0' + seconds : seconds;
 
-        let timeString = hours + ':' + minutes + ':' + seconds + ' ' + ampm;
-        document.getElementById('live-clock').innerText = timeString;
+    let timeString = hours + ':' + minutes + ':' + seconds + ' ' + ampm;
+    document.getElementById('live-clock').innerText = timeString;
+}
+updateClock();
+setInterval(updateClock, 1000);
+
+function updateScanCount() {
+    scanCount++;
+    document.getElementById('scan-count').innerText = scanCount + ' scan' + (scanCount !== 1 ? 's' : '');
+}
+
+function clearLogs() {
+    if (confirm('Clear all scan history?')) {
+        const logBox = document.getElementById('log-box');
+        logBox.innerHTML = `
+            <div class="log-header">
+                <h4 style="color: rgba(3, 71, 3, 0.7); margin: 0;">Recent Scans</h4>
+                <span class="scan-count" id="scan-count">0 scans</span>
+            </div>
+            <p style="color: #838282; font-size: 12px; margin-bottom: 15px;">Scan history will appear here...</p>
+        `;
+        scanCount = 0;
     }
-    updateClock();
-    setInterval(updateClock, 1000);
+}
 
-    function updateScanCount() {
-        scanCount++;
-        document.getElementById('scan-count').innerText = scanCount + ' scan' + (scanCount !== 1 ? 's' : '');
+function toggleScanner() {
+    isPaused = !isPaused;
+    const btn = document.getElementById('pauseBtn');
+    const statusEl = document.getElementById('scanner-status');
+
+    if (isPaused) {
+        btn.innerText = 'Resume Scanner';
+        btn.className = 'btn-control btn-resume';
+        statusEl.className = 'scanner-status status-processing';
+        statusEl.innerHTML = '<span>Scanner paused</span>';
+    } else {
+        btn.innerText = 'Pause Scanner';
+        btn.className = 'btn-control btn-pause';
+        statusEl.className = 'scanner-status status-ready';
+        statusEl.innerHTML = '<span>Scanner ready - Point camera at QR code</span>';
     }
+}
 
-    function clearLogs() {
-        if (confirm('Clear all scan history?')) {
-            const logBox = document.getElementById('log-box');
-            logBox.innerHTML = `
-                <div class="log-header">
-                    <h4 style="color: rgba(3, 71, 3, 0.7); margin: 0;">Recent Scans</h4>
-                    <span class="scan-count" id="scan-count">0 scans</span>
-                </div>
-                <p style="color: #838282; font-size: 12px; margin-bottom: 15px;">Scan history will appear here...</p>
-            `;
-            scanCount = 0;
+// Function to capture photo from video stream
+async function capturePhoto() {
+    try {
+        // Try multiple selectors to find the video element
+        let video = document.querySelector('#reader video');
+
+        if (!video) {
+            video = document.querySelector('video');
         }
-    }
 
-    function toggleScanner() {
-        isPaused = !isPaused;
-        const btn = document.getElementById('pauseBtn');
-        const statusEl = document.getElementById('scanner-status');
-
-        if (isPaused) {
-            btn.innerText = 'Resume Scanner';
-            btn.className = 'btn-control btn-resume';
-            statusEl.className = 'scanner-status status-processing';
-            statusEl.innerHTML = '<span>Scanner paused</span>';
-        } else {
-            btn.innerText = 'Pause Scanner';
-            btn.className = 'btn-control btn-pause';
-            statusEl.className = 'scanner-status status-ready';
-            statusEl.innerHTML = '<span>Scanner ready - Point camera at QR code</span>';
+        if (!video) {
+            console.error('❌ No video element found');
+            return null;
         }
+
+        // Check if video is playing and has dimensions
+        if (video.videoWidth === 0 || video.videoHeight === 0) {
+            console.error('❌ Video dimensions are 0');
+            return null;
+        }
+
+        console.log('📸 Capturing photo from video:', video.videoWidth + 'x' + video.videoHeight);
+
+        const canvas = document.createElement('canvas');
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        // Convert to blob with higher quality
+        return new Promise((resolve) => {
+            canvas.toBlob((blob) => {
+                if (blob) {
+                    console.log('✅ Photo captured successfully, size:', blob.size, 'bytes');
+                } else {
+                    console.error('❌ Failed to create blob from canvas');
+                }
+                resolve(blob);
+            }, 'image/jpeg', 0.95);
+        });
+    } catch (error) {
+        console.error('❌ Error capturing photo:', error);
+        return null;
+    }
+}
+
+// OPTIMIZED SCANNER CONFIG
+let html5QrcodeScanner = new Html5QrcodeScanner("reader", {
+    fps: 15,
+    qrbox: { width: 250, height: 250 },
+    aspectRatio: 1.0,
+    formatsToSupport: [ Html5QrcodeSupportedFormats.QR_CODE ],
+    experimentalFeatures: {
+        useBarCodeDetectorIfSupported: true
+    },
+    rememberLastUsedCamera: true,
+    showTorchButtonIfSupported: true,
+    videoConstraints: {
+        facingMode: "environment",
+        advanced: [{
+            focusMode: "continuous",
+            exposureMode: "continuous",
+            whiteBalanceMode: "continuous"
+        }]
+    }
+});
+
+let canScan = true;
+let lastScannedCode = null;
+let lastScanTime = 0;
+
+async function onScanSuccess(decodedText) {
+    console.log('🔍 Scanned QR code:', decodedText);
+
+    if (!canScan || isPaused) return;
+
+    const now = Date.now();
+    if (decodedText === lastScannedCode && (now - lastScanTime) < 3000) {
+        console.log('⚠️ Duplicate scan ignored');
+        return;
     }
 
-    // OPTIMIZED SCANNER CONFIG - Works for BOTH print and phone screens
-    let html5QrcodeScanner = new Html5QrcodeScanner("reader", {
-        fps: 15,  // Balanced frame rate - not too fast, not too slow
-        qrbox: { width: 300, height: 300 },  // Standard scan box
-        aspectRatio: 1.0,
+    lastScannedCode = decodedText;
+    lastScanTime = now;
+    canScan = false;
 
-        // Enable all helpful features
-        formatsToSupport: [ Html5QrcodeSupportedFormats.QR_CODE ],
+    const statusEl = document.getElementById('scanner-status');
+    statusEl.className = "scanner-status status-processing processing";
+    statusEl.innerHTML = '<span>Capturing photo...</span>';
 
-        // Use browser's native detector when available (better for printed codes)
-        experimentalFeatures: {
-            useBarCodeDetectorIfSupported: true
+    // Add small delay to ensure video is ready
+    await new Promise(resolve => setTimeout(resolve, 200));
+
+    // Capture photo
+    const photoBlob = await capturePhoto();
+
+    if (!photoBlob) {
+        console.warn('⚠️ No photo captured, continuing without photo');
+    }
+
+    statusEl.innerHTML = '<span>Processing scan...</span>';
+
+    // Prepare form data with photo
+    const formData = new FormData();
+    formData.append('qr_code', decodedText);
+    if (photoBlob) {
+        formData.append('photo', photoBlob, 'scan_' + Date.now() + '.jpg');
+        console.log('📤 Sending photo with scan data');
+    } else {
+        console.log('📤 Sending scan data without photo');
+    }
+
+    fetch("{{ route('company.attendance.scan') }}", {
+        method: "POST",
+        headers: {
+            "X-CSRF-TOKEN": "{{ csrf_token() }}"
         },
+        body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+        console.log('✅ Server response:', data);
 
-        // Remember camera selection
-        rememberLastUsedCamera: true,
-
-        // Show torch/flashlight button if available (helps with print scanning)
-        showTorchButtonIfSupported: true,
-
-        // Advanced camera settings for better scanning
-        videoConstraints: {
-            facingMode: "environment",  // Use back camera on mobile
-            advanced: [{
-                focusMode: "continuous",      // Auto-focus continuously
-                exposureMode: "continuous",   // Auto-adjust exposure
-                whiteBalanceMode: "continuous" // Auto-adjust white balance
-            }]
-        }
-    });
-
-    let canScan = true;
-    let lastScannedCode = null;
-    let lastScanTime = 0;
-
-    function onScanSuccess(decodedText) {
-        // Debug: Log what was scanned
-        console.log('🔍 Scanned QR code:', decodedText);
-        console.log('🔍 Data type:', typeof decodedText);
-
-        if (!canScan || isPaused) return;
-
-        // Prevent duplicate scans within 3 seconds
-        const now = Date.now();
-        if (decodedText === lastScannedCode && (now - lastScanTime) < 3000) {
-            console.log('⚠️ Duplicate scan ignored');
-            return;
+        if(data.success){
+            new Audio('/sounds/success.mp3').play().catch(e => console.log('Audio play failed'));
+        } else if(data.message.toLowerCase().includes("too early") ||
+                  data.message.toLowerCase().includes("not allowed")){
+            new Audio('/sounds/denied.mp3').play().catch(e => console.log('Audio play failed'));
+        } else {
+            new Audio('/sounds/denied.mp3').play().catch(e => console.log('Audio play failed'));
         }
 
-        lastScannedCode = decodedText;
-        lastScanTime = now;
-        canScan = false;
+        statusEl.className = "scanner-status status-ready";
+        statusEl.innerHTML = '<span>Scanner ready - Point camera at QR code</span>';
 
-        const statusEl = document.getElementById('scanner-status');
-        statusEl.className = "scanner-status status-processing processing";
-        statusEl.innerHTML = '<span>Processing scan...</span>';
+        let displayName = data.name || 'ID: ' + decodedText;
 
-        fetch("{{ route('company.attendance.scan') }}", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "X-CSRF-TOKEN": "{{ csrf_token() }}"
-            },
-            body: JSON.stringify({ qr_code: decodedText })
-        })
-        .then(res => res.json())
-        .then(data => {
-            console.log('✅ Server response:', data);
+        let logBox = document.getElementById("log-box");
+        let entry = document.createElement("div");
+        entry.classList.add("log-entry");
 
-            // Play appropriate sound
-            if(data.success){
-                new Audio('/sounds/success.mp3').play().catch(e => console.log('Audio play failed'));
-            } else if(data.message.toLowerCase().includes("too early") ||
-                      data.message.toLowerCase().includes("not allowed")){
-                new Audio('/sounds/denied.mp3').play().catch(e => console.log('Audio play failed'));
-            } else {
-                new Audio('/sounds/denied.mp3').play().catch(e => console.log('Audio play failed'));
-            }
+        if (!data.success) {
+            entry.classList.add(data.message.toLowerCase().includes("not allowed") ? "denied" : "error");
+        }
 
+        entry.innerHTML = `<p style="color:darkgreen;"><strong>${displayName}</strong> - ${data.message} (${new Date().toLocaleTimeString()})</p>`;
+
+        const logHeader = logBox.querySelector('.log-header');
+        const infoText = logBox.querySelector('p[style*="color: #838282"]');
+        if (infoText) infoText.remove();
+
+        if (logHeader && logHeader.nextSibling) {
+            logBox.insertBefore(entry, logHeader.nextSibling);
+        } else {
+            logBox.appendChild(entry);
+        }
+
+        updateScanCount();
+
+        setTimeout(() => {
+            canScan = true;
+        }, 3000);
+    })
+    .catch(err => {
+        console.error("❌ Scan error:", err);
+        statusEl.className = "scanner-status status-error";
+        statusEl.innerHTML = '<span>Error occurred - check connection</span>';
+
+        let logBox = document.getElementById("log-box");
+        let entry = document.createElement("div");
+        entry.classList.add("log-entry", "error");
+        entry.innerHTML = `<p><strong>ID: ${decodedText}</strong> - Network error occurred (${new Date().toLocaleTimeString()})</p>`;
+
+        const logHeader = logBox.querySelector('.log-header');
+        if (logHeader && logHeader.nextSibling) {
+            logBox.insertBefore(entry, logHeader.nextSibling);
+        } else {
+            logBox.appendChild(entry);
+        }
+
+        updateScanCount();
+
+        setTimeout(() => {
+            canScan = true;
             statusEl.className = "scanner-status status-ready";
             statusEl.innerHTML = '<span>Scanner ready - Point camera at QR code</span>';
+        }, 3000);
+    });
+}
 
-            let displayName = data.name || 'ID: ' + decodedText;
-
-            let logBox = document.getElementById("log-box");
-            let entry = document.createElement("div");
-            entry.classList.add("log-entry");
-
-            if (!data.success) {
-                entry.classList.add(data.message.toLowerCase().includes("not allowed") ? "denied" : "error");
-            }
-
-            entry.innerHTML = `<p style="color:darkgreen;"><strong>${displayName}</strong> - ${data.message} (${new Date().toLocaleTimeString()})</p>`;
-
-            // Insert after the header
-            const logHeader = logBox.querySelector('.log-header');
-            const infoText = logBox.querySelector('p[style*="color: #838282"]');
-            if (infoText) infoText.remove();
-
-            if (logHeader && logHeader.nextSibling) {
-                logBox.insertBefore(entry, logHeader.nextSibling);
-            } else {
-                logBox.appendChild(entry);
-            }
-
-            updateScanCount();
-
-            // Re-enable scanning after 3 seconds
-            setTimeout(() => {
-                canScan = true;
-            }, 3000);
-        })
-        .catch(err => {
-            console.error("❌ Scan error:", err);
-            statusEl.className = "scanner-status status-error";
-            statusEl.innerHTML = '<span>Error occurred - check connection</span>';
-
-            let logBox = document.getElementById("log-box");
-            let entry = document.createElement("div");
-            entry.classList.add("log-entry", "error");
-            entry.innerHTML = `<p><strong>ID: ${decodedText}</strong> - Network error occurred (${new Date().toLocaleTimeString()})</p>`;
-
-            const logHeader = logBox.querySelector('.log-header');
-            if (logHeader && logHeader.nextSibling) {
-                logBox.insertBefore(entry, logHeader.nextSibling);
-            } else {
-                logBox.appendChild(entry);
-            }
-
-            updateScanCount();
-
-            setTimeout(() => {
-                canScan = true;
-                statusEl.className = "scanner-status status-ready";
-                statusEl.innerHTML = '<span>Scanner ready - Point camera at QR code</span>';
-            }, 3000);
-        });
-    }
-
-    // Start the scanner
-    html5QrcodeScanner.render(onScanSuccess);
+// Start the scanner
+html5QrcodeScanner.render(onScanSuccess);
 </script>
 
 @endsection

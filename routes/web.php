@@ -200,7 +200,7 @@ Route::middleware(['student'])->prefix('student')->group(function () {
     Route::post('/overtime/scan', [OvertimeRequestController::class, 'completeScan'])->name('student.overtime.scan');
 
 
-
+        Route::get('/students/search', [StudentController::class, 'search'])->name('admin.students.search');
 });
 
 

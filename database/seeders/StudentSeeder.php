@@ -14,14 +14,14 @@ class StudentSeeder extends Seeder
      */
     public function run(): void
     {
-        $student = new Student();
-        $student->name = 'Student';
-        $student->email = 'student@gmail.com';
-        $student->username = '20223053';
-        $student->password = Hash::make('password'); // Use a secure password
+        // $student = new Student();
+        // $student->name = 'Student';
+        // $student->email = 'student@gmail.com';
+        // $student->username = '20223053';
+        // $student->password = Hash::make('password'); // Use a secure password
 
 
-        $student->save();
+        // $student->save();
 
 
 

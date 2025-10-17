@@ -372,7 +372,7 @@ tbody tr:hover {
         </thead>
         <tbody>
 
-            @foreach($students as $student)
+            @forelse($students as $student)
             <tr>
 
                 <td>{{ $student->name }}</td>
@@ -423,11 +423,12 @@ tbody tr:hover {
                     </form>
                 </td>
 
-
-
-
-            @endforeach
             </tr>
+             @empty
+            <tr>
+                <td colspan="9" style="text-align: center; color: gray;">No students found.</td>
+            </tr>
+            @endforelse
         </tbody>
     </table>
 </div>

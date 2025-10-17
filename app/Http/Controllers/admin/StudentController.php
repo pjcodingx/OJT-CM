@@ -51,6 +51,29 @@ class StudentController extends Controller
         return view('admin.students.index', compact('admin', 'students', 'courseCounts', 'courses', 'companies'));
     }
 
+    public function search(Request $request)
+{
+    $query = $request->get('query');
+
+    $students = Student::with('course')
+        ->where('status', 1) // Only search active students
+        ->where(function ($q) use ($query) {
+            $q->where('name', 'like', '%' . $query . '%')
+              ->orWhere('email', 'like', '%' . $query . '%');
+        })
+        ->limit(10)
+        ->get(['id', 'name', 'email', 'course_id']);
+
+    return response()->json($students->map(function ($student) {
+        return [
+            'id' => $student->id,
+            'name' => $student->name,
+            'email' => $student->email,
+            'course' => $student->course->name ?? 'Not Assigned'
+        ];
+    }));
+}
+
 
     public function create(){ //create accounts
         $admin = Auth::guard('admin')->user();

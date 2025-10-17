@@ -13,7 +13,7 @@ class Attendance extends Model
 
 
     protected $fillable = [
-        'student_id','company_id', 'date', 'time_in', 'time_out', 'time_in_counted', 'time_out_counted',
+        'student_id','company_id', 'date', 'time_in', 'time_out', 'time_in_counted', 'time_out_counted','time_in_photo', 'time_out_photo', 'overtime_photo'
     ];
 
     public function student(){
