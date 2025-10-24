@@ -158,11 +158,6 @@ Student → Scan QR Code → Photo Capture → Timestamp Logged → Supervisor R
 | **Penalties** | Automated penalty system for late submissions |
 | **Tracking** | Real-time progress monitoring by advisers |
 
-### 🔄 Appeal System
-
-```mermaid
-Student Files Appeal → Supervisor Reviews → Approve (with hours) OR Reject (with reason) → Student Notified
-```
 
 **Key Points:**
 - ✅ Student-initiated attendance appeals
